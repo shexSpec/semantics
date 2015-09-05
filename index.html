@@ -87,7 +87,7 @@
     </p>
 
     <p>
-      Let <span class="math">S</span> be a shape label, and <span class="math">definition(S)</span> be its shape definition. We say that the shape label <span class="math">T</span> <span class="emph">appears negated</span> in <span class="math">definition(S)</span> if there is a some triple constraint <span class="math">p T1 OR ... OR Tk</span> in <span class="math">expr(S)</span> such that <span class="math">T</span> is one among  <span class="math">T1, ..., Tk</span>, and <span class="math">p</span> is an extra property in <span class="math">definition(S)</span>. We denote <span class="math">negated-shapes(S)</span> the set of shape labels that appear negated in <span class="math">definition(S)</span>.
+      Let <span class="math">S</span> be a shape label, and <span class="math">definition(S)</span> be its shape definition. We say that the shape label <span class="math">T</span> <span class="emph">appears negated</span> in <span class="math">definition(S)</span> if there is a some triple constraint <span class="math">p T<sub>1</sub> OR ... OR T<sub>k</sub></span> in <span class="math">expr(S)</span> such that <span class="math">T</span> is one among  <span class="math">T<sub>1</sub>, ..., T<sub>k</sub></span>, and <span class="math">p</span> is an extra property in <span class="math">definition(S)</span>. We denote <span class="math">negated-shapes(S)</span> the set of shape labels that appear negated in <span class="math">definition(S)</span>.
     </p>
     
     <header>
@@ -123,17 +123,17 @@
       A shape definition allows to define constraints on the neighborhood of a focus node in the RDF graph. Because of inverse triple constraint, we consider the neighborhood as being composed of both outgoing and incoming edges, that is of both triples that have the focus node as subject, and triples that have the focus node as an object. 
     </p>
     <p>
-      In order to handle incoming and outgoing edges uniformly, we consider the following abstraction of RDF graphs. Let <span class="math">Prop</span> be a set of properties, that in practice correspond to the set of IRI, and let <span class="math">^Prop</span> be a set of  <span class="emph">inverse properties</span>. An inverse property is simply a property decorated by a hat <span class="math">^</span>, that is, if <span class="math">p</span> is a property, then <span class="math">^p</span> is an inverse property. 
+      In order to handle incoming and outgoing edges uniformly, we consider the following abstraction of RDF graphs. Let <span class="math">Prop</span> be a set of properties, that in practice correspond to the set of IRI, and let <span class="math">^Prop</span> be a set of  <span class="emph">inverse properties</span>. An inverse property is simply a property decorated by a hat <span class="math">^</span>, that is, if <span class="math">prop</span> is a property, then <span class="math">^prop</span> is an inverse property. 
     </p>
     <p>
-A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</span> of nodes, a set <span class="math">Edges</span> of edges, and  <span class="math">val</span> a value function. The nodes of the graph are abstract entities. The value function <span class="math">val</span> associates, with every  <span class="math">node</span> in <span class="math">Nodes</span>, either an IRI, or a literal value, or a special value  <span class="mathbf">b</span> that stands for a blank node. Finally, every   <span class="math">edge</span> in <span class="math">Edges</span> is a triple of the form  <span class="math">(n, p, n')</span> or <span class="math">(n', ^p, n)</span>, where <span class="math">p</span> is a property and <span class="math">^p</span> is an inverse property.
+A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</span> of nodes, a set <span class="math">Edges</span> of edges, and  <span class="math">val</span> a value function. The nodes of the graph are abstract entities. The value function <span class="math">val</span> associates, with every  <span class="math">node</span> in <span class="math">Nodes</span>, either an IRI, or a literal value, or a special value  <span class="mathbf">b</span> that stands for a blank node. Finally, every   <span class="math">edge</span> in <span class="math">Edges</span> is a triple of the form  <span class="math">(node, prop, node')</span> or <span class="math">(node', ^prop, node)</span>, where <span class="math">prop</span> is a property and <span class="math">^prop</span> is an inverse property.
     </p>
     <p>
       Given a set of triples defining an RDF graph, the above abstraction is obtained by: 
       <ul>
-	<li>For all IRI <span class="math">I</span> that appears in a subject or object position in some triple, there is <span class="math">nodeI</span> in <span class="math">Nodes</span> s.t. <span class="math">val(nodeI) = I</span>.</li>
-	<li>For all blank node <span class="math">B</span> that appears in some triple, there is a <span class="math">nodeB</span> in <span class="math">Nodes</span> s.t. <span class="math">val(nodeB) = </span><span class="mathbf">b</span>.</li>
-	<li>For all triple <span class="math">(E1, P, E2)</span>, the set <span class="math">Edges</span> contains the two edges  <span class="math">(nodeE1, P, nodeE2)</span> and <span class="math">(nodeE2, ^P, nodeE1)</span>. </li>
+	<li>For all IRI <span class="math">X</span> that appears in a subject or object position in some triple, there is <span class="math">node<sub>X</sub></span> in <span class="math">Nodes</span> s.t. <span class="math">val(node<sub>X</sub>) = X</span>.</li>
+	<li>For all blank node <span class="math">B</span> that appears in some triple, there is a <span class="math">node<sub>B</sub></span> in <span class="math">Nodes</span> s.t. <span class="math">val(node<sub>B</sub>) = </span><span class="mathbf">b</span>.</li>
+	<li>For all triple <span class="math">(E<sub>1</sub>, P, E<sub>2</sub>)</span>, the set <span class="math">Edges</span> contains the two edges  <span class="math">(node<sub>E<sub>1</sub></sub>, P, node<sub>E<sub>2</sub></sub>)</span> and <span class="math">(node<sub>E<sub>2</sub></sub>, ^P, node<sub>E<sub>1</sub></sub>)</span>. </li>
       </ul>
     </p>
 
@@ -142,7 +142,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
     </p>
 
     <p>
-      Given a <span class="math">node</span> in a graph, its <span class="emph">neighborhood</span> is the set of edges of the form <span class="math">(node, p, node')</span> and <span class="math">(node', ^p, node)</span>, for some property <span class="math">p</span> or inverse property <span class="math">^p</span>. It is denoted <span class="math">neigh(node)</span>
+      Given a <span class="math">node</span> in a graph, its <span class="emph">neighborhood</span> is the set of edges of the form <span class="math">(node, prop, node')</span> and <span class="math">(node', ^prop, node)</span>, for some property <span class="math">prop</span> or inverse property <span class="math">^prop</span>. It is denoted <span class="math">neigh(node)</span>
     </p>
 
     <header>
@@ -159,7 +159,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       For every shape definition we identify a set of <span class="emph">triple consumers</span>, that correspond either to a triple constraint, or to an extra property, or to the un-constrained properties of open shape definitions. Intuitively, a <span class="math">node</span> locally satisfies a shape definition if all edge from <span class="math">neigh(node)</span> can be consumed by one of the triple consumers, in way that satisfies the corresponding shape expression. Formally, given a shape definition <span class="math">ShDef</span>, let <span class="math">C<sub>1</sub>,  …, C<sub>k</sub></span> be the set of its triple constraints. The set of triple consumers of  <span class="math">ShDef</span> contains the following.
     </p>
     <ul>
-      <li><span class="math">TCons<sub>q,C<sub>i</sub></sub></span> for all triple constraint <span class="math">C<sub>i</sub></span> that appears in <span class="math">ShDef</span>, where <span class="math">q</span> is the property, or inverse property, of the triple constraint <span class="math">Ci</span>.</li>
+      <li><span class="math">TCons<sub>q,C<sub>i</sub></sub></span> for all triple constraint <span class="math">C<sub>i</sub></span> that appears in <span class="math">ShDef</span>, where <span class="math">q</span> is the property, or inverse property, of the triple constraint <span class="math">C<sub>i</sub></span>.</li>
       <li><span class="math">TCons<sub>q,extra</sub></span> for all extra property <span class="math">q</span> in <span class="math">ShDef</span>.</li>
       <li><span class="math">TCons<sub>open</sub></span> which is a special constant.</li>
     </ul>
@@ -202,7 +202,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
     </p>
 
     <h3>Propagation of Shape Constraints</h3>
-
+    
 
 
 
