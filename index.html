@@ -43,7 +43,7 @@
     </p>
 
     <div class="abstrsynt">
-      <span class="math" id="as-ShapeDefinition">ShapeDefinition ::= InclPropSet "CLOSED" ? ShapeExpr</span><br>
+      <span class="math" id="as-ShapeDefinition">ShapeDefinition ::= InclPropSet 'FWCLOSED'? 'INVCLOSED'? ShapeExpr</span><br>
       <span class="math" id="as-ShapeExpr">ShapeExpr ::= EmptyShape</span><br>
       <span class="math">| TripleConstraint</span><br>
       <span class="math">| SomeOfShape</span><br>
@@ -70,8 +70,11 @@
     </p>
 
     <header>
-      <h2>Useful Notations</h2>
+      <h2>Useful Vocabulary and Notations</h2>
     </header>
+    <p>
+      A shape definition is called <span class="emph">forward closed</span> if it has the FWCLOSED modifier, and is called <span class="emph">forward open</span> otherwise. Similarly, a shape definition is called <span class="emph">inverse</span> closed if it has the INVCLOSED modifier, and <span class="emph">inverse open</span> otherwise.
+    </p>
     <p>
      For a shape label <span class="math">S</span>, we denote <span class="math">definition(S)</span> its shape definition, and we denote <span class="math">expr(S)</span> the shape expression within the definition of <span class="math">S</span>.
     </p>
@@ -130,19 +133,49 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       <ul>
 	<li>For all IRI <span class="math">I</span> that appears in a subject or object position in some triple, there is <span class="math">nodeI</span> in <span class="math">Nodes</span> s.t. <span class="math">val(nodeI) = I</span>.</li>
 	<li>For all blank node <span class="math">B</span> that appears in some triple, there is a <span class="math">nodeB</span> in <span class="math">Nodes</span> s.t. <span class="math">val(nodeB) = </span><span class="mathbf">b</span>.</li>
-	<li>For all triple <span class="math">(E1, P, E2)</span>, there are two edges  <span class="math">(nodeE1, P, nodeE2)</span> and <span class="math">(nodeE2, ^P, nodeE1)</span> in <span class="math">Edges</span>. </li>
+	<li>For all triple <span class="math">(E1, P, E2)</span>, the set <span class="math">Edges</span> contains the two edges  <span class="math">(nodeE1, P, nodeE2)</span> and <span class="math">(nodeE2, ^P, nodeE1)</span>. </li>
       </ul>
     </p>
 
     <p>
       Thus, we are going to write <span class="math">(node, q, node')</span> for an edge, where <span class="math">q</span> is either a property or an inverses property. 
+    </p>
+
+    <p>
+      Given a <span class="math">node</span> in a graph, its <span class="emph">neighborhood</span> is the set of edges of the form <span class="math">(node, p, node')</span> and <span class="math">(node', ^p, node)</span>, for some property <span class="math">p</span> or inverse property <span class="math">^p</span>. It is denoted <span class="math">neigh(node)</span>
+    </p>
 
     <header>
       <h2>Declarative Semantics of Shape Expression Schemas</h2>
     </header>
+   
     <p>
-      
+      For every shape definition, we need to refer to the occurrences of its triple constraints. Therefore, we are going to use <span class="math">C1, ..., Ck</span> as unique names for the triple constraints that appear in a shape definition, where <span class="math">k</span> is the number of triple constraints. Note that if the same triple constraint appears twice (i.e. same property and same value set or disjunction of shape names), the two occurrences are distinguished and correspond to different <span class="math">Ci</span>. To say it differently, any of the <span class="math">Ci</span> corresponds to a position on the abstract syntax tree of a shape definition that corresponds to the <span class="math">TripleConstraint</span> rule.
     </p>
+    
+    <p>
+      For every shape definition we identify a set of <span class="emph">triple consumers</span>, that correspond either to a triple constraint, or to an extra property, or to the un-constrained properties of open shape definitions. Intuitively, a <span class="math">node</span> locally satisfies a shape definition if all edge from <span class="math">neigh(node)</span> can be consumed by one of the triple consumers, in way that satisfies the corresponding shape expression. Formally, given a shape definition <span class="math">ShDef</span>, let <span class="math">C1, ..., Ck</span> be the set of its triple constraints. The set of triple consumers of  <span class="math">ShDef</span> contains the following.
+    </p>
+    <ul>
+      <li><span class="math">TCons_q_Ci</span> for all triple constraint <span class="math">Ci</span> that appears in <span class="math">ShDef</span>, where <span class="math">q</span> is the property, or inverse property, of the triple constraint <span class="math">Ci</span>.</li>
+      <li><span class="math">TCons_q_extra</span> for all extra property <span class="math">q</span> in <span class="math">ShDef</span>.</li>
+      <li><span class="math">TCons_open</span> which is a special constant.</li>
+    </ul>
+    
+    <p>
+      Let <span class="math">Consumers</span> be the set of triple consumers that correspond to some shape definition. For an edge <span class="math">(node, q, node')</span>, we say that it <span class="emph">matches</span> a triple consumer from <span class="math">Consumers</span> in one of the following situations.
+    </p>
+    <ul>
+      <li>The edge <span class="math">(node, q, node')</span> matches all triple consumer of the form <span class="math">TCons_q_Ci</span>.</li>
+      <li>The edge <span class="math">(node, q, node')</span> matches all triple consumer of the form <span class="math">TCons_q_extra</span>.</li>
+      <li>The edge <span class="math">(node, q, node')</span> matches the triple consumer <span class="math">TCons_open</span> whenever <span class="math">Consumers</span> does not contain any triple consumer of the form <span class="math">TCons_q_Ci</span> or <span class="math">TCons_q_extra</span>.</li>
+    </ul>
+
+
+    
+
+
+
 
     <!-- triple matches constraint -->
     <!-- a matching defines a unique local witness map from triples to triple constraints -->
