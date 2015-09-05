@@ -5,18 +5,157 @@
     <meta name="viewport" content="width=device-width"/>
     <title>Shape Expressions Semantics</title>
     <link rel="stylesheet" href="css/wgio.min.css"/>
+    <style>
+      .abstrsynt{
+      margin-left: 0;
+      margin-right: 2ex;
+      margin-top: 0.1ex;
+      margin-bottom: 0.1ex;
+      /* border: double 1px #888888; */
+      border: thin solid #888888;
+      padding: 1ex 2ex 0.5ex 2ex;
+      page-break-inside: avoid;
+      background-color: #F0F8F8;
+      line-height: 1.5;
+      }
+      .emph{
+      font-style: italic;
+      }
+
+      .math{
+      font-style: normal;
+      font-family: sans-serif;
+      }
+
+      .mathbf{
+      font-weight: bold;
+      font-family: sans-serif;
+      }
+
+    </style>
   </head>
   <body>
     <header>
-      <h1>Shape Expressions Semantics</h1>
+      <h1>Syntax</h1>
     </header>
     <p>
-      ...:
+      A shape expression schema is defined by a set of shape labels and their associated shape definition. A shape definition is defined by the abstract syntax below. 
+    </p>
+
+    <div class="abstrsynt">
+      <span class="math" id="as-ShapeDefinition">ShapeDefinition ::= InclPropSet "CLOSED" ? ShapeExpr</span><br>
+      <span class="math" id="as-ShapeExpr">ShapeExpr ::= EmptyShape</span><br>
+      <span class="math">| TripleConstraint</span><br>
+      <span class="math">| SomeOfShape</span><br>
+      <span class="math">| GroupShape</span><br>
+      <span class="math">| RepetitionShape</span><br>
+      <span class="math" id="as-TripleConstraint">TripleConstraint ::= (Property | InvProperty) ValueClass</span><br>
+      <span class="math" id="as-SomeOfShape">SomeOfShape ::= ShapeExpr ('|' ShapeExpr)*</span><br>
+      <span class="math" id="as-GroupShape">GroupShape ::= ShapeExpr (',' ShapeExpr)*</span> <br>
+      <span class="math" id="as-RepetitionShape">RepetitionShape ::= ShapeExpr Cardinality</span> <br>
+      <span class="math" id="as-Cardinality">Cardinality ::= '[' MinCardinality ';' MaxCardinality ']'</span><br>
+      <span class="math" id="as-MinCardinality">MinCardinality ::=</span> a natural number<br>
+      <span class="math" id="as-MaxCardinality">MaxCardinality ::=</span> a natural number <span class="math">| 'unbound'</span> <br>
+      <span class="math" id="as-ValueClass">ValueClass ::= ValueSet | ShapeConstr</span><br>
+      <span class="math" id="as-ValueSet">ValueSet ::=</span> set of literals and <span class="math">IRI</span><br>
+      <span class="math" id="as-ShapeConstr">ShapeConstr ::= ShapeLabel ('OR' ShapeLabel)*</span><br>
+      <span class="math" id="as-ShapeLabel">ShapeLabel ::= </span>an identifier<br>
+      <span class="math" id="as-InclPropSet">InclPropSet ::= (Property | InvProperty)*</span><br>
+      <span class="math" id="as-Property">Property ::= </span>an <span class="math">IRI</span><br>
+      <span class="math" id="as-InvProperty">InvProperty ::= ^ Property</span><br>
+    </div>
+
+    <p>
+      In what follows, we assume a fixed shape expression schema <span class="mathbf">Sh</span> which set of shape labels is <span class="math">Shapes</span>.
+    </p>
+
+    <header>
+      <h2>Useful Notations</h2>
+    </header>
+    <p>
+     For a shape label <span class="math">S</span>, we denote <span class="math">definition(S)</span> its shape definition, and we denote <span class="math">expr(S)</span> the shape expression within the definition of <span class="math">S</span>.
+    </p>
+    <p>
+      The dependency graph of the schema <span class="mathbf">Sh</span> describes how shape labels refer to other shape labels in shape definitions. More formally, the <span class="emph">dependency graph</span> of <span class="mathbf">Sh</span> is an oriented graph which nodes are the elements of <span class="math">Shapes</span>, the shape labels of the schema, and that has an arrow from <span class="math">S</span> to <span class="math">T</span> if the shape label <span class="math">T</span> appears in some triple constraint in <span class="math">expr(S)</span>. 
+    </p>
+
+    <p>
+      For a shape name <span class="math">S</span>, the <span class="emph">extra properties</span> in <span class="math">definition(S)</span> are the properties or inverse properties defined by <span class="math">InclPropSet</span> in <span class="math">definition(S)</span>.
+    </p>
+
+    <p>
+      Let <span class="math">S</span> be a shape label, and <span class="math">definition(S)</span> be its shape definition. We say that the shape label <span class="math">T</span> <span class="emph">appears negated</span> in <span class="math">definition(S)</span> if there is a some triple constraint <span class="math">p T1 OR ... OR Tk</span> in <span class="math">expr(S)</span> such that <span class="math">T</span> is one among  <span class="math">T1, ..., Tk</span>, and <span class="math">p</span> is an extra property in <span class="math">definition(S)</span>. We denote <span class="math">negated-shapes(S)</span> the set of shape labels that appear negated in <span class="math">definition(S)</span>.
+    </p>
+    
+    <header>
+      <h2>Well Defined Schemas</h2>
+    </header>
+    <p>
+      The following syntactic restriction is imposed in order to guarantee well-defined semantics for shape expression schemas. It requires that shape labels that appear negated do not lead to cyclic dependencies between shapes.
+    </p> 
+    <ul>
+      <li>For every shape name <span class="math">S</span> and every shape label <span class="math">T</span> in <span class="math">definition(S)</span>, it is the case that the sub-graph accessible from <span class="math">T</span> in the dependency graph of <span class="mathbf">Sh</span> is a direct acyclic graph.
+      </li>
+    </ul>
+
+    <p>
+      The following restriction imposes that all extra properties in a shape definition appear in some triple constraint of the same definition. 
     </p>
     <ul>
-      <li>some</li>
-      <li>stuff</li>
+      <li>For every shape name <span class="math">S</span>, and every extra property <span class="math">p</span> in <span class="math">definition(S)</span>, the property <span class="math">p</span> also appears in some triple constraint in <span class="math">expr(S)</span>. 
+      </li>
     </ul>
+    <p>
+      The above restriction is not required for well-defined semantics, but rather makes the definition of the semantics easier, as the extra properties that do not appear in triple constraints are useless.
+    </p>
+
+    <header>
+      <h1>Validation</h1>
+    </header>
+
+    <header>
+      <h2>Abstraction of RDF Graphs</h2>
+    </header>
+    <p>
+      A shape definition allows to define constraints on the neighborhood of a focus node in the RDF graph. Because of inverse triple constraint, we consider the neighborhood as being composed of both outgoing and incoming edges, that is of both triples that have the focus node as subject, and triples that have the focus node as an object. 
+    </p>
+    <p>
+      In order to handle incoming and outgoing edges uniformly, we consider the following abstraction of RDF graphs. Let <span class="math">Prop</span> be a set of properties, that in practice correspond to the set of IRI, and let <span class="math">^Prop</span> be a set of  <span class="emph">inverse properties</span>. An inverse property is simply a property decorated by a hat <span class="math">^</span>, that is, if <span class="math">p</span> is a property, then <span class="math">^p</span> is an inverse property. 
+    </p>
+    <p>
+A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</span> of nodes, a set <span class="math">Edges</span> of edges, and  <span class="math">val</span> a value function. The nodes of the graph are abstract entities. The value function <span class="math">val</span> associates, with every  <span class="math">node</span> in <span class="math">Nodes</span>, either an IRI, or a literal value, or a special value  <span class="mathbf">b</span> that stands for a blank node. Finally, every   <span class="math">edge</span> in <span class="math">Edges</span> is a triple of the form  <span class="math">(n, p, n')</span> or <span class="math">(n', ^p, n)</span>, where <span class="math">p</span> is a property and <span class="math">^p</span> is an inverse property.
+    </p>
+    <p>
+      Given a set of triples defining an RDF graph, the above abstraction is obtained by: 
+      <ul>
+	<li>For all IRI <span class="math">I</span> that appears in a subject or object position in some triple, there is <span class="math">nodeI</span> in <span class="math">Nodes</span> s.t. <span class="math">val(nodeI) = I</span>.</li>
+	<li>For all blank node <span class="math">B</span> that appears in some triple, there is a <span class="math">nodeB</span> in <span class="math">Nodes</span> s.t. <span class="math">val(nodeB) = </span><span class="mathbf">b</span>.</li>
+	<li>For all triple <span class="math">(E1, P, E2)</span>, there are two edges  <span class="math">(nodeE1, P, nodeE2)</span> and <span class="math">(nodeE2, ^P, nodeE1)</span> in <span class="math">Edges</span>. </li>
+      </ul>
+    </p>
+
+    <p>
+      Thus, we are going to write <span class="math">(node, q, node')</span> for an edge, where <span class="math">q</span> is either a property or an inverses property. 
+
+    <header>
+      <h2>Declarative Semantics of Shape Expression Schemas</h2>
+    </header>
+    <p>
+      
+    </p>
+
+    <!-- triple matches constraint -->
+    <!-- a matching defines a unique local witness map from triples to triple constraints -->
+    <!-- typing propagates a witness -->
+
+
+
+
+
+
+
+
+
     <footer>
       <p>
         
