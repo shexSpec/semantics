@@ -10,6 +10,18 @@
       color: red;
       }
 
+      .Definition{
+      margin-left: 0;
+      margin-right: 2ex;
+      margin-top: 0.1ex;
+      margin-bottom: 0.1ex;
+      /* border: double 1px #888888; */
+      border: thin solid #888888;
+      padding: 1ex 2ex 0.5ex 2ex;
+      page-break-inside: avoid;
+      background-color: #F0F0F0;
+      }
+
       .abstrsynt{
       margin-left: 0;
       margin-right: 2ex;
@@ -73,7 +85,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
     </p>
 
     <header>
-      <h2>Shape Definition</h2>
+      <h2>Shape Expression Schema</h2>
     </header>
 
     <p>
@@ -132,15 +144,45 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       Now, a <span class="emph">shape definition</span> specifies a constraint to be satisfied by the entire neighborhood of the focus node. It is composed of: 
       <ul>
 	<li>A <span class="emph">set of extra properties</span> (<span class="math">InclPropSet</span>), which is a set of properties or inverse properties, and can be empty.</li>
-	<li>An optional <span class="math">CLOSED</span> modifier and an optional <span class="math">^CLOSED</span> modifier, which role is explained above.</li>
+	<li>An optional <span class="math">CLOSED</span> modifier and an optional <span class="math">^CLOSED</span> modifier, which role is explained below. A shape definition is called <span class="emph">forward closed</span> if it has the <span class="math">CLOSED</span> modifier, and is called <span class="emph">inverse closed</span> if it has the <span class="math">^CLOSED</span> modifier.</li>
 	<li>A shape expression <span class="math">ShapeExpr</span>.</li>
       </ul>
     </p>
+    
+    <p>
+      A shape definition distinguishes three different kinds of edges in the neighborhood of a node:
+      <ul>
+	<li>The edges that are used for satisfying the shape expression. These are all the edges that satisfy some triple constraint in the shape expression. That is, the edges <span class="math">(node, q, node')</span> s.t. there is a triple constraint <span class="math">q K</span>, and <span class="math">node'</span> satisfies the constraint defined by <span class="math">K</span>.</li>
+	<li>The extra edges, that are those edges whose property belongs to the set of extra properties, but that satisfy none of the triple constraints in the shape expression (that is, are not in the prevous category of edges).</li>
+	<li>The remaining edges, whose label property does not appear neither in some triple constraint, nor in the set of extra properties. No remaining forward edges are allowed if the shape definition is forward closed (<span class="math">CLOSED</span>), and similarly, no remaining inverse edges are allowed if the shape definition is inverse closed (<span class="math">^CLOSED</span>).</ul>
+    </p>
+    
+    <p>
+      A<span class="emph">shape expression schema</span> defines a set of <span class="emph">shape labels</span> (also called <span class="emph">shape names</span>), and associates a shape definition with every shape label. Intuitively, a shape expression schema is satisfied by an RDF graph if one can associate shape labels with the nodes of the graph in a way that every node satisfies (the shape definition associated with) all its shape labels. 
+    </p>
+    
+    <div class="abstrsynt">
+      <span class="math" id="as-ShapeExpressionSchema">ShapeExpressionSchema ::= (ShapeLabel '&rarr;' ShapeDefinition)+</span><br>
+    </div>
 
-
-    <div class="todo">To be continued </div>
+    <p>
+      We terminate by explaining the constraints defined by <span class="math">ValueClass</span>, which is either a set of values (<span class="math">ValueSet</span>), or a shape constraint (<span class="math">ShapeConstr</span>). A set of values is interpreted as a set that can contain IRIs, literal values, or the special constant <span class="mathbf">b</span> for a blank node. A neighbour node of the focus node satisfies a <span class="math">ValueSet</span> constraint if its value belongs to the corresponding set. A shape constraint <span class="math">ShapeConstr</span> is defined as a disjunction of shape labels, to be interpreted as the shape definition associated with that label within the shape expression schema. A neighbour node of the focus node satisfies a <span class="math">ShapeConstr</span> if its neighbourhood satisfies the shape definition that corresponds to (at least) one of the shape labels in the disjunction.
+    </p>
 
     <div class="abstrsynt">
+      <span class="math" id="as-ValueSet">ValueSet ::=</span> set which elements are literals, <span class="math">IRIs</span>, or <span class="mathbf">b</span> <br> 
+      <span class="math" id="as-ShapeConstr">ShapeConstr ::= ShapeLabel ('OR' ShapeLabel)*</span><br>
+      <span class="math" id="as-ShapeLabel">ShapeLabel ::= </span>an identifier<br>
+    </div>
+
+    <p>
+      In practice, a <span class="math">ValueSet</span> can be given by enumerating all the possible values, or by any standard way of defining sets of allowed values, such as XML Facets, node kind specification (Literal, NonLiteral, IRI, Blank, …), a regular expression defining the allowed IRIs, etc.
+    </p>
+
+    We summarize by recalling the full syntax of shape expression schemas.
+
+    <div class="abstrsynt">
+      <span class="math" id="as-ShapeExpressionSchema">ShapeExpressionSchema ::= (ShapeLabel '&rarr;' ShapeDefinition)+</span><br>
       <span class="math" id="as-ShapeDefinition">ShapeDefinition ::= InclPropSet 'CLOSED'? '^CLOSED'? ShapeExpr</span><br>
       <span class="math" id="as-ShapeExpr">ShapeExpr ::= EmptyShape</span><br>
       <span class="math">| TripleConstraint</span><br>
@@ -155,7 +197,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       <span class="math" id="as-MinCardinality">MinCardinality ::=</span> a natural number<br>
       <span class="math" id="as-MaxCardinality">MaxCardinality ::=</span> a natural number <span class="math">| 'unbound'</span> <br>
       <span class="math" id="as-ValueClass">ValueClass ::= ValueSet | ShapeConstr</span><br>
-      <span class="math" id="as-ValueSet">ValueSet ::=</span> set of literals and <span class="math">IRI</span><br>
+      <span class="math" id="as-ValueSet">ValueSet ::=</span> set which elements are literals, <span class="math">IRIs</span>, or <span class="mathbf">b</span> <br>
       <span class="math" id="as-ShapeConstr">ShapeConstr ::= ShapeLabel ('OR' ShapeLabel)*</span><br>
       <span class="math" id="as-ShapeLabel">ShapeLabel ::= </span>an identifier<br>
       <span class="math" id="as-InclPropSet">InclPropSet ::= (Property | InvProperty)*</span><br>
@@ -163,34 +205,16 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       <span class="math" id="as-InvProperty">InvProperty ::= ^Property</span><br>
     </div>
 
-    <header>
-      <h2>Shape Expression Schema</h2>
-    </header>
-
-    <p>
-      A shape expression schema is defined by a set of shape labels and their associated shape definition. A shape definition is defined by the abstract syntax below. 
-    </p>
-
-
-    <p>
-      In what follows, we assume a fixed shape expression schema <span class="mathbf">Sh</span> which set of shape labels is <span class="math">Shapes</span>.
-    </p>
 
     <header>
       <h2>Useful Vocabulary and Notations</h2>
     </header>
-    <p>
-      A shape definition is called <span class="emph">forward closed</span> if it has the CLOSED modifier, and is called <span class="emph">forward open</span> otherwise. Similarly, a shape definition is called <span class="emph">inverse closed</span> if it has the ^CLOSED modifier, and <span class="emph">inverse open</span> otherwise.
-    </p>
-    <p>
-     For a shape label <span class="math">S</span>, we denote <span class="math">definition(S)</span> its shape definition, and we denote <span class="math">expr(S)</span> the shape expression within the definition of <span class="math">S</span>.
-    </p>
-    <p>
-      The dependency graph of the schema <span class="mathbf">Sh</span> describes how shape labels refer to other shape labels in shape definitions. More formally, the <span class="emph">dependency graph</span> of <span class="mathbf">Sh</span> is an oriented graph which nodes are the elements of <span class="math">Shapes</span>, the shape labels of the schema, and that has an arrow from <span class="math">S</span> to <span class="math">T</span> if the shape label <span class="math">T</span> appears in some triple constraint in <span class="math">expr(S)</span>. 
-    </p>
 
     <p>
-      For a shape name <span class="math">S</span>, the <span class="emph">extra properties</span> in <span class="math">definition(S)</span> are the properties or inverse properties defined by <span class="math">InclPropSet</span> in <span class="math">definition(S)</span>.
+      For the remaining, we assume a fixed shape expression schema <span class="mathbf">Sh</span> which set of labels is <span class="math">Shapes</span>. For a shape label <span class="math">S</span>, we denote <span class="math">definition(S)</span> its shape definition in <span class="mathbf">Sh</span>, and we denote <span class="math">expr(S)</span> the shape expression within the definition of <span class="math">S</span>.
+    </p>
+    <p>
+      The dependency graph of the schema <span class="mathbf">Sh</span> describes how shape labels refer to each others in shape definitions. More formally, the <span class="emph">dependency graph</span> of <span class="mathbf">Sh</span> is an oriented graph which nodes are the elements of <span class="math">Shapes</span>, and that has an arrow from <span class="math">S</span> to <span class="math">T</span> if the shape label <span class="math">T</span> appears in some triple constraint in <span class="math">expr(S)</span>. 
     </p>
 
     <p>
@@ -216,7 +240,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       </li>
     </ul>
     <p>
-      The above restriction is not required for well-defined semantics, but rather makes the definition of the semantics easier, as the extra properties that do not appear in triple constraints are useless.
+      The latter restriction is not required for well-defined semantics, but rather avoids the need to consider extra properties that do not appear in any triple constraint, as such extra properties are useless (in the sense that they do not modify the satisfiability of the shape definition).
     </p>
 
     <header>
@@ -232,11 +256,14 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
     <h3>Locally Satisfying a Shape Definition</h3>
 
     <p>
-      For every shape definition, we need to refer to the occurrences of its triple constraints. Therefore, we are going to use <span class="math">C<sub>1</sub>, …, C<sub>k</sub></span> as unique names for the triple constraints that appear in a shape definition, where <span class="math">k</span> is the number of triple constraints. Note that if the same triple constraint appears twice (i.e. same property and same value set or disjunction of shape names), the two occurrences are distinguished and correspond to different <span class="math">C<sub>i</sub></span>. To say it differently, any of the <span class="math">C<sub>i</sub></span> corresponds to a position on the abstract syntax tree of a shape definition that corresponds to the <span class="math">TripleConstraint</span> rule.
+      For every shape definition, we need to refer to the occurrences of its triple constraints. Therefore, we are going to use <span class="math">C<sub>1</sub>, …, C<sub>k</sub></span> as unique names for the triple constraints that appear in a shape definition, where <span class="math">k</span> is the number of triple constraints. The shape definition to which the <span class="math">C<sub>i</sub></span> belong will be always clear from the context. Note that if the same triple constraint appears twice (i.e. same property and same value set or disjunction of shape names), the two occurrences are distinguished and correspond to different <span class="math">C<sub>i</sub></span>. To say it differently, any of the <span class="math">C<sub>i</sub></span> corresponds to a <span class="math">TripleConstraint</span>-position in the abstract syntax tree of a shape definition.
     </p>
     
     <p>
-      For every shape definition we identify a set of <span class="emph">triple consumers</span>, that correspond either to a triple constraint, or to an extra property, or to the un-constrained properties of open shape definitions. Intuitively, a <span class="math">node</span> locally satisfies a shape definition if all edge from <span class="math">neigh(node)</span> can be consumed by one of the triple consumers, in way that satisfies the corresponding shape expression. Formally, given a shape definition <span class="math">ShDef</span>, let <span class="math">C<sub>1</sub>,  …, C<sub>k</sub></span> be the set of its triple constraints. The set of triple consumers of  <span class="math">ShDef</span> contains the following.
+      For every shape definition we identify a set of <span class="emph">triple consumers</span>, that correspond either to some triple constraint, or to an extra property, or to the un-constrained properties of open shape definitions. Intuitively, a <span class="math">node</span> locally satisfies a shape definition if all edge from <span class="math">neigh(node)</span> can be consumed by one of the triple consumers of that shape definition, in a way that satisfies the shape expression of that shape definition. 
+    </p>
+    <p>
+      Formally, let <span class="math">ShDef</span> be a shape definition (fixed in the sequel), and let <span class="math">C<sub>1</sub>,  …, C<sub>k</sub></span> be the set of its triple constraints. The set of triple consumers of  <span class="math">ShDef</span> is composed by the following.
     </p>
     <ul>
       <li><span class="math">TCons<sub>q,C<sub>i</sub></sub></span> for all triple constraint <span class="math">C<sub>i</sub></span> that appears in <span class="math">ShDef</span>, where <span class="math">q</span> is the property, or inverse property, of the triple constraint <span class="math">C<sub>i</sub></span>.</li>
@@ -245,40 +272,42 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
     </ul>
     
     <p>
-      Let <span class="math">Consumers</span> be the set of triple consumers that correspond to some shape definition. For an edge <span class="math">(node, q, node')</span>, we say that it <span class="emph">matches</span> a triple consumer from <span class="math">Consumers</span> in one of the following situations.
+      Let <span class="math">Consumers</span> be the set of triple consumers of <span class="math">ShDef</span>. For an edge <span class="math">(node, q, node')</span>, we say that it <span class="emph">matches</span> a triple consumer from <span class="math">Consumers</span> in one of the following situations.
     </p>
     <ul>
       <li>The edge <span class="math">(node, q, node')</span> matches all triple consumer of the form <span class="math">TCons<sub>q,C<sub>i</sub></sub></span>.</li>
       <li>The edge <span class="math">(node, q, node')</span> matches all triple consumer of the form <span class="math">TCons<sub>q,extra</sub></span>.</li>
-      <li>The edge <span class="math">(node, q, node')</span> matches the triple consumer <span class="math">TCons<sub>open</sub></span> whenever <span class="math">Consumers</span> does not contain any triple consumer of the form <span class="math">TCons<sub>q,C<sub>i</sub></sub></span> or <span class="math">TCons<sub>q,extra</sub></span>.</li>
+      <li>The edge <span class="math">(node, q, node')</span> matches the triple consumer <span class="math">TCons<sub>open</sub></span> whenever <span class="math">Consumers</span> does not contain any triple consumer of the form <span class="math">TCons<sub>q,C<sub>i</sub></sub></span> or <span class="math">TCons<sub>q,extra</sub></span> (for the same property or inverse property <span class="math">q</span>).</li>
     </ul>
 
     <p>
-      Let <span class="math">ShDef</span> be a shape definition, and let <span class="math">Consumers</span> be the set of its triple consumers. Consider a set of edges <span class="math">Neigh</span> that corresponds to the neighborhood of some node in some graph. Let <span class="math">witness : Neigh &rarr; Consumers</span> be a total mapping that maps a triple consumer with every edge in <span class="math">Neigh</span>. We say that the mapping <span class="math">witness</span> is a local witness for the fact that the neighborhood  <span class="math">Neigh</span> satisfies the shape definition <span class="math">ShDef</span> if the following are satisfied.
+      Consider a set of edges <span class="math">Neigh</span> that corresponds to the neighborhood of some node in some graph. Let <span class="math">witness : Neigh &rarr; Consumers</span> be a total mapping that maps a triple consumer with every edge in <span class="math">Neigh</span>. We say that the mapping <span class="math">witness</span> <span class="emph">is a local witness for the fact that the neighborhood  <span class="math">Neigh</span> satisfies the shape definition <span class="math">ShDef</span></span> if the following are satisfied.
     </p>
     <ul>
       <li>If <span class="math">witness(edge) = TCons</span>, then <span class="math">edge</span> matches <span class="math">TCons</span>.</li>
       <li>If <span class="math">ShDef</span> is forward closed, then there is no forward edge that is mapped with <span class="math">TCons<sub>open</sub></span> by <span class="math">witness</span>.</li>
       <li>If <span class="math">ShDef</span> is inverse closed, then there is no inverse edge that is mapped with <span class="math">TCons<sub>open</sub></span> by <span class="math">witness</span>.</li>
-      <li>The set of edges <span class="math">Neigh<sub>expr</sub></span> <span class="emph">satisfies</span> the shape expression of <span class="math">ShDef</span>, where <span class="math">Neigh<sub>expr</sub></span> is the set of edges from <span class="math">Neigh</span> that the mapping <span class="math">witness</span> maps with a triple consumer of the form <span class="math">TCons<sub>q,C<sub>i</sub></sub></span>.</li>
+      <li>The set of edges <span class="math">Neigh<sub>expr</sub></span> <span class="emph">satisfies</span> the shape expression of <span class="math">ShDef</span>, where <span class="math">Neigh<sub>expr</sub></span> is the set of edges <span class="math">edge</span> from <span class="math">Neigh</span> such that <span class="math">witness(edge) = TCons<sub>q,C<sub>i</sub></sub></span> for some triple constraint <span class="math">C<sub>i</sub></span> in <span class="math">ShDef</span>.</li>
     </ul>
 
     <p>
       Finally, we define what it means for a set of neighbourhood edges to satisfy a shape expression. It is parametriezed by a <span class="math">witness</span> mapping. We give a general definition. Let <span class="math">Neigh</span> be a neighbourhood set of edges, <span class="math">Expr</span> be a shape expression, <span class="math">Consumers</span> be the set of triple consumers coming from the triple constraints in  <span class="math">Expr</span>, and let <span class="math">witness : Neigh &rarr; Consumers</span> be a mapping from edges to triple consumers. Then <span class="math">witness</span> is <span class="emph"> is a local witness for the fact that</span> <span class="math">Neig</span> <span class="emph">satisfies</span> <span class="math">Expr</span>, written <span class="math">witness, Neigh &#747; Expr</span>, as defined as follows recursively on the structure of <span class="math">Expr</span>.
     </p>
-    <ul>
-      <li><span class="math">Expr = C<sub>i</sub></span> is a triple constraint, <span class="math">Neigh = {edge}</span> is a singleton set, and <span class="math">witness(edge) = C<sub>i</sub></span>.</li>
-      <li><span class="math">Expr = Expr<sub>1</sub> | ... | Expr<sub>k</sub></span> is a some-of shape, and <span class="math">witness, Neigh  &#747; Expr<sub>i</sub></span> for some <span class="math">i</span> in <span class="math">1..k</span>.</li>
-      <li><span class="math">Expr = Expr<sub>1</sub> , ... , Expr<sub>k</sub></span> is a group shape, and for all <span class="math">i</span> in <span class="math">1..k</span>, <span class="math">witness, Neigh<sub>Expr<sub>i</sub>,witness</sub> &#747; Expr<sub>i</sub></span>, and <span class="math">Neigh<sub>Expr<sub>1</sub>,witness</sub> &cup; … &cup; Neigh<sub>Expr<sub>k</sub>,witness</sub> = Neigh</span>, where the sets <span class="math">Neigh<sub>Expr<sub>i</sub>,witness</sub></span> are defined below.</li>
-      <li><span class="math">Expr[min;max]</span> is a repetition shape, and there exists <span class="math">m</span> that belongs to the interval <span class="math">[min;max]</span> s.t. one can split <span class="math">Neigh</span> in  <span class="math">m</span> disjoint sets <span class="math">Neigh<sub>1</sub>,  …, Neigh<sub>m</sub></span> which union is  <span class="math">Neigh</span>, and such that <span class="math">witness, Neigh<sub>i</sub> &#747; Expr</span> for all <span class="math">i</span> in <span class="math">1..m</span>.</li>
-    </ul>
-    
+
+    <div class="Definition">
+      <p><span class="math">witness, Neig &#747; Expr</span> holds if:
+	<ul>
+	  <li><span class="math">Expr = C<sub>i</sub></span> is a triple constraint, <span class="math">Neigh = {edge}</span> is a singleton set, and <span class="math">witness(edge) = C<sub>i</sub></span>.</li>
+	  <li><span class="math">Expr = Expr<sub>1</sub> | ... | Expr<sub>k</sub></span> is a some-of shape, and <span class="math">witness, Neigh  &#747; Expr<sub>i</sub></span> for some <span class="math">i</span> in <span class="math">1..k</span>.</li>
+	  <li><span class="math">Expr = Expr<sub>1</sub> , ... , Expr<sub>k</sub></span> is a group shape, and for all <span class="math">i</span> in <span class="math">1..k</span>, <span class="math">witness, Neigh<sub>Expr<sub>i</sub>,witness</sub> &#747; Expr<sub>i</sub></span>, and <span class="math">Neigh<sub>Expr<sub>1</sub>,witness</sub> &cup; … &cup; Neigh<sub>Expr<sub>k</sub>,witness</sub> = Neigh</span>, where the sets <span class="math">Neigh<sub>Expr<sub>i</sub>,witness</sub></span> are defined below.</li>
+	  <li><span class="math">Expr[min;max]</span> is a repetition shape, and there exists <span class="math">m</span> that belongs to the interval <span class="math">[min;max]</span> s.t. one can split <span class="math">Neigh</span> in  <span class="math">m</span> disjoint sets <span class="math">Neigh<sub>1</sub>,  …, Neigh<sub>m</sub></span> which union is  <span class="math">Neigh</span>, and such that <span class="math">witness, Neigh<sub>i</sub> &#747; Expr</span> for all <span class="math">i</span> in <span class="math">1..m</span>.</li>
+	</ul>
+	where, <span class="math">Neigh<sub>Expr<sub>i</sub>,witness</sub></span> is the subset of <span class="math">Neigh</span> that contains <span class="math">edge</span> if, and only if, <span class="math">witness(edge) =  TCons<sub>q,C<sub>j</sub></sub></span> for some triple constraint  <span class="math">C<sub>j</sub></span> in <span class="math">Expr</span>.
+      </p>
+    </div>
+
     <p>
-      For a neighbourhood set of edges <span class="math">Neigh</span>, a shape expression <span class="math">Neigh</span>, and a mappings <span class="math">witness</span> that associates triple consumers with the elements of <span class="math">Neigh</span>, we denote <span class="math">Neigh<sub>Expr,witness</sub></span> the subset of <span class="math">Neigh</span> that contains <span class="math">edge</span> if, and only if, <span class="math">witness(edge)</span> is a triple consumer that corresponds to a triple constraint from  <span class="math">Expr</span>. That is, <span class="math">witness(edge) = TCons<sub>q,C<sub>i</sub></sub></span> and  <span class="math">C<sub>i</sub></span> is a triple constraint in <span class="math">Expr</span>.
-    </p>
-    
-    <p>
-      Also, in the definition of satisfiability of a repetition shape, we required that <span class="math">Neigh</span> is split into <span class="math">m</span> disjoint sets. If  <span class="math">m = 0</span>, this is possible only if  <span class="math">Neigh</span> is the empty set.
+      In the above definition, for a repetition shape, we required that <span class="math">Neigh</span> is split into <span class="math">m</span> disjoint sets. For <span class="math">m = 0</span>, it is equivalent to <span class="math">Neigh = &empty;</span>.
     </p>
 
     <h3>Propagation of Shape Constraints</h3>
