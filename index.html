@@ -10,6 +10,8 @@
       color: red;
       }
 
+      
+
       .Definition{
       margin-left: 0;
       margin-right: 2ex;
@@ -38,6 +40,9 @@
       font-style: italic;
       }
 
+      .textbf{
+      font-weight: bold;
+      }
       .math{
       font-style: normal;
       font-family: sans-serif;
@@ -228,7 +233,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       The following syntactic restriction is imposed in order to guarantee well-defined semantics for shape expression schemas. It requires that shape labels that appear negated do not lead to cyclic dependencies between shapes.
     </p> 
     <ul>
-      <li>For every shape name <span class="math">S</span> and every shape label <span class="math">T</span> in <span class="math">definition(S)</span>, it is the case that the sub-graph accessible from <span class="math">T</span> in the dependency graph of <span class="mathbf">Sh</span> is a direct acyclic graph.
+      <li>For every shape name <span class="math">S</span> and every shape label <span class="math">T</span> in <span class="math">negated-shapes(S)</span>, it is the case that the sub-graph accessible from <span class="math">T</span> in the dependency graph of <span class="mathbf">Sh</span> is a direct acyclic graph.
       </li>
     </ul>
 
@@ -294,8 +299,8 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       Finally, we define what it means for a set of neighbourhood edges to satisfy a shape expression. It is parametriezed by a <span class="math">witness</span> mapping. We give a general definition. Let <span class="math">Neigh</span> be a neighbourhood set of edges, <span class="math">Expr</span> be a shape expression, <span class="math">Consumers</span> be the set of triple consumers coming from the triple constraints in  <span class="math">Expr</span>, and let <span class="math">witness : Neigh &rarr; Consumers</span> be a mapping from edges to triple consumers. Then <span class="math">witness</span> is <span class="emph"> is a local witness for the fact that</span> <span class="math">Neig</span> <span class="emph">satisfies</span> <span class="math">Expr</span>, written <span class="math">witness, Neigh &#747; Expr</span>, as defined as follows recursively on the structure of <span class="math">Expr</span>.
     </p>
 
-    <div class="Definition">
-      <p><span class="math">witness, Neig &#747; Expr</span> holds if:
+    <div class="Definition"> 
+      <p><span class="math"><span class="textbf">Definition.</span> witness, Neig &#747; Expr</span> holds if:
 	<ul>
 	  <li><span class="math">Expr = C<sub>i</sub></span> is a triple constraint, <span class="math">Neigh = {edge}</span> is a singleton set, and <span class="math">witness(edge) = C<sub>i</sub></span>.</li>
 	  <li><span class="math">Expr = Expr<sub>1</sub> | ... | Expr<sub>k</sub></span> is a some-of shape, and <span class="math">witness, Neigh  &#747; Expr<sub>i</sub></span> for some <span class="math">i</span> in <span class="math">1..k</span>.</li>
@@ -310,13 +315,98 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       In the above definition, for a repetition shape, we required that <span class="math">Neigh</span> is split into <span class="math">m</span> disjoint sets. For <span class="math">m = 0</span>, it is equivalent to <span class="math">Neigh = &empty;</span>.
     </p>
 
-    <h3>Propagation of Shape Constraints</h3>
-    
-    <div class="todo
-">To be continued</div>
+    <h3>Typing of Graph by a Shape Expression Schema</h3>
+    <p>
+      A shape definition specifies a constraint to be satisfied by the neighbourhood edges of a focus node, but also allows to specify constraints to be satisfied by the neighbour nodes, by referring to other shape definitions, using shape constraints in triple constraints. Thus, the validity of a graph with respect to a shape expression schema is a global property on the graph, and is captured by the notion of valid typing.
+    </p>
 
-    <h2>Preferred typing</h2>
+    <p>
+      As previously, we consider a shape expression schema  <span class="mathbf">Sh</span> which set of shape labels is <span class="math">Shapes</span>. The set of shapes negated in <span class="mathbf">Sh</span> is defined as the set of shape names <span class="math">S</span> such that <span class="math">S</span> appears negated in <span class="math">definition(T)</span> for some shape name <span class="math">T</span>. Let <span class="math">NegatedShapes</span> be the set of shape labels of the form <span class="math">!S</span> where <span class="math">S</span> is negated in <span class="mathbf">Sh</span>. That is, <span class="math">NegatedShapes</span> contains all the shapes negated in <span class="mathbf">Sh</span> decorated by a leading <span class="math">!</span> sign.
+    </p>
+
+    <p>
+      A <span class="emph">typing</span> of a graph <span class="math">G</span> by <span class="mathbf">Sh</span> is a mapping <span class="math">typing : Nodes<sub>G</sub> &rarr; ℙ(Shapes &cup; NegatedShapes)</span> that associates a set of shape names and negated shape names with the nodes of the graph <span class="math">G</span>, and such that a shape name <span class="math">S</span> and its negated variant <span class="math">!S</span> cannot be both associated with the same node. That is, there is no <span class="math">node</span> and no shape name <span class="math">S</span> such that <span class="math">S &in; typing(node)</span> and <span class="math">!S &in; typing(node)</span>. Here, the <span class="math">ℙ</span> symbol is used as power set.
+    </p>
+    
+    <p>
+      A typing can be used as a witness that every node in the graph satisfies all the shapes associated with it. This is captured by the notion of <span class="emph">valid typing</span>.
+    </p>
+    
+    <p>
+      In the following definition, for a shape label <span class="math">S</span>, <span class="math">Consumers(S)</span> is the set of triple consumers of <span class="math">definition(S)</span>.
+    </p>
+
+    <div class="Definition">
+      <span class="textbf">Definition (valid typing)</span>
+      <p>
+	<span class="math">typing</span> is a valid typing if it is a typing, and:
+	<dl>
+	  <dt><span class="textbf">vt-sat</span></dt>
+	  <dd>if <span class="math">S &in; typing(node)</span>, then there exists <span class="math">witness : neigh(node) &rarr; Consumers(S)</span> a local witness for the fact that <span class="math">neigh(n)</span> satisfies <span class="math">definition(S)</span> such that, for all edge <span class="math">(node, q, node')</span> in <span class="math">neigh(node)</span>:
+	    <ul>
+	      <li>if <span class="math">witness((node, q, node')) = TCons<sub>q,C<sub>i</sub></sub></span> and <span class="math">C<sub>i</sub> = q V</span> for some value set <span class="math">V</span>, then the value of <span class="math">node'</span> belongs to <span class="math">V</span>;
+	      </li>
+	      <li>if <span class="math">witness((node, q, node')) = TCons<sub>q,C<sub>i</sub></sub></span> and <span class="math">C<sub>i</sub> = q T<sub>1</sub>, …, T<sub>k</sub></span>, then <span class="math">T<sub>j</sub> &in; typing(node')</span> for some shape name <span class="math">T<sub>j</sub></span> among T<sub>1</sub>, …, T<sub>k</sub>;
+	      </li>
+	      <li>if <span class="math">witness((node, q, node')) = TCons<sub>q,extra</sub></span>, then 
+		<ul>
+		  <li>for all triple constraint <span class="math">q T<sub>1</sub>, …, T<sub>k</sub></span> in <span class="math">definition(S)</span>, and for all <span class="math">T<sub>j</sub></span> among T<sub>1</sub>, …, T<sub>k</sub>, it is the case that <span class="math">!T<sub>j</sub> &in; typing(node')</span>, and</li>
+		  <li>for all triple constraint <span class="math">q V</span> in <span class="math">definition(S)</span>, it is not the case that the value of <span class="math">node'</span> belongs to <span class="math">V;</span></li>
+		</ul>
+	      </li>
+	    </ul>
+	  </dd>
+	  <dt><span class="textbf">vt-neg</span></dt>
+	  <dd>if <span class="math">!S &in; typing(node)</span>, then there does not exist <span class="math">typing'</span> a valid typing such that <span class="math">S &in; typing'(node)</span>.
+	  </dd>
+	</dl>
+      </p>
+    </div>
+
+    <p>
+      The <span class="textbf">vt-sat</span> requirement intuitively ensures that if a shape name <span class="math">S</span> is associated with a node, then the corresponding shape definition is locally satisfied in that node, and the shape constraints are propagated to its neighbour nodes. The <span class="textbf">vt-neg</span> requirement ensures that a negated shape name is associated with a node only if the node does not satisfy the corresponding (non-negated) shape. Note that the <span class="textbf">vt-sat</span> also enforces that extra properties consume only edges that do not satisfy any of the triple constraints.
+    </p>
+
+    <p>
+      A typing can also be used as a validation requirement, in order to specify which nodes are expected to satisfy which shapes. Suppose a given <span class="math">typing_requirement</span> which associates shape names or negated shape names with the nodes of a graph. If it is possible to extend <span class="math">typing_requirement</span>, by adding additional shape names to the nodes of the graph, so that the resulting typing is a valid typing, this intuitively captures the fact that for all <span class="math">S &in; typing_requirement(node)</span>, it is the case that the node <span class="math">node</span> satisfies the shape <span class="math">S</span>.
+    </p>
+
+    <header>
+      <h2>Maximal valid typing</h2>
+    </header>
+    
+    <p>
+      For all graph and all shape expression schema, there exists a unique <span class="emph">maximal valid typing</span> that associates with every node all the shape names that are satisfied by this node, and all the negated shape names that are not satisfied by the node. Such a maximal tying can be obtained as follows:
+      <ol>
+	For all shape name <span class="math">S</span> that appears negated in <span class="mathbf">Sh</span>, and for all <span class="math">node</span> in the graph, associate with <span class="math">node</span> either the type <span class="math">S</span> or the type <span class="math">!S</span>. This is possible because of the well-defined criterion of shape expression schemas. More precisely, it guarantees that shape names that appear negated do not require recursion, and their satisfiability can be checked by exploring only a limited portion of the graph around every node.
+      </ol>
+      <ol>
+	For all shape name <span class="math">S</span> that does not appear negated in <span class="mathbf">Sh</span>, and for all <span class="math">node</span>, add <span class="math">S</span> to the types of <span class="math">node</span>. Then, iteratively remove shape names that are not satisfied the node, until reaching a fixed point (impossible to remove other shape names, because all remaining shape names are satisfied).
+      </ol>
+    </p>
+    
+    <p>
+      A typing requirement can then be verified by checking whether it is included in the maximal valid typing.
+    </p>
+
+    <header>
+      <h2>Minimal and Preferred Valid Typings</h2>
+    </header>
+
+    <p>
+      The maximal valid typing is complex to compute. A more suitable way for verifying a typing requirement is by providing a minimal valid typing that certifies the typing requirement. We now define a notion of minimality that ensures the existence of a unique minimal valid typing. The minimality criterion is based on a total ordering on the edges of an RDF graph. In practice, such total ordering might not exist, but the ORDER BY operator of SPARQL defines a standard partial ordering. Using a partial ordering instead of a total one, there does not exist a unique minimal typing, but one can define a family of <span class="emph">preferred</span> valid typings as a best effort approach. 
+    </p>
+
+    <p>
+      We define the unique minimal valid typing, provided a total ordering on the edges of an RDF graph. The family of preferred typings w.r.t. the SPARQL ORDER BY contains exactly the valid typings that are a unique minimal typing for some arbitrary total ordering compatible by the SPARQL ORDER BY partial order.
+    </p>
+    
     <div class="todo">To be continued</div>
+    
+    <!-- <p> -->
+    <!--   Let <span class="math"><</span> be a total ordering relation on the edges of a graph.  -->
+    <!-- </p> -->
+
 
     <!-- triple matches constraint -->
     <!-- a matching defines a unique local witness map from triples to triple constraints -->
@@ -325,7 +415,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
 
 
 
-
+<!-- … -->
 
 
 
