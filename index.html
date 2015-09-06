@@ -6,6 +6,10 @@
     <title>Shape Expressions Semantics</title>
     <link rel="stylesheet" href="css/wgio.min.css"/>
     <style>
+      .todo {
+      color: red;
+      }
+
       .abstrsynt{
       margin-left: 0;
       margin-right: 2ex;
@@ -38,83 +42,6 @@
     <header>
       <h1>Syntax</h1>
     </header>
-    <p>
-      A shape expression schema is defined by a set of shape labels and their associated shape definition. A shape definition is defined by the abstract syntax below. 
-    </p>
-
-    <div class="abstrsynt">
-      <span class="math" id="as-ShapeDefinition">ShapeDefinition ::= InclPropSet 'CLOSED'? '^CLOSED'? ShapeExpr</span><br>
-      <span class="math" id="as-ShapeExpr">ShapeExpr ::= EmptyShape</span><br>
-      <span class="math">| TripleConstraint</span><br>
-      <span class="math">| SomeOfShape</span><br>
-      <span class="math">| GroupShape</span><br>
-      <span class="math">| RepetitionShape</span><br>
-      <span class="math" id="as-TripleConstraint">TripleConstraint ::= (Property | InvProperty) ValueClass</span><br>
-      <span class="math" id="as-SomeOfShape">SomeOfShape ::= ShapeExpr ('|' ShapeExpr)*</span><br>
-      <span class="math" id="as-GroupShape">GroupShape ::= ShapeExpr (',' ShapeExpr)*</span> <br>
-      <span class="math" id="as-RepetitionShape">RepetitionShape ::= ShapeExpr Cardinality</span> <br>
-      <span class="math" id="as-Cardinality">Cardinality ::= '[' MinCardinality ';' MaxCardinality ']'</span><br>
-      <span class="math" id="as-MinCardinality">MinCardinality ::=</span> a natural number<br>
-      <span class="math" id="as-MaxCardinality">MaxCardinality ::=</span> a natural number <span class="math">| 'unbound'</span> <br>
-      <span class="math" id="as-ValueClass">ValueClass ::= ValueSet | ShapeConstr</span><br>
-      <span class="math" id="as-ValueSet">ValueSet ::=</span> set of literals and <span class="math">IRI</span><br>
-      <span class="math" id="as-ShapeConstr">ShapeConstr ::= ShapeLabel ('OR' ShapeLabel)*</span><br>
-      <span class="math" id="as-ShapeLabel">ShapeLabel ::= </span>an identifier<br>
-      <span class="math" id="as-InclPropSet">InclPropSet ::= (Property | InvProperty)*</span><br>
-      <span class="math" id="as-Property">Property ::= </span>an <span class="math">IRI</span><br>
-      <span class="math" id="as-InvProperty">InvProperty ::= ^ Property</span><br>
-    </div>
-
-    <p>
-      In what follows, we assume a fixed shape expression schema <span class="mathbf">Sh</span> which set of shape labels is <span class="math">Shapes</span>.
-    </p>
-
-    <header>
-      <h2>Useful Vocabulary and Notations</h2>
-    </header>
-    <p>
-      A shape definition is called <span class="emph">forward closed</span> if it has the FWCLOSED modifier, and is called <span class="emph">forward open</span> otherwise. Similarly, a shape definition is called <span class="emph">inverse</span> closed if it has the INVCLOSED modifier, and <span class="emph">inverse open</span> otherwise.
-    </p>
-    <p>
-     For a shape label <span class="math">S</span>, we denote <span class="math">definition(S)</span> its shape definition, and we denote <span class="math">expr(S)</span> the shape expression within the definition of <span class="math">S</span>.
-    </p>
-    <p>
-      The dependency graph of the schema <span class="mathbf">Sh</span> describes how shape labels refer to other shape labels in shape definitions. More formally, the <span class="emph">dependency graph</span> of <span class="mathbf">Sh</span> is an oriented graph which nodes are the elements of <span class="math">Shapes</span>, the shape labels of the schema, and that has an arrow from <span class="math">S</span> to <span class="math">T</span> if the shape label <span class="math">T</span> appears in some triple constraint in <span class="math">expr(S)</span>. 
-    </p>
-
-    <p>
-      For a shape name <span class="math">S</span>, the <span class="emph">extra properties</span> in <span class="math">definition(S)</span> are the properties or inverse properties defined by <span class="math">InclPropSet</span> in <span class="math">definition(S)</span>.
-    </p>
-
-    <p>
-      Let <span class="math">S</span> be a shape label, and <span class="math">definition(S)</span> be its shape definition. We say that the shape label <span class="math">T</span> <span class="emph">appears negated</span> in <span class="math">definition(S)</span> if there is a some triple constraint <span class="math">p T<sub>1</sub> OR ... OR T<sub>k</sub></span> in <span class="math">expr(S)</span> such that <span class="math">T</span> is one among  <span class="math">T<sub>1</sub>, ..., T<sub>k</sub></span>, and <span class="math">p</span> is an extra property in <span class="math">definition(S)</span>. We denote <span class="math">negated-shapes(S)</span> the set of shape labels that appear negated in <span class="math">definition(S)</span>.
-    </p>
-    
-    <header>
-      <h2>Well Defined Schemas</h2>
-    </header>
-    <p>
-      The following syntactic restriction is imposed in order to guarantee well-defined semantics for shape expression schemas. It requires that shape labels that appear negated do not lead to cyclic dependencies between shapes.
-    </p> 
-    <ul>
-      <li>For every shape name <span class="math">S</span> and every shape label <span class="math">T</span> in <span class="math">definition(S)</span>, it is the case that the sub-graph accessible from <span class="math">T</span> in the dependency graph of <span class="mathbf">Sh</span> is a direct acyclic graph.
-      </li>
-    </ul>
-
-    <p>
-      The following restriction imposes that all extra properties in a shape definition appear in some triple constraint of the same definition. 
-    </p>
-    <ul>
-      <li>For every shape name <span class="math">S</span>, and every extra property <span class="math">p</span> in <span class="math">definition(S)</span>, the property <span class="math">p</span> also appears in some triple constraint in <span class="math">expr(S)</span>. 
-      </li>
-    </ul>
-    <p>
-      The above restriction is not required for well-defined semantics, but rather makes the definition of the semantics easier, as the extra properties that do not appear in triple constraints are useless.
-    </p>
-
-    <header>
-      <h1>Validation</h1>
-    </header>
 
     <header>
       <h2>Abstraction of RDF Graphs</h2>
@@ -144,6 +71,159 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
     <p>
       Given a <span class="math">node</span> in a graph, its <span class="emph">neighborhood</span> is the set of edges of the form <span class="math">(node, prop, node')</span> and <span class="math">(node', ^prop, node)</span>, for some property <span class="math">prop</span> or inverse property <span class="math">^prop</span>. It is denoted <span class="math">neigh(node)</span>
     </p>
+
+    <header>
+      <h2>Shape Definition</h2>
+    </header>
+
+    <p>
+      A shape expression allows to define constraints on the neighborhood of an identified node, called <span class="emph">focus node</span>, within an RDF graph. It is defined by the following abstract syntax.
+    </p>
+    
+    <div class="abstrsynt">
+      <span class="math" id="as-ShapeExpr">ShapeExpr ::= EmptyShape</span><br>
+      <span class="math">| TripleConstraint</span><br>
+      <span class="math">| SomeOfShape</span><br>
+      <span class="math">| GroupShape</span><br>
+      <span class="math">| RepetitionShape</span><br>
+    </div>
+
+    <p>
+      The <span class="math">empty shape</span> (<span class="math">EmptyShape</span>) is satisfied by an empty neighborhood.
+    </p>
+
+    <p>
+      The basic component of a shape expression is a triple constraint (<span class="math">TripleConstraint</span>), which is a forward constraint of the form <span class="math">prop K</span>, or an inverse constraint of the form <span class="math">^prop K</span>. A triple constraint is satisfied by a single adjacent edge of the focus node. A forward constraint <span class="math">prop K</span> is satisfied by an outgoing edge labelled by <span class="math">prop</span> and which target node satisfies the constraint defined by <span class="math">K</span>. An inverse constraint <span class="math">^prop K</span> is satisfied by an incoming edge labelled by <span class="math">prop</span> and which source node satisfies the constraint defined by <span class="math">K</span>. The constraint <span class="math">K</span> can define either a set of allowed values, or a shape constraint that refers to other shape definitions. These will be discussed later on.
+    </p>
+
+    <div class="abstrsynt">
+      <span class="math" id="as-TripleConstraint">TripleConstraint ::= (Property | InvProperty) ValueClass</span><br>
+      <span class="math" id="as-Property">Property ::= </span>an <span class="math">IRI</span><br>
+      <span class="math" id="as-InvProperty">InvProperty ::= ^Property</span><br>
+      <span class="math" id="as-ValueClass">ValueClass ::= ValueSet | ShapeConstr</span><br>
+    </div>
+
+    <p>
+      A <span class="emph">some-of shape expression</span> (<span class="math">SomeOfShape</span>) allows to define a disjunctive constraint. It is composed by one or more sub-expressions. A some-of expression is satisfied by a set of neighborhood edges if one of its sub-expressions is satisfied.
+    </p>
+
+    <p>
+      A <span class="emph">group shape expression</span> (<span class="math">GroupShape</span>) is the most complex one. It is also composed by on or more sub-expressions, and is satisfied by a set of neighborhood edges if the set can be split into as many disjoint subsets, and each of these components satisfies the corresponding sub-expression.
+    </p>
+    
+    <div class="abstrsynt">
+      <span class="math" id="as-SomeOfShape">SomeOfShape ::= ShapeExpr ('|' ShapeExpr)*</span><br>
+      <span class="math" id="as-GroupShape">GroupShape ::= ShapeExpr (',' ShapeExpr)*</span> <br>
+    </div>
+
+    <p>
+      Finally, a <span class="math">repetition shape expression</span> (<span class="math">RepetitionShape)</span> is composed by an inner sub-expression, and an allowed number of repetitions specified by a possibly unbounded interval of natural values. Its satisfiability is similar to that of a group expression. A set of neighborhood edges satisfies a group expression if it can be split in <span class="math">m</span> disjoint subsets, and each of those satisfies the sub-expression, where <span class="math">m</span> must belong to the interval of allowed repetitions.
+    </p>
+
+
+    <div class="abstrsynt">
+      <span class="math" id="as-RepetitionShape">RepetitionShape ::= ShapeExpr Cardinality</span> <br>
+      <span class="math" id="as-Cardinality">Cardinality ::= '[' MinCardinality ';' MaxCardinality ']'</span><br>
+      <span class="math" id="as-MinCardinality">MinCardinality ::=</span> a natural number<br>
+      <span class="math" id="as-MaxCardinality">MaxCardinality ::=</span> a natural number <span class="math">| 'unbound'</span> <br>
+    </div>
+
+    <p>
+      Now, a <span class="emph">shape definition</span> specifies a constraint to be satisfied by the entire neighborhood of the focus node. It is composed of: 
+      <ul>
+	<li>A <span class="emph">set of extra properties</span> (<span class="math">InclPropSet</span>), which is a set of properties or inverse properties, and can be empty.</li>
+	<li>An optional <span class="math">CLOSED</span> modifier and an optional <span class="math">^CLOSED</span> modifier, which role is explained above.</li>
+	<li>A shape expression <span class="math">ShapeExpr</span>.</li>
+      </ul>
+    </p>
+
+
+    <div class="todo">To be continued </div>
+
+    <div class="abstrsynt">
+      <span class="math" id="as-ShapeDefinition">ShapeDefinition ::= InclPropSet 'CLOSED'? '^CLOSED'? ShapeExpr</span><br>
+      <span class="math" id="as-ShapeExpr">ShapeExpr ::= EmptyShape</span><br>
+      <span class="math">| TripleConstraint</span><br>
+      <span class="math">| SomeOfShape</span><br>
+      <span class="math">| GroupShape</span><br>
+      <span class="math">| RepetitionShape</span><br>
+      <span class="math" id="as-TripleConstraint">TripleConstraint ::= (Property | InvProperty) ValueClass</span><br>
+      <span class="math" id="as-SomeOfShape">SomeOfShape ::= ShapeExpr ('|' ShapeExpr)*</span><br>
+      <span class="math" id="as-GroupShape">GroupShape ::= ShapeExpr (',' ShapeExpr)*</span> <br>
+      <span class="math" id="as-RepetitionShape">RepetitionShape ::= ShapeExpr Cardinality</span> <br>
+      <span class="math" id="as-Cardinality">Cardinality ::= '[' MinCardinality ';' MaxCardinality ']'</span><br>
+      <span class="math" id="as-MinCardinality">MinCardinality ::=</span> a natural number<br>
+      <span class="math" id="as-MaxCardinality">MaxCardinality ::=</span> a natural number <span class="math">| 'unbound'</span> <br>
+      <span class="math" id="as-ValueClass">ValueClass ::= ValueSet | ShapeConstr</span><br>
+      <span class="math" id="as-ValueSet">ValueSet ::=</span> set of literals and <span class="math">IRI</span><br>
+      <span class="math" id="as-ShapeConstr">ShapeConstr ::= ShapeLabel ('OR' ShapeLabel)*</span><br>
+      <span class="math" id="as-ShapeLabel">ShapeLabel ::= </span>an identifier<br>
+      <span class="math" id="as-InclPropSet">InclPropSet ::= (Property | InvProperty)*</span><br>
+      <span class="math" id="as-Property">Property ::= </span>an <span class="math">IRI</span><br>
+      <span class="math" id="as-InvProperty">InvProperty ::= ^Property</span><br>
+    </div>
+
+    <header>
+      <h2>Shape Expression Schema</h2>
+    </header>
+
+    <p>
+      A shape expression schema is defined by a set of shape labels and their associated shape definition. A shape definition is defined by the abstract syntax below. 
+    </p>
+
+
+    <p>
+      In what follows, we assume a fixed shape expression schema <span class="mathbf">Sh</span> which set of shape labels is <span class="math">Shapes</span>.
+    </p>
+
+    <header>
+      <h2>Useful Vocabulary and Notations</h2>
+    </header>
+    <p>
+      A shape definition is called <span class="emph">forward closed</span> if it has the CLOSED modifier, and is called <span class="emph">forward open</span> otherwise. Similarly, a shape definition is called <span class="emph">inverse closed</span> if it has the ^CLOSED modifier, and <span class="emph">inverse open</span> otherwise.
+    </p>
+    <p>
+     For a shape label <span class="math">S</span>, we denote <span class="math">definition(S)</span> its shape definition, and we denote <span class="math">expr(S)</span> the shape expression within the definition of <span class="math">S</span>.
+    </p>
+    <p>
+      The dependency graph of the schema <span class="mathbf">Sh</span> describes how shape labels refer to other shape labels in shape definitions. More formally, the <span class="emph">dependency graph</span> of <span class="mathbf">Sh</span> is an oriented graph which nodes are the elements of <span class="math">Shapes</span>, the shape labels of the schema, and that has an arrow from <span class="math">S</span> to <span class="math">T</span> if the shape label <span class="math">T</span> appears in some triple constraint in <span class="math">expr(S)</span>. 
+    </p>
+
+    <p>
+      For a shape name <span class="math">S</span>, the <span class="emph">extra properties</span> in <span class="math">definition(S)</span> are the properties or inverse properties defined by <span class="math">InclPropSet</span> in <span class="math">definition(S)</span>.
+    </p>
+
+    <p>
+      Let <span class="math">S</span> be a shape label, and <span class="math">definition(S)</span> be its shape definition. We say that the shape label <span class="math">T</span> <span class="emph">appears negated</span> in <span class="math">definition(S)</span> if there is a some triple constraint <span class="math">q T<sub>1</sub> OR ... OR T<sub>k</sub></span> in <span class="math">expr(S)</span> such that <span class="math">T</span> is one among  <span class="math">T<sub>1</sub>, ..., T<sub>k</sub></span>, and <span class="math">q</span> is an extra property in <span class="math">definition(S)</span>. We denote <span class="math">negated-shapes(S)</span> the set of shape labels that appear negated in <span class="math">definition(S)</span>.
+    </p>
+    
+    <header>
+      <h2>Well Defined Schemas</h2>
+    </header>
+    <p>
+      The following syntactic restriction is imposed in order to guarantee well-defined semantics for shape expression schemas. It requires that shape labels that appear negated do not lead to cyclic dependencies between shapes.
+    </p> 
+    <ul>
+      <li>For every shape name <span class="math">S</span> and every shape label <span class="math">T</span> in <span class="math">definition(S)</span>, it is the case that the sub-graph accessible from <span class="math">T</span> in the dependency graph of <span class="mathbf">Sh</span> is a direct acyclic graph.
+      </li>
+    </ul>
+
+    <p>
+      The following restriction imposes that all extra properties in a shape definition appear in some triple constraint of the same definition. 
+    </p>
+    <ul>
+      <li>For every shape name <span class="math">S</span>, and every extra property <span class="math">p</span> in <span class="math">definition(S)</span>, the property <span class="math">p</span> also appears in some triple constraint in <span class="math">expr(S)</span>. 
+      </li>
+    </ul>
+    <p>
+      The above restriction is not required for well-defined semantics, but rather makes the definition of the semantics easier, as the extra properties that do not appear in triple constraints are useless.
+    </p>
+
+    <header>
+      <h1>Validation</h1>
+    </header>
+
+
 
     <header>
       <h2>Declarative Semantics of Shape Expression Schemas</h2>
@@ -203,9 +283,11 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
 
     <h3>Propagation of Shape Constraints</h3>
     
+    <div class="todo
+">To be continued</div>
 
-
-
+    <h2>Preferred typing</h2>
+    <div class="todo">To be continued</div>
 
     <!-- triple matches constraint -->
     <!-- a matching defines a unique local witness map from triples to triple constraints -->
