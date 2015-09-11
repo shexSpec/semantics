@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width"/>
-    <title>Shape Expressions Semantics</title>
+    <title>Semantics of Shape Expressions</title>
+    <script src="http://www.w3.org/2013/ShEx/demobits/jquery.min.js" type="text/javascript"></script>
     <link rel="stylesheet" href="css/wgio.min.css"/>
     <style>
       .todo {
@@ -56,13 +57,12 @@
     </style>
   </head>
   <body>
-    <header>
-      <h1>Syntax</h1>
-    </header>
+    <h1>Semantics of Shape Expressions</h1>
+    <b> Author: Iovka Boneva </b><br>
+    <b> Version: Sept 11, 2015 </b> 
 
-    <header>
-      <h2>Abstraction of RDF Graphs</h2>
-    </header>
+
+    <h2>Abstraction of RDF Graphs</h2>
     <p>
       A shape definition allows to define constraints on the neighborhood of a focus node in the RDF graph. Because of inverse triple constraint, we consider the neighborhood as being composed of both outgoing and incoming edges, that is of both triples that have the focus node as subject, and triples that have the focus node as an object. 
     </p>
@@ -90,7 +90,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
     </p>
 
     <header>
-      <h2>Shape Expression Schema</h2>
+      <h2>Syntax of Shape Expression Schema</h2>
     </header>
 
     <p>
@@ -248,15 +248,9 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       The latter restriction is not required for well-defined semantics, but rather avoids the need to consider extra properties that do not appear in any triple constraint, as such extra properties are useless (in the sense that they do not modify the satisfiability of the shape definition).
     </p>
 
-    <header>
-      <h1>Validation</h1>
-    </header>
 
+    <h2>Declarative Semantics of Shape Expression Schemas</h2>
 
-
-    <header>
-      <h2>Declarative Semantics of Shape Expression Schemas</h2>
-    </header>
    
     <h3>Locally Satisfying a Shape Definition</h3>
 
@@ -315,7 +309,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
       In the above definition, for a repetition shape, we required that <span class="math">Neigh</span> is split into <span class="math">m</span> disjoint sets. For <span class="math">m = 0</span>, it is equivalent to <span class="math">Neigh = &empty;</span>.
     </p>
 
-    <h3>Typing of Graph by a Shape Expression Schema</h3>
+    <h4>Typing of Graph by a Shape Expression Schema</h4>
     <p>
       A shape definition specifies a constraint to be satisfied by the neighbourhood edges of a focus node, but also allows to specify constraints to be satisfied by the neighbour nodes, by referring to other shape definitions, using shape constraints in triple constraints. Thus, the validity of a graph with respect to a shape expression schema is a global property on the graph, and is captured by the notion of valid typing.
     </p>
@@ -398,7 +392,7 @@ A <span class="emph">graph</span> is defined by a set <span class="math">Nodes</
     </p>
 
     <p>
-      We define the unique minimal valid typing, provided a total ordering on the edges of an RDF graph. The family of preferred typings w.r.t. the SPARQL ORDER BY contains exactly the valid typings that are a unique minimal typing for some arbitrary total ordering compatible by the SPARQL ORDER BY partial order.
+      We next define the unique minimal valid typing, provided a total ordering on the edges of an RDF graph. The family of preferred typings w.r.t. the SPARQL ORDER BY contains exactly the valid typings that are a unique minimal typing for some arbitrary total ordering compatible with the SPARQL ORDER BY partial order.
     </p>
     
     <div class="todo">To be continued</div>
