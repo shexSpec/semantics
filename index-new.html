@@ -46,10 +46,14 @@
       border: thin solid #888888;
       padding: 1ex 2ex 0.5ex 2ex;
       page-break-inside: avoid;
-      background-color: #F0F0F0;
+      background-color: #FFF0F0;
       }
 
-
+      .pre{
+      font-family: monospace;
+      
+      }
+      
       .abstrsynt{
       margin-left: 0;
       margin-right: 2ex;
@@ -62,7 +66,8 @@
       background-color: #F0F8F8;
       line-height: 1.5;
       }
-      
+     
+
       .concrsynt{
       font-size: 80%;
       }
@@ -260,6 +265,54 @@
 	  </li>
 	</ul>
       </p>
+
+      <div class="Example">
+	<p>
+	  Consider the RDF graph <m>G</m> given by:
+	</p>
+
+	<pre>
+PREFIX ex: http://ex.example/#
+PREFIX foaf: http://xmlns.com/foaf/
+PREFIX xsd: http://www.w3.org/2001/XMLSchema#
+
+inst:Issue1 
+    ex:state      ex:unassigned ;
+    ex:reportedBy inst:User2 .
+
+inst:User2
+    foaf:name     "Bob Smith" ;
+    foaf:mbox     &lt;mailto:bob@example.org&gt; .
+         </pre>
+	<p>
+	  The set <m>Nodes(G)</m> of the nodes of <m>G</m> is
+<pre>
+    { inst:Issue1, ex:unassigned, inst:User2, "Bob Smith", &lt;mailto:bob@example.org&gt; }
+</pre>
+	</p>
+	<p>
+	  The set <m>Props(G)</m> of the properties of <m>G</m> is
+<pre>
+    { ex:state, ex:reportedBy, foaf:name, foaf:mbox }
+</pre>
+	</p>
+
+	<p>
+	  The set <m>InvProps(G)</m> of inverse properties of <m>G</m> is
+<pre>
+    { ^ex:state, ^ex:reportedBy, ^foaf:name, ^foaf:mbox }
+</pre>
+	</p>
+
+	<p>
+	  The set <m>neigh(G, <span class="pre">inst:User2</span>)</m>, neighbourhood of the node <span class="pre">inst:User2</span> is the set composed of the following triples and inverse triples:
+<pre>
+    inst:User2  foaf:name  "Bob Smith" .
+    inst:User2  foaf:mbox  &lt;mailto:bob@example.org&gt; .
+    inst:User2  ^ex:reportedBy  inst:Issue1 .
+</pre>
+	</p>
+      </div>
     </section>
 
     <section id="shapes-language">
@@ -298,6 +351,21 @@
       </p>
 
 
+      <div class="Example">
+	<p>
+	  Consider a shapes schema <m>Sch = (VCLabels, SLabels, def)</m> with 
+	  <m>SLabels = {<span class="pre">&lt;IssueShape&gt;, &lt;UserShape&gt;, &lt;EmployeeShape&gt;</span>}</m>.
+	</p>
+	<p>
+	  An example of a typing of the graph <m>G</m> by <m>Sch</m> is:
+	  <ul>
+	    <li>
+	      <m>typing = { (<span class="pre">inst:Issue1, &lt;IssueShape&gt;</span>), (<span class="pre">inst:User2, &lt;UserShape&gt;</span>), (<span class="pre">inst:User2, &lt;EmployeeShape&gt;</span>) }</m>
+	    </li>
+	  </ul>
+	</p>
+      </div>
+
       <h3>Value Expressions</h3>
       <p>
 	Value expressions are associated with value constraint labels by the <m>def</m> function of a shapes schema.
@@ -329,6 +397,32 @@
 	</ul>
       </p>
       
+      <div class="Example">
+	<p>Let <m>U, V, <span class="pre">int</span></m> be node constraints, that is, subests of <m>IRI &cup; Lit</m>, with 
+	  <ul>
+	    <li>
+	      <m>U = { <span class="pre">ex:unassigned, ex:assigned, ex:unknown</span> }</m>
+	    </li>
+	    <li>
+	      <m>V = { <span class="pre">1, 2, 5</span> }</m>
+	    </li>
+	    <li>
+	      <m><span class="pre">int</span></m> the set of all integer values
+	    </li>
+	  </ul>
+	</p>
+	<p>
+	  Let <m>S</m> and <m>T</m> be a shape labels.<br/>
+	</p>
+	<p>
+	  Examples of value expressions are
+	  <ul>
+	    <li><m>int AND (NOT V)</m></li>
+	    <li><m>U AND (S AND (NOT T))</m></li> 
+	  </ul>
+	</p>
+      </div>
+
       <p>
 	A value expression defines a property of a single node.
 	The semantics of a value expression is defined relative to a typing.
@@ -353,6 +447,34 @@
       <p>
 	<img src="images/ve-rules.png" width="600"/>
       </p>
+
+      <div class="Example">
+	<p>
+	  Let <m>U, V, <span class="pre">int</span>, S, T</m> be as in the previous example.
+	</p>
+	<p>
+	  Whatever the value of <m>typing</m>, it holds
+	  <ul>
+	    <li>
+	      <m>typing, 3 &vdash; int AND (NOT V)</m>, whatever the value of <m>typing</m><br/>
+	    </li>
+	  </ul>
+	</p>
+
+	<p> If <m>typing = { (<span class="pre">ex:assigned</span>, S), (<span class="pre">ex:assigned</span>, T), (<span class="pre">ex:unknown</span>, S), (<span class="pre">ex:somenode</span>, S) }</m>, then 
+	  <ul>
+	    <li>
+	      <m>typing, ex:assigned &vdash;/ U AND (S AND (NOT T))</m><br/>
+	    </li>
+	    <li>
+	      <m>typing, ex:unknown &vdash; U AND (S AND (NOT T))</m><br/>
+	    </li>
+	    <li>
+	      <m>typing, ex:somenode &vdash;/ U AND (S AND (NOT T))</m><br/>
+	    </li>
+	  </ul>
+	</p>
+      </div>
 
       <h3>Triple Expressions</h3>
       
@@ -405,6 +527,98 @@
 	Intuitively, a repeated triple expression is satisfied if the neighbourhood of the focus node can be split into a number of parts that belongs to the interval specified by the minimal and maximal cardinality, and each of the parts satisfies the inner triple expression.
       </p>
     
+      <div class="Example">
+	<p>
+	  Parentheses are not part of the syntax of triple expressions, we use them here for delimiting sub-expressions.
+	  Note that, as we will see in the sequel, the some-of and each-of operators are associative and commutative, therefore we use them with any number of sub-expressions without parentheses.
+	  That is, for instance, <span class="pre">(x | y) | z</span> is the same as <span class="pre">x | (y | z)</span>, so we write simply <span class="pre">x | y | z</span>, and similarly for the each-of operator.
+	</p>
+	<!--<p> -->
+	<!--   Let a set of shape labels <m>SLabels = { <span class="pre">&lt;UserShape&gt;, &lt;ClientShape&gt; &lt;TesterShape&gt;, &lt;ProgrammerShape&gt;</span> }</m>. -->
+	<!-- </p> -->
+	<p>
+	  Let a set of value constraint labels <m>VCLabels = { <span class="pre">&lt;VC_A&gt;, &lt;VC_B&gt;, &lt;VC_string&gt;,  &lt;VC_int&gt; }</m>
+	</p>
+	<p>
+	  Let <span class="pre">ex:p, ex:q, foaf:name, foaf:firstName, foaf:lastName</span> be properties (that is, IRI), for some prefixes <span class="pre">ex:</span> and <span class="pre">foaf:</span>.
+	</p>
+	<p>
+	  The following are examples of relatively simple triple expressions.
+	  <ul>
+	    <li>
+	      Triple constraints, with <m>P = (Prop &cup; InvProp) \ {<span class="pre">ex:p</span>}</m>
+	      <ul>
+		<li>
+		  <span class="pre">{^ex:p}   &lt;VC_A&gt;</span>
+		</li>
+		<li>
+		  <span class="pre">{foaf:name, foaf:lastName}  &lt;VC_string&gt;</span>
+		</li>
+		<li>
+		  <span class="pre"><m>P</m>  &lt;VC_int&gt;</span>
+		</li>
+	      </ul>
+	      The first two triple constraints use finite sets of properties, the last one uses a co-finite set of properties.
+	    </li>
+	    <li>
+	      A repeated triple expression, which sub-expression is a triple constraint, with minimal cardinality 1 and maximal cardinality *
+	      <ul>
+		<li>
+		   <span class="pre">( {ex:p}  &lt;VC_int&gt; )[1;*]</span><br/>
+		</li>
+	      </ul>
+	    </li>
+	    <li>
+	      An each-of operator on top of three triple constraints:
+	      <ul>
+		<li>
+		  <span class="pre">{ex:p} &lt;VC_A&gt; , {ex:q} &lt;VC_int&gt; , {ex:p}  &lt;VC_B&gt;</span>  
+		</li>
+	      </ul>
+	    </li>
+	    <li>
+	      A some-of operator on top of one triple constraint and one each-of sub-expression, the latter composed of one repeated triple constraint and one triple constraint.
+	      <ul>
+		<li>
+		  <span class="pre">{foaf:name} &lt;VC_string&gt; | <br/>
+		    ( ({foaf:firstName} &lt;VC_string&gt;)[1;*] , {foaf:lastName}  &lt;VC_string&gt; )</span>  
+		</li>
+	      </ul>
+	    </li>
+	  </ul>
+	</p>
+      </div>
+
+      <div class="Example">
+	<p>
+	  We now give a more complex triple expression.
+	</p>
+	<p>
+	  Let a set of value constraint labels <m>VCLabels = { <span class="pre">&lt;VC_UserAndClient&gt;, &lt;VC_Programmer&gt;, &lt;VC_Tester&gt;,  &lt;VC_User&gt;, &lt;VC_NotProgrammerTester&gt;, &lt;VC_AllNode&gt;</span> }</m>
+	</p>
+	<p>
+	  Let <span class="pre">is:reproducedBy, is:reportedBy, is:affectedBy</span> be properties for some prefix <span class="pre">is:</span>.
+	</p>
+	<p>
+	  An example of a triple expression is (the leading numbers are line numbers for future reference):
+<pre>
+1.    {is:reportedBy}    &lt;VC_UserAndClient&gt;              ,
+2.    {is:reproducedBy}  &lt;VC_Tester&gt;                     ,
+3.    {is:reproducedBy}  &lt;VC_Programmer&gt;                 ,
+4.  ( {^is:affectedBy}   &lt;VC_User&gt;                )[1;*] , 
+5.    {is:reproducedBy}  &lt;VC_NotProgrammerTester&gt;        ,
+6.  ( OtherProp          &lt;VC_AllNode&gt;             )[0;*]      
+</pre>
+where <m><span class="pre">OtherProp</span> = (Prop &cup; InvProp) \ { <span class="pre">is:reportedBy, is:reproducedBy, ^is:affectedBy</span> }</m> is the set that contains all properties and inverse properties except for <span class="pre">is:reportedBy, is:reproducedBy, ^is:affectedBy</span>.
+	</p>
+	<p>
+	  The above triple expression is an each-of expression on top of 6 sub-expressions, one on each line.
+	  The sub-expressions on lines 1., 2., 3., 5. are triple constraints.
+	  The sub-expression on line 4. is a repeted triple expression, with minimum cardinality 1 and maximum cardinality *.
+	  The sub-expression on line 6. is also a repeated triple expression, with minimum cardinality 0 and maximum cardinaliy *.
+	</p>
+      </div>
+
       <p>
 	A triple expression defines a property on the neighbourhood of a node in a graph.
       </p>
@@ -438,6 +652,13 @@
 	A <m>typing</m> of <m>G</m> by <m>Sch</m> is called locally valid if for all node-shape association <m>(node, S)</m> in <m>typing</m>, it is the case that <m>typing, neigh(node) &vdash; def(S)</m>.
       </p>
       
+      <div class="Example">
+	<p>
+	  TODO: examples of a satisfiability of triple expressions
+	</p>
+      </div>
+
+
       <h3>Shapes Schemas with Stratified Negation</h3>
       <p>
 	As we can see from the syntax, value expressions refer to shapes (through a <m>TripleExprRef</m>), and triple expressions refer to value expressions (through a <m>ValueExprRef</m> in a triple constraint). 
@@ -466,6 +687,13 @@
 	Then the dependency relations <m>dep+</m> and <m>dep-</m> define a dependency graph between shape labels of the shapes schema <m>Sch</m>.
 	We say that the shapes schema <m>Sch</m> is with stratified negation if its dependency graph does not contain a cycle that contains a <m>dep-</m> edge.
       </p>
+      
+      <div class="Example">
+	<p>
+	  TODO: An example of a shapes schema and its dependency graph.
+	</p>
+      </div>
+
       <p>
 	It is well known that in case of stratified negation, one can define what is called a stratification. 
 	If the schema <m>Sch = (VCLabels, SLabels, def)</m> is with stratified negation, then there exists a natural number <m>k</m> and a partitioning function <m>strat: SLabels &#8594; 1..k</m> that with every shape label from <m>SLabels</m> associates a natural number between <m>1</m> and <m>k</m>, called the stratum of that label. 
@@ -473,6 +701,12 @@
 	Such a partitioning function is called a stratification.
 	The property ensured of a stratification is that a shape label can depend negatively only on shape labels that are in strictly lower stratums, and a shape label can depend positively only on shape labels that are on lower or on the same stratum.
       </p>
+
+      <div class="Example">
+	<p>
+	  TODO: an example of stratificaiton
+	</p>
+      </div>
 
       <p>
 	Shapes schemas with stratified negation are guaranteed to have well founded semantics as it will be defined in the sequel.
@@ -527,6 +761,13 @@
       <p>
 	The typing <m>typing<sub>k</sub></m> as defined above is called the maximal typing of <m>G</m> by <m>Sch</m>.
       </p>
+
+      <div class="Example">
+	<p>
+	  TODO: an example of the sequence of typings
+	</p>
+      </div>
+      
     </section>
     
     <section id="translation-shex-shapes">
