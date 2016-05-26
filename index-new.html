@@ -315,6 +315,163 @@ inst:User2
       </div>
     </section>
 
+    <section id="shex-abstrsynt">
+      <h2>Abstract Syntax of ShEx Schemas</h2>
+
+      <p>
+	The abstract syntax of ShEx schemas is given by the following rules.
+      </p>
+
+      <div class="abstrsynt">
+	<m>ShapeExpressionsSchema ::= (ShapeLabel ShapeExpression)+</m><br/>
+	<m>ShapeLabel ::= </m> an identifier <br/>
+	<m>ShapeExpression ::= NodeConstraint* ShapeDefinition*</m><br/>
+	<m>NodeConstraint ::= </m> a subset of <m>IRI &cup; Lit &cup; {blank}</m><br/>
+	<br/>
+	<m>ShapeDefinition ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet)? TripleExpr</m><br/>
+	<m>ExtraPropSet ::= </m> a set of properties and inverse properties<br/>
+	<m>TripleExpr ::= EmptyTripleExpr</m><br/>
+	<m> | TripleCosntraint</m><br/>
+	<m> | SomeOfTripleExpr</m><br/>
+	<m> | EachOfTripleExpr</m><br/>
+	<m> | RepeatedTripleExpr</m><br/>
+	<br/>
+	<m>EmptyTripleExpr ::= 'EMPTY'</m><br/>
+	<m>TripleConstraint ::= (Property | InvProperty) ValueExpression</m><br/>
+	<m>Property ::=</m> an IRI<br/>
+	<m>InvProperty ::= '^'Property</m><br/>
+	<br/>
+	<m>SomeOfTripleExpr ::= TripleExpr '|' TripleExpr</m><br/>
+	<m>EachOfTripleExpr ::= TripleExpr ',' TripleExpr</m><br/>
+	<br/>
+	<m>RepeatedTipleExpr ::= TripleExpr '[' MinCard ';' MaxCard ']'</m><br/>
+	<m>MinCard ::= </m>a natural number<br/>
+	<m>MaxCard ::= </m>a natural number or '*'<br/>
+	<br/>
+	<m>ValueExpr ::= ValueConstraint</m><br/>
+	<m> | ConjunctiveValueExpr</m><br/>
+	<m> | DisjunctiveValueExpr</m><br/>
+	<m>ValueConstraint ::= NodeConstraint*</m><br/>
+	<m> | ShapeExprRef</m><br/>
+	<m>ShapeExprRef ::= '@' ShapeLabel</m><br/>
+	<m>ConjunctiveValueExpr ::= ValueExpr 'AND' ValueExpr</m><br/>
+	<m>DisjunctiveValueExpr ::= ValueExpr 'OR' ValueExpr</m><br/>
+      </div>
+      
+      <p>
+	A shape expressions schema defines a set of shape labels, together with their definition which is called a shape expression.
+      </p>
+      
+      <p>
+	TODO: explanation of the constructs of a ShEx schema
+      </p>
+
+      <div class="Example">
+	<p>
+	  In this example we illustrate how concrete syntax of ShEx in Turtle format corresponds to the abstract syntax presented above.
+	</p> 
+	<p>
+	  Here is a ShEx schema written in Turtle format.
+	  The leading numbers are line numbers used for reference.
+	</p>
+
+
+<pre>
+
+      RREFIX ex:   &lt;http://ex.example/#&gt;
+      PREFIX foaf: &lt;http://xmlns.com/foaf/&gt;
+      PREFIX xsd:  &lt;http://www.w3.org/2001/XMLSchema#&gt;
+      PREFIX rdf:  &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+
+1     &lt;IssueShape&gt; CLOSED EXTRA rdf:type
+2     {                           
+3         rdf:type [ex:Issue];
+4         ex:state [ex:unassigned ex:assigned]; 
+5                                            
+6         ex:reportedBy @&lt;UserShape&gt;;   
+7         ex:reportedOn xsd:dateTime;         
+8         (                                   
+9           ex:reproducedBy @&lt;EmployeeShape&gt;;  
+10          ex:reproducedOn xsd:dateTime OR xsd:date 
+11        )?;
+12        ex:related @&lt;IssueShape&gt;*            
+13    }
+14
+15    &lt;UserShape&gt; {                     
+16        (                                   
+17           foaf:name xsd:string             
+18         |                                  
+19           foaf:givenName xsd:string+;      
+20           foaf:familyName xsd:string
+21        );     
+22        foaf:mbox IRI              
+23    }
+24
+25    &lt;EmployeeShape&gt; {        
+26        foaf:phone IRI*;          
+27        foaf:mbox IRI             
+28    } AND {
+29        ( foaf:phone PATTERN "^tel:\\+33"; 
+30          foaf:mbox PATTERN "\\.fr$" )?;
+31        ( foaf:phone PATTERN "^tel:\\+44"; 
+32          foaf:mbox PATTERN "\\.uk$")?
+33    }
+</pre>
+
+	<p>
+	  We first explain some elements of the concrete syntax. 
+	  A triple expression is surrounded by curly braces { and }.
+	  The square braces delimit sets of values.
+	  Parentheses are used for specifying precedence, as usual.
+	  We use abbreviations for some intervals of min and max cardinality, namely, '+' is the interval [1;*], '*' is the interval [0;*], and '?' is the interval [0;1].
+	</p>
+
+	<p>
+	  Then, the schema here above defines three shape labels: <span class="pre">&lt;IssueShape&gt;, &lt;UserShape&gt;, &lt;EmployeeShape&gt</span>.
+	</p>
+	<p>
+	  The shape expression that defines the shape label <span class="pre">&lt;IssueShape&gt;</span> starts on line 1 after the shape label, and ends with the curly bracket on line 13.
+	  It has an empty list of node constraints, and a single shape definition.
+	  The shape definition has two modifiers, <m>CLOSED</m>, and <m>EXTRA</m>. 
+	  The parameter of the <m>EXTRA</m> modifier is a singleton set that contains the property <span class="pre">rdf:type</span>.
+	</p>
+	<p>
+	  The triple expression in the shape definition is given between the curly braces on lines 2 and 13.
+	  It is an each-of expression composed of six sub-expressions, separated by semicolons. 
+	</p>
+	<p>
+	  The first sub-expression (on line 3) is a triple constraint with property <span class="pre">rdf:type</span> and which value expression <span class="pre">[ex:Issue]</span> is a <m>NodeConstraint</m> that is a singleton set containing the IRI <span class="pre">[ex:Issue]</span>.
+	</p>
+	<p>
+	  The second sub-expression (on line 4) is also a triple constraint, whose value expression is also a node constraint that is a set with two elements.
+	</p>
+	<p>
+	  The third sub-expression (on line 6) is a triple constraint as well, whose value expression is <m>ShapeExprRef</m>.
+	</p>
+	<p>
+	  The fourth sub-expression (on line 7) is a triple constraint, whose value expression is a <m>NodeConstraint</m> that is the set of all literal values with type <span class="pre">xsd:dateTime</span>.
+	</p>
+	<p>
+	  The fifth sub-expression (on lines 8 to 11) is a <m>RepeatedTripleExpr</m> with cardinality interval ? (which is a synonym for [0;1]).
+	  The inner expression of this repeated triple expression is an each-of expression with two sub-expressions that are both triple constraints.
+	  The second of these triple constraints (on line 10) has a value expression that is a <m>DisjunctiveValueExpr</m>, which two disjuncts are the sets of literal values <span class="div">xsd:dateTime</span> and <span class="div">xsd:date</span>.
+	</p>
+
+	<p>
+	  Finally, the sixth sub-expression is a repeated triple expression with sub-expression that is a triple constraint, and with cardinality interval that is * (equal to [0;*]).
+	</p>
+
+	<p>
+	  We do not explain the other shape expressions in detail, but give few elements of the syntax that do not appear in the shape expression for <span class="pre">&lt;IssueShape&gt;</span>.
+	</p>
+	
+	<p>
+	  TODO: to be continued
+	</p>
+      </div>
+    </section>
+
+
     <section id="shapes-language">
       <h2>The Shapes Language</h2>
       <p>
@@ -494,7 +651,7 @@ inst:User2
 	<m>ValueExprRef ::= </m> a value constraint label from <m>VCLabels</m></br>
 	<m>SomeOfTripleExpr ::= TripleExpr '|' TripleExpr</m></br>
 	<m>EachOfTripleExpr ::= TripleExpr ',' TripleExpr</m></br>
-	<m>RepeatedTRipleExpr ::= TripleExpr '[' MinCard ';' MaxCard ']'</m></br>
+	<m>RepeatedTripleExpr ::= TripleExpr '[' MinCard ';' MaxCard ']'</m></br>
 	<m>MinCard ::= </m> a natural number</br>
 	<m>MaxCard ::= </m> a natural number or <m>'*'</m></br>
       </div>
@@ -529,9 +686,9 @@ inst:User2
     
       <div class="Example">
 	<p>
-	  Parentheses are not part of the syntax of triple expressions, we use them here for delimiting sub-expressions.
+	  Parentheses are used for delimiting sub-expressions.
 	  Note that, as we will see in the sequel, the some-of and each-of operators are associative and commutative, therefore we use them with any number of sub-expressions without parentheses.
-	  That is, for instance, <span class="pre">(x | y) | z</span> is the same as <span class="pre">x | (y | z)</span>, so we write simply <span class="pre">x | y | z</span>, and similarly for the each-of operator.
+	  That is, for instance, <span class="pre">(x | y) | z</span> is equivalent to <span class="pre">x | (y | z)</span>, so we write simply <span class="pre">x | y | z</span>, and similarly for the each-of operator.
 	</p>
 	<!--<p> -->
 	<!--   Let a set of shape labels <m>SLabels = { <span class="pre">&lt;UserShape&gt;, &lt;ClientShape&gt; &lt;TesterShape&gt;, &lt;ProgrammerShape&gt;</span> }</m>. -->
