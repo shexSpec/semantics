@@ -342,7 +342,7 @@ inst:User2
 	<m>InvProperty ::= '^'Property</m><br/>
 	<br/>
 	<m>SomeOfTripleExpr ::= TripleExpr '|' TripleExpr</m><br/>
-	<m>EachOfTripleExpr ::= TripleExpr ',' TripleExpr</m><br/>
+	<m>EachOfTripleExpr ::= TripleExpr ';' TripleExpr</m><br/>
 	<br/>
 	<m>RepeatedTipleExpr ::= TripleExpr '[' MinCard ';' MaxCard ']'</m><br/>
 	<m>MinCard ::= </m>a natural number<br/>
@@ -650,7 +650,7 @@ inst:User2
 	<m>PropSet ::= </m> a finite or co-finite subset of <m>Prop &cup; InvProp</m></br>
 	<m>ValueExprRef ::= </m> a value constraint label from <m>VCLabels</m></br>
 	<m>SomeOfTripleExpr ::= TripleExpr '|' TripleExpr</m></br>
-	<m>EachOfTripleExpr ::= TripleExpr ',' TripleExpr</m></br>
+	<m>EachOfTripleExpr ::= TripleExpr ';' TripleExpr</m></br>
 	<m>RepeatedTripleExpr ::= TripleExpr '[' MinCard ';' MaxCard ']'</m></br>
 	<m>MinCard ::= </m> a natural number</br>
 	<m>MaxCard ::= </m> a natural number or <m>'*'</m></br>
@@ -668,7 +668,7 @@ inst:User2
 	</ul>
       </p>
       <p>
-	Then, a triple expression can be obtained by combining two triple expressions using the some-of binary operator, denoted <m>|</m>, and the each-of binary operator, denoted as a comma <m>,</m>. Intuitively, 
+	Then, a triple expression can be obtained by combining two triple expressions using the some-of binary operator, denoted <m>|</m>, and the each-of binary operator, denoted as a semicolon <m>;</m>. Intuitively, 
 	<ul>
 	  <li>
 	    a some-of triple expression is satisfied if the neighbourhood of the node satisfies one of its sub-expressions, and
