@@ -325,7 +325,8 @@ inst:User2
       <div class="abstrsynt">
 	<m>ShapeExpressionsSchema ::= (ShapeLabel ShapeExpression)+</m><br/>
 	<m>ShapeLabel ::= </m> an identifier <br/>
-	<m>ShapeExpression ::= NodeConstraint* ShapeDefinition*</m><br/>
+	<m>ShapeExpression ::= NodeConstraint* ShapeDefinitions?</m><br/>
+	<m>ShapeDefinitions ::= ShapeDefinition ('AND' ShapeDefinition)*</m><br/>
 	<m>NodeConstraint ::= </m> a subset of <m>IRI &cup; Lit &cup; {blank}</m><br/>
 	<br/>
 	<m>ShapeDefinition ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet)? TripleExpr</m><br/>
@@ -394,10 +395,10 @@ inst:User2
 9           ex:reproducedBy @&lt;EmployeeShape&gt;;  
 10          ex:reproducedOn xsd:dateTime OR xsd:date 
 11        )?;
-12        ex:related @&lt;IssueShape&gt;*            
+12        ^ex:related @&lt;IssueShape&gt;*            
 13    }
 14
-15    &lt;UserShape&gt; {                     
+15    &lt;UserShape&gt; PATTERN "^http:/example.org/.*" {                     
 16        (                                   
 17           foaf:name xsd:string             
 18         |                                  
@@ -422,7 +423,7 @@ inst:User2
 	  We first explain some elements of the concrete syntax. 
 	  A triple expression is surrounded by curly braces { and }.
 	  The square braces delimit sets of values.
-	  Parentheses are used for specifying precedence, as usual.
+	  Parentheses are used as usual for defining the structre of an expression.
 	  We use abbreviations for some intervals of min and max cardinality, namely, '+' is the interval [1;*], '*' is the interval [0;*], and '?' is the interval [0;1].
 	</p>
 
@@ -438,35 +439,70 @@ inst:User2
 	<p>
 	  The triple expression in the shape definition is given between the curly braces on lines 2 and 13.
 	  It is an each-of expression composed of six sub-expressions, separated by semicolons. 
-	</p>
-	<p>
-	  The first sub-expression (on line 3) is a triple constraint with property <span class="pre">rdf:type</span> and which value expression <span class="pre">[ex:Issue]</span> is a <m>NodeConstraint</m> that is a singleton set containing the IRI <span class="pre">[ex:Issue]</span>.
-	</p>
-	<p>
-	  The second sub-expression (on line 4) is also a triple constraint, whose value expression is also a node constraint that is a set with two elements.
-	</p>
-	<p>
-	  The third sub-expression (on line 6) is a triple constraint as well, whose value expression is <m>ShapeExprRef</m>.
-	</p>
-	<p>
-	  The fourth sub-expression (on line 7) is a triple constraint, whose value expression is a <m>NodeConstraint</m> that is the set of all literal values with type <span class="pre">xsd:dateTime</span>.
-	</p>
-	<p>
-	  The fifth sub-expression (on lines 8 to 11) is a <m>RepeatedTripleExpr</m> with cardinality interval ? (which is a synonym for [0;1]).
-	  The inner expression of this repeated triple expression is an each-of expression with two sub-expressions that are both triple constraints.
-	  The second of these triple constraints (on line 10) has a value expression that is a <m>DisjunctiveValueExpr</m>, which two disjuncts are the sets of literal values <span class="div">xsd:dateTime</span> and <span class="div">xsd:date</span>.
+	  The sub-expressions are as follows:
+	  <ul>
+	    <li>
+	      Four triple constraints on lines 3, 4, 6, 7.
+	    </li>
+	    <li>
+	      Two repeated triple expressions, one on lines 8--11 with cardinality ? = [0;1], another one on line 12 with cardinality * = [0;*].
+	    </li>
+	  </ul>
 	</p>
 
 	<p>
-	  Finally, the sixth sub-expression is a repeated triple expression with sub-expression that is a triple constraint, and with cardinality interval that is * (equal to [0;*]).
+	  We explain the different forms of triple constraint that appear in the definition of <span class="pre">&lt;IssueShape&gt;</span>, by explaining their property or their value expression.
 	</p>
 
+<pre>
+1     &lt;IssueShape&gt; CLOSED EXTRA rdf:type
+2     {                           
+3         rdf:type [ex:Issue];                            # the property is rdf:type, 
+                                                          # the value expression is a node constraint 
+                                                          #    that is a singleton set containing the IRI ex:Issue
+
+4         ex:state [ex:unassigned ex:assigned];           # the property is ex:state
+5                                                         # the value expression is a set with two IRI,
+                                                          #    ex:unassigned and ex:assigned
+
+6         ex:reportedBy @&lt;UserShape&gt;;                     # the value expression is a ShapeExprRef 
+
+7         ex:reportedOn xsd:dateTime;                     # the value expression is a the set of literal values 
+                                                          #    that have XSD type xsd:dateTime
+8         (                                   
+9           ex:reproducedBy @&lt;EmployeeShape&gt;;  
+10          ex:reproducedOn xsd:dateTime OR xsd:date      # the value expression is DisjunctiveValueExpr,
+                                                          #    whose sub-expressions are sets of literal values
+11        )?;
+12        ex:related @&lt;IssueShape&gt;*            
+13    }
+</pre>
+
 	<p>
-	  We do not explain the other shape expressions in detail, but give few elements of the syntax that do not appear in the shape expression for <span class="pre">&lt;IssueShape&gt;</span>.
+	  We now explain a few other elements of the syntax.
 	</p>
-	
+
+<pre>
+15    &lt;UserShape&gt; PATTERN "^http:/example.org/.*" {                     
+         ...
+23    }
+</pre>	
+
 	<p>
-	  TODO: to be continued
+	  The shape expression that defines <span class="pre">&lt;UserShape&gt;</span> is composed of one node constraint <span class="pre">PATTERN "^http:/example.org/.*"</span> and one shape definition between the curly braces lines 15 to 23.
+	  The node constraint <span class="pre">PATTERN "^http:/example.org/.*"</span> defines the set of IRI that satisfy a pattern given by a regular expression.
+	</p>
+
+<pre>
+25    &lt;EmployeeShape&gt; {        
+        ...
+28    } AND {
+        ...
+33    }
+</pre>
+
+	<p>
+	  The shape expression that defines <span class="pre">&lt;EmployeeShape&gt;</span> is composed of zero node constrainst, and two shape definitions, separated by an <span class="pre">AND</span>.
 	</p>
       </div>
     </section>
@@ -496,6 +532,16 @@ inst:User2
 	</ul>
       </p>
 
+      <p>
+	The structure of a shapes schema is captured by the following abstract syntax.
+      </p>
+      <div class="abstrsynt">
+	<m>ShapesSchema ::= ValueConstraintDefinition+ ShapeDefinition*</m><br/>
+	<m>ValueConstraintDefinition ::= ValueConstraintLabel ValueExpression</m><br/>
+	<m>ShapeDefinition ::= ShapeLabel TripleExpression</m><br/>
+      </div>
+
+
       <h3>Typing of a Graph by a Shapes Schema</h3>
 
       <p>
@@ -524,6 +570,7 @@ inst:User2
       </div>
 
       <h3>Value Expressions</h3>
+      <h4>Abstract Syntax</h4>
       <p>
 	Value expressions are associated with value constraint labels by the <m>def</m> function of a shapes schema.
 	Value expressions are defined by the following abstract syntax.
@@ -580,6 +627,7 @@ inst:User2
 	</p>
       </div>
 
+      <h4>Semantics</h4>
       <p>
 	A value expression defines a property of a single node.
 	The semantics of a value expression is defined relative to a typing.
@@ -640,20 +688,23 @@ inst:User2
 	They are defined by the following abstract syntax.
       </p>
       <div class="abstrsynt">
-	<m>TripleExpr ::= EmptyTripleExpr</m></br>
-	<m>| TripleConstraint</m></br>
-	<m>| SomeOfTripleExpr</m></br>
-	<m>| EachOfTripleExpr</m></br>
-	<m>| RepeatedTripleExpr</m></br>
+	<m>TripleExpr ::= EmptyTripleExpr</m><br/>
+	<m>| TripleConstraint</m><br/>
+	<m>| SomeOfTripleExpr</m><br/>
+	<m>| EachOfTripleExpr</m><br/>
+	<m>| RepeatedTripleExpr</m><br/>
+	<br/>
 	<m>EmptyTripleExpr ::= 'EMPTY'</m></br>
-	<m>TripleConstraint ::= PropSet ValueExprRef</m></br>
-	<m>PropSet ::= </m> a finite or co-finite subset of <m>Prop &cup; InvProp</m></br>
-	<m>ValueExprRef ::= </m> a value constraint label from <m>VCLabels</m></br>
-	<m>SomeOfTripleExpr ::= TripleExpr '|' TripleExpr</m></br>
-	<m>EachOfTripleExpr ::= TripleExpr ';' TripleExpr</m></br>
-	<m>RepeatedTripleExpr ::= TripleExpr '[' MinCard ';' MaxCard ']'</m></br>
-	<m>MinCard ::= </m> a natural number</br>
-	<m>MaxCard ::= </m> a natural number or <m>'*'</m></br>
+	<m>TripleConstraint ::= PropSet ValueExprRef</m><br/>
+	<m>PropSet ::= </m> a finite or co-finite subset of <m>Prop &cup; InvProp</m><br/>
+	<m>ValueExprRef ::= </m> a value constraint label from <m>VCLabels</m><br/>
+	<br/>
+	<m>SomeOfTripleExpr ::= TripleExpr '|' TripleExpr</m><br/>
+	<m>EachOfTripleExpr ::= TripleExpr ';' TripleExpr</m><br/>
+	<br/>
+	<m>RepeatedTripleExpr ::= TripleExpr '[' MinCard ';' MaxCard ']'</m><br/>
+	<m>MinCard ::= </m> a natural number<br/>
+	<m>MaxCard ::= </m> a natural number or <m>'*'</m><br/>
       </div>
       <p>
 	That is, an atomic triple expression can be
@@ -684,97 +735,101 @@ inst:User2
 	Intuitively, a repeated triple expression is satisfied if the neighbourhood of the focus node can be split into a number of parts that belongs to the interval specified by the minimal and maximal cardinality, and each of the parts satisfies the inner triple expression.
       </p>
     
-      <div class="Example">
-	<p>
-	  Parentheses are used for delimiting sub-expressions.
-	  Note that, as we will see in the sequel, the some-of and each-of operators are associative and commutative, therefore we use them with any number of sub-expressions without parentheses.
-	  That is, for instance, <span class="pre">(x | y) | z</span> is equivalent to <span class="pre">x | (y | z)</span>, so we write simply <span class="pre">x | y | z</span>, and similarly for the each-of operator.
-	</p>
-	<!--<p> -->
-	<!--   Let a set of shape labels <m>SLabels = { <span class="pre">&lt;UserShape&gt;, &lt;ClientShape&gt; &lt;TesterShape&gt;, &lt;ProgrammerShape&gt;</span> }</m>. -->
-	<!-- </p> -->
-	<p>
-	  Let a set of value constraint labels <m>VCLabels = { <span class="pre">&lt;VC_A&gt;, &lt;VC_B&gt;, &lt;VC_string&gt;,  &lt;VC_int&gt; }</m>
-	</p>
-	<p>
-	  Let <span class="pre">ex:p, ex:q, foaf:name, foaf:firstName, foaf:lastName</span> be properties (that is, IRI), for some prefixes <span class="pre">ex:</span> and <span class="pre">foaf:</span>.
-	</p>
-	<p>
-	  The following are examples of relatively simple triple expressions.
-	  <ul>
-	    <li>
-	      Triple constraints, with <m>P = (Prop &cup; InvProp) \ {<span class="pre">ex:p</span>}</m>
-	      <ul>
-		<li>
-		  <span class="pre">{^ex:p}   &lt;VC_A&gt;</span>
-		</li>
-		<li>
-		  <span class="pre">{foaf:name, foaf:lastName}  &lt;VC_string&gt;</span>
-		</li>
-		<li>
-		  <span class="pre"><m>P</m>  &lt;VC_int&gt;</span>
-		</li>
-	      </ul>
-	      The first two triple constraints use finite sets of properties, the last one uses a co-finite set of properties.
-	    </li>
-	    <li>
-	      A repeated triple expression, which sub-expression is a triple constraint, with minimal cardinality 1 and maximal cardinality *
-	      <ul>
-		<li>
-		   <span class="pre">( {ex:p}  &lt;VC_int&gt; )[1;*]</span><br/>
-		</li>
-	      </ul>
-	    </li>
-	    <li>
-	      An each-of operator on top of three triple constraints:
-	      <ul>
-		<li>
-		  <span class="pre">{ex:p} &lt;VC_A&gt; , {ex:q} &lt;VC_int&gt; , {ex:p}  &lt;VC_B&gt;</span>  
-		</li>
-	      </ul>
-	    </li>
-	    <li>
-	      A some-of operator on top of one triple constraint and one each-of sub-expression, the latter composed of one repeated triple constraint and one triple constraint.
-	      <ul>
-		<li>
-		  <span class="pre">{foaf:name} &lt;VC_string&gt; | <br/>
-		    ( ({foaf:firstName} &lt;VC_string&gt;)[1;*] , {foaf:lastName}  &lt;VC_string&gt; )</span>  
-		</li>
-	      </ul>
-	    </li>
-	  </ul>
-	</p>
-      </div>
 
       <div class="Example">
-	<p>
-	  We now give a more complex triple expression.
-	</p>
-	<p>
-	  Let a set of value constraint labels <m>VCLabels = { <span class="pre">&lt;VC_UserAndClient&gt;, &lt;VC_Programmer&gt;, &lt;VC_Tester&gt;,  &lt;VC_User&gt;, &lt;VC_NotProgrammerTester&gt;, &lt;VC_AllNode&gt;</span> }</m>
-	</p>
-	<p>
-	  Let <span class="pre">is:reproducedBy, is:reportedBy, is:affectedBy</span> be properties for some prefix <span class="pre">is:</span>.
-	</p>
-	<p>
-	  An example of a triple expression is (the leading numbers are line numbers for future reference):
-<pre>
-1.    {is:reportedBy}    &lt;VC_UserAndClient&gt;              ,
-2.    {is:reproducedBy}  &lt;VC_Tester&gt;                     ,
-3.    {is:reproducedBy}  &lt;VC_Programmer&gt;                 ,
-4.  ( {^is:affectedBy}   &lt;VC_User&gt;                )[1;*] , 
-5.    {is:reproducedBy}  &lt;VC_NotProgrammerTester&gt;        ,
-6.  ( OtherProp          &lt;VC_AllNode&gt;             )[0;*]      
-</pre>
-where <m><span class="pre">OtherProp</span> = (Prop &cup; InvProp) \ { <span class="pre">is:reportedBy, is:reproducedBy, ^is:affectedBy</span> }</m> is the set that contains all properties and inverse properties except for <span class="pre">is:reportedBy, is:reproducedBy, ^is:affectedBy</span>.
-	</p>
-	<p>
-	  The above triple expression is an each-of expression on top of 6 sub-expressions, one on each line.
-	  The sub-expressions on lines 1., 2., 3., 5. are triple constraints.
-	  The sub-expression on line 4. is a repeted triple expression, with minimum cardinality 1 and maximum cardinality *.
-	  The sub-expression on line 6. is also a repeated triple expression, with minimum cardinality 0 and maximum cardinaliy *.
-	</p>
+	TODO: an example of a triple expression that is part of the translation to be done for the ShEx schema.
       </div>
+<!--       <div class="Example"> -->
+<!-- 	<p> -->
+<!-- 	  Parentheses are used for delimiting sub-expressions. -->
+<!-- 	  Note that, as we will see in the sequel, the some-of and each-of operators are associative and commutative, therefore we use them with any number of sub-expressions without parentheses. -->
+<!-- 	  That is, for instance, <span class="pre">(x | y) | z</span> is equivalent to <span class="pre">x | (y | z)</span>, so we write simply <span class="pre">x | y | z</span>, and similarly for the each-of operator. -->
+<!-- 	</p> -->
+<!-- 	<\!--<p> -\-> -->
+<!-- 	<\!--   Let a set of shape labels <m>SLabels = { <span class="pre">&lt;UserShape&gt;, &lt;ClientShape&gt; &lt;TesterShape&gt;, &lt;ProgrammerShape&gt;</span> }</m>. -\-> -->
+<!-- 	<\!-- </p> -\-> -->
+<!-- 	<p> -->
+<!-- 	  Let a set of value constraint labels <m>VCLabels = { <span class="pre">&lt;VC_A&gt;, &lt;VC_B&gt;, &lt;VC_string&gt;,  &lt;VC_int&gt; }</m> -->
+<!-- 	</p> -->
+<!-- 	<p> -->
+<!-- 	  Let <span class="pre">ex:p, ex:q, foaf:name, foaf:firstName, foaf:lastName</span> be properties (that is, IRI), for some prefixes <span class="pre">ex:</span> and <span class="pre">foaf:</span>. -->
+<!-- 	</p> -->
+<!-- 	<p> -->
+<!-- 	  The following are examples of relatively simple triple expressions. -->
+<!-- 	  <ul> -->
+<!-- 	    <li> -->
+<!-- 	      Triple constraints, with <m>P = (Prop &cup; InvProp) \ {<span class="pre">ex:p</span>}</m> -->
+<!-- 	      <ul> -->
+<!-- 		<li> -->
+<!-- 		  <span class="pre">{^ex:p}   &lt;VC_A&gt;</span> -->
+<!-- 		</li> -->
+<!-- 		<li> -->
+<!-- 		  <span class="pre">{foaf:name, foaf:lastName}  &lt;VC_string&gt;</span> -->
+<!-- 		</li> -->
+<!-- 		<li> -->
+<!-- 		  <span class="pre"><m>P</m>  &lt;VC_int&gt;</span> -->
+<!-- 		</li> -->
+<!-- 	      </ul> -->
+<!-- 	      The first two triple constraints use finite sets of properties, the last one uses a co-finite set of properties. -->
+<!-- 	    </li> -->
+<!-- 	    <li> -->
+<!-- 	      A repeated triple expression, which sub-expression is a triple constraint, with minimal cardinality 1 and maximal cardinality * -->
+<!-- 	      <ul> -->
+<!-- 		<li> -->
+<!-- 		   <span class="pre">( {ex:p}  &lt;VC_int&gt; )[1;*]</span><br/> -->
+<!-- 		</li> -->
+<!-- 	      </ul> -->
+<!-- 	    </li> -->
+<!-- 	    <li> -->
+<!-- 	      An each-of operator on top of three triple constraints: -->
+<!-- 	      <ul> -->
+<!-- 		<li> -->
+<!-- 		  <span class="pre">{ex:p} &lt;VC_A&gt; , {ex:q} &lt;VC_int&gt; , {ex:p}  &lt;VC_B&gt;</span>   -->
+<!-- 		</li> -->
+<!-- 	      </ul> -->
+<!-- 	    </li> -->
+<!-- 	    <li> -->
+<!-- 	      A some-of operator on top of one triple constraint and one each-of sub-expression, the latter composed of one repeated triple constraint and one triple constraint. -->
+<!-- 	      <ul> -->
+<!-- 		<li> -->
+<!-- 		  <span class="pre">{foaf:name} &lt;VC_string&gt; | <br/> -->
+<!-- 		    ( ({foaf:firstName} &lt;VC_string&gt;)[1;*] , {foaf:lastName}  &lt;VC_string&gt; )</span>   -->
+<!-- 		</li> -->
+<!-- 	      </ul> -->
+<!-- 	    </li> -->
+<!-- 	  </ul> -->
+<!-- 	</p> -->
+<!--       </div> -->
+
+<!--       <div class="Example"> -->
+<!-- 	<p> -->
+<!-- 	  We now give a more complex triple expression. -->
+<!-- 	</p> -->
+<!-- 	<p> -->
+<!-- 	  Let a set of value constraint labels <m>VCLabels = { <span class="pre">&lt;VC_UserAndClient&gt;, &lt;VC_Programmer&gt;, &lt;VC_Tester&gt;,  &lt;VC_User&gt;, &lt;VC_NotProgrammerTester&gt;, &lt;VC_AllNode&gt;</span> }</m> -->
+<!-- 	</p> -->
+<!-- 	<p> -->
+<!-- 	  Let <span class="pre">is:reproducedBy, is:reportedBy, is:affectedBy</span> be properties for some prefix <span class="pre">is:</span>. -->
+<!-- 	</p> -->
+<!-- 	<p> -->
+<!-- 	  An example of a triple expression is (the leading numbers are line numbers for future reference): -->
+<!-- <pre> -->
+<!-- 1.    {is:reportedBy}    &lt;VC_UserAndClient&gt;              ; -->
+<!-- 2.    {is:reproducedBy}  &lt;VC_Tester&gt;                     ; -->
+<!-- 3.    {is:reproducedBy}  &lt;VC_Programmer&gt;                 ; -->
+<!-- 4.  ( {^is:affectedBy}   &lt;VC_User&gt;                )[1;*] ;  -->
+<!-- 5.    {is:reproducedBy}  &lt;VC_NotProgrammerTester&gt;        ; -->
+<!-- 6.  ( OtherProp          &lt;VC_AllNode&gt;             )[0;*]       -->
+<!-- </pre> -->
+<!-- where <m><span class="pre">OtherProp</span> = (Prop &cup; InvProp) \ { <span class="pre">is:reportedBy, is:reproducedBy, ^is:affectedBy</span> }</m> is the set that contains all properties and inverse properties except for <span class="pre">is:reportedBy, is:reproducedBy, ^is:affectedBy</span>. -->
+<!-- 	</p> -->
+<!-- 	<p> -->
+<!-- 	  The above triple expression is an each-of expression on top of 6 sub-expressions, one on each line. -->
+<!-- 	  The sub-expressions on lines 1., 2., 3., 5. are triple constraints. -->
+<!-- 	  The sub-expression on line 4. is a repeted triple expression, with minimum cardinality 1 and maximum cardinality *. -->
+<!-- 	  The sub-expression on line 6. is also a repeated triple expression, with minimum cardinality 0 and maximum cardinaliy *. -->
+<!-- 	</p> -->
+<!--       </div> -->
 
       <p>
 	A triple expression defines a property on the neighbourhood of a node in a graph.
