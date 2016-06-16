@@ -201,6 +201,9 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
   </head>
   
   <body>
+    <p>
+      <b>Document under construction.</b>
+    </p>
     <section id="abstract">
       <p>
 	This document describes the formal semantics of Shape Expressions (ShEx) schemas.
@@ -316,11 +319,6 @@ inst:User2
 	The name of a value constraint is called value constraint label, and the name of a shape is called shape label.
       </p>
 
-      <p>
-	<span class="textbf">All non-terminal symbols in the abstract syntax of shapes schemas end with an underscore _.
-	  This helps to avoid confusion between non-terminals of ShEx and shapes schemas. </span>
-      </p>
-
       <section id="shapes-schema">
       <h3>Shapes Schema</h3>
       <p>
@@ -342,9 +340,9 @@ inst:User2
 	The structure of a shapes schema is captured by the following abstract syntax.
       </p>
       <div class="Abstrsynt">
-	<as>ShapesSchema_ ::= (ShapeLabel_ ValueExpression_)+ (TripleConstraintLabel_ TripleExpression_)*</as><br/>
-<!-- 	<as>ValueConstraintDefinition_ ::= ValueConstraintLabel_ ValueExpression_</as><br/> -->
-<!-- 	<as>ShapeDefinition_ ::= ShapeLabel_ TripleExpression_ -->
+	<as>ShapesSchema ::= (ShapeLabel ValueExpression)+ (TripleConstraintLabel TripleExpression)*</as><br/>
+<!-- 	<as>ValueConstraintDefinition ::= ValueConstraintLabel ValueExpression</as><br/> -->
+<!-- 	<as>ShapeDefinition ::= ShapeLabel TripleExpression -->
 <!-- </m><br/> -->
       </div>
       </section>
@@ -387,16 +385,16 @@ inst:User2
       <h4>Abstract Syntax</h4>
 
       <div class="Abstrsynt">
-	<as>ValueExpression_ ::= TripleExprRef_</as></br>
-	<as>| NodeConstraint_</as></br>
-	<as>| ConjunctiveValueExpr_</as></br>
-	<as>| DisjunctiveValueExpr_</as></br>
-	<as>| NegatedValueExpr_</as></br>
-	<as>TripleExprRef_ ::=</as> a triple expression label from <as>TELabels</as></br>
-	<as>NodeConstraint_ ::=</as> a subset of <as>IRI &cup; Lit &cup; {blank}</as></br>
-	<as>ConjunctiveValueExpr_ ::= ValueExpression_ 'AND' ValueExpression_</as></br>
-	<as>DisjunctiveValueExpr_ ::= ValueExpression_ 'OR' ValueExpression_</as></br>
-	<as>NegatedValueExpr_ ::= 'NOT' ValueExpression_</as>
+	<as>ValueExpression ::= TripleExprRef</as></br>
+	<as>| NodeConstraint</as></br>
+	<as>| ConjunctiveValueExpr</as></br>
+	<as>| DisjunctiveValueExpr</as></br>
+	<as>| NegatedValueExpr</as></br>
+	<as>TripleExprRef ::=</as> a triple expression label from <as>TELabels</as></br>
+	<as>NodeConstraint ::=</as> a subset of <as>IRI &cup; Lit &cup; {blank}</as></br>
+	<as>ConjunctiveValueExpr ::= ValueExpression 'AND' ValueExpression</as></br>
+	<as>DisjunctiveValueExpr ::= ValueExpression 'OR' ValueExpression</as></br>
+	<as>NegatedValueExpr ::= 'NOT' ValueExpression</as>
       </div>
       <p>
 	That is, a value expression is any Boolean combination of two kinds of atomic components:
@@ -456,7 +454,7 @@ inst:User2
 	    <m>NC</m> is a <as>NodeConstraint</as> (in the ve-nodeconstr and ve-nodeconstr-brank rules); 
 	  </li>
 	  <li>
-	    the <m>typing, node &#x22ac; VExpr<sub>2</sub></m> in the premise of the ve-neg rule means that it is impossible to construct a proof for <m>typing, node &vdash; VExpr</m>.
+	    the <m>typing, node &#x22ac; VExpr</m> in the premise of the ve-neg rule means that it is impossible to construct a proof for <m>typing, node &vdash; VExpr</m>.
 	  </li>
 	</ul>
       </p>
@@ -506,23 +504,23 @@ inst:User2
       <h4>Abstract syntax</h4>
 
       <div class="Abstrsynt">
-	<as>TripleExpression_ ::= EmptyTripleExpr_</as><br/>
-	<as>| TripleConstraint_</as><br/>
-	<as>| SomeOfTripleExpr_</as><br/>
-	<as>| EachOfTripleExpr_</as><br/>
-	<as>| RepeatedTripleExpr_</as><br/>
+	<as>TripleExpression ::= EmptyTripleExpr</as><br/>
+	<as>| TripleConstraint</as><br/>
+	<as>| SomeOfTripleExpr</as><br/>
+	<as>| EachOfTripleExpr</as><br/>
+	<as>| RepeatedTripleExpr</as><br/>
 	<br/>
-	<as>EmptyTripleExpr_ ::= 'EMPTY'</as></br>
-	<as>TripleConstraint_ ::= PropertySet_ ShapeRef_</as><br/>
-	<as>PropertySet_ ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
-	<as>ShapeRef_ ::= </as> a shape label from <as>SLabels</as><br/>
+	<as>EmptyTripleExpr ::= 'EMPTY'</as></br>
+	<as>TripleConstraint ::= PropertySet ShapeRef</as><br/>
+	<as>PropertySet ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
+	<as>ShapeRef ::= </as> a shape label from <as>SLabels</as><br/>
 	<br/>
-	<as>SomeOfTripleExpr_ ::= TripleExpression_ '|' TripleExpression_</as><br/>
-	<as>EachOfTripleExpr_ ::= TripleExpression_ ';' TripleExpression_</as><br/>
+	<as>SomeOfTripleExpr ::= TripleExpression '|' TripleExpression ('|' TripleExpression)*</as><br/>
+	<as>EachOfTripleExpr ::= TripleExpression ';' TripleExpression (';' TripleExpression)*</as><br/>
 	<br/>
-	<as>RepeatedTripleExpr_ ::= TripleExpression_ '{' MinCard_ ';' MaxCard_ '}'</as><br/>
-	<as>MinCard_ ::= </as> a natural number<br/>
-	<as>MaxCard_ ::= </as> a natural number or <as>'*'</as><br/>
+	<as>RepeatedTripleExpr ::= TripleExpression '{' MinCard ';' MaxCard '}'</as><br/>
+	<as>MinCard ::= </as> a natural number<br/>
+	<as>MaxCard ::= </as> a natural number or <as>'*'</as><br/>
       </div>
       <p>
 	That is, an atomic triple expression can be
@@ -537,7 +535,7 @@ inst:User2
 	</ul>
       </p>
       <p>
-	Then, a triple expression can be obtained by combining two triple expressions using the some-of binary operator, denoted <m>|</m>, and the each-of binary operator, denoted as a semicolon <m>;</m>. Intuitively, 
+	Then, two or more triple expressions can be combined using the some-of operator, denoted <m>|</m>, or the each-of operator, denoted as a semicolon <m>;</m>. Intuitively, 
 	<ul>
 	  <li>
 	    a some-of triple expression is satisfied if the neighbourhood of the node satisfies one of its sub-expressions, and
@@ -559,29 +557,36 @@ inst:User2
 	  <p>
 	    Moving the mouse over the elements of the list below will highlight the corresponding elements in the triple expression.
 	    <ul>
-	      <li><span class="hl-tc lowlight1">triple constraint</span> (<as>TripleConstraint_</as>)</li>
-	      <li><span class="hl-someof lowlight2">some-of triple expression</span> (<as>SomeOfTripleExpr_</as>)</li>
-	      <li><span class="hl-eachof lowlight2">each-of triple expression</span> (<as>EachOfTripleExpr_</as>)</li>
-	      <li><span class="hl-repet lowlight3">repeated triple expression</span> (<as>RepeatedTripleExpr_</as>)</li>
+	      <li><span class="hl-tc lowlight1">triple constraint</span> (<as>TripleConstraint</as>)</li>
+	      <li><span class="hl-someof lowlight2">some-of triple expression</span> (<as>SomeOfTripleExpr</as>)</li>
+	      <li><span class="hl-eachof lowlight2">each-of triple expression</span> (<as>EachOfTripleExpr</as>)</li>
+	      <li><span class="hl-repet lowlight3">repeated triple expression</span> (<as>RepeatedTripleExpr</as>)</li>
+	      <li><span class="hl-inverse-tc lowlight1">triple constraint with an inverse property</span></li>
 	      <li><span class="hl-tc-cofinite lowlight1">triple constraint with a non-singleton co-finite set of properties</span></li>
-	      <li><span class="hl-shref lowlight4">shape reference</span> (<as>ShapeRef_</as>)</li>
+	      <li><span class="hl-shref lowlight4">shape reference</span> (<as>ShapeRef</as>)</li>
 	    </ul>
+	  </p>
 <pre class="shex">
 # triple expression of the shapes language
 
-<div class="hl-eachof lowlight2"><span class="hl-tc lowlight1">{rdf:type}  <span class="hl-shref lowlight4">&lt;VE_1&gt;</span></span> ;
+<div class="hl-eachof lowlight2"><span class="hl-tc lowlight1">{rdf:type}  <span class="hl-shref lowlight4">&lt;SL_1&gt;</span></span> ;
 
-<span class="hl-tc lowlight1">{foaf:name} <span class="hl-shref lowlight4">&lt;VE_2&gt;</span></span> ;
+<span class="hl-tc lowlight1">{foaf:name} <span class="hl-shref lowlight4">&lt;SL_2&gt;</span></span> ;
 
-<span class="hl-someof lowlight2">( <span class="hl-repet lowlight3"><span class="hl-tc lowlight1">{foaf:mbox} <span class="hl-shref lowlight4">&lt;VE_3&gt;</span></span> {1;3}</span> | <span class="hl-tc lowlight1">{foaf:adress} <span class="hl-shref lowlight4">&lt;VE_3&gt;</span></span> )</span> ;
+<span class="hl-someof lowlight2">( <span class="hl-repet lowlight3"><span class="hl-tc lowlight1">{foaf:mbox} <span class="hl-shref lowlight4">&lt;SL_3&gt;</span></span> {1;3}</span> | <span class="hl-tc lowlight1">{foaf:adress} <span class="hl-shref lowlight4">&lt;SL_3&gt;</span></span> )</span> ;
 
-<span class="hl-repet lowlight3"><span class="hl-tc hl-tc-cofinite lowlight1">C{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox} <span class="hl-shref lowlight4">&lt;VE_all&gt;</span></span> *</span>
+<span class="hl-tc hl-inverse-tc lowlight1">{^ex:leader} &lt;SL_4&gt;</span> ;
+
+<span class="hl-repet lowlight3"><span class="hl-tc hl-tc-cofinite lowlight1">C{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox, ^ex:leader} <span class="hl-shref lowlight4">&lt;SL_all&gt;</span></span> *</span>
 </div>
 </pre>
+	  <p>
+	    Where <span class="pre">C{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox} = (Prop &cup; InvProp) \ {rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox}</span>, that is, the complement of the set <span class="pre">{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox}</span> within the set of all properties and inverse properties.
+	  </p>
 	</div>
 	<script type="text/javascript">
 	  <!--
-	      prepareHighlight(["hl-tc", "hl-tc-cofinite"], "highlight1", "lowlight1");
+	      prepareHighlight(["hl-tc", "hl-tc-cofinite", "hl-inverse-tc"], "highlight1", "lowlight1");
 	      prepareHighlight(["hl-someof", "hl-eachof"], "highlight2", "lowlight2");
 	      prepareHighlight(["hl-repet"], "highlight3", "lowlight3");
 	      prepareHighlight(["hl-shref"], "highlight4", "lowlight4");
@@ -597,7 +602,7 @@ inst:User2
       </p>
 
       <p>
-	A set of triples <m>Neigh</m> is called a neighbourhood set of triples if there is a <m>node</m> such that all triple in <m>Neigh</m> is either of the form <m>(node, prop, node')</m> or of the form <m>(node, ^prop, node')</m> for some <m>node'</m> in <m>G</m> and some property <m>prop</m> or inverse property <m>^prop</m>.
+	A set of triples <m>Neigh</m> is called a neighbourhood set of triples if there exists a <m>node</m> such that all triple in <m>Neigh</m> is either of the form <m>(node, prop, node')</m> or of the form <m>(node, ^prop, node')</m> for some <m>node'</m> in <m>G</m> and some property <m>prop</m> or inverse property <m>^prop</m>.
 	Intuitively, a neighbourhood set of triples is a subset of <m>neigh(G,node)</m> for some <m>node</m> in the graph <m>G</m>.
       </p>
       
@@ -605,13 +610,13 @@ inst:User2
 	For a neighbourhood set of triples <m>Neigh</m> from the graph <m>G</m>, a triple expression <m>TExpr</m>, and a <m>typing</m> of <m>G</m> by <m>Sch</m>, we say that <m>Neigh</m> satisfies <m>TEXpr</m> for <m>typing</m>, written <m>typing, Neigh &vdash; TExpr</m>, as defined above recursively on the structure of <m>TExpr</m>, where
 	<ul>
 	  <li>
-	    <m>P</m> is a subset of <m>Prop &cup; InvProp</m> and <m>V</m> is a shape label (in rule te-tripleconstr);
+	    <m>P</m> is a subset of <m>Prop &cup; InvProp</m> and <m>V</m> is a shape label (in rule te-tripleconstr), and <m>def</m> is a function that associates a value expression with <m>V</m>;
 	  </li>
 	  <li>
 	    <m>&uplus;</m> is the disjoint union of sets (in rules te-eachof and te-repet); 
 	  </li>
 	  <li>
-	    <m>min</m> and <m>max</m> are the minimum, respectively maximum cardinality in a <m>RepetedTripleExpr</m> (in rule te-repet).
+	    <m>min</m> and <m>max</m> are the minimum, respectively maximum cardinality in a <m>RepetedTripleExpr</m> (in rule te-repet);
 	  </li>
 	</ul>
 
@@ -627,8 +632,137 @@ inst:User2
       
       <div class="Example">
 	<p>
-	  TODO: examples of a satisfiability of triple expressions
+	  Example of satisfying a triple constraint.
 	</p>
+<pre class="shex" style="float:left">
+# if typing is such that
+typing, :n1  &vdash; &lt;SL_1&gt;
+typing, :n2  &#x22ac; &lt;SL_2&gt;
+
+# then 
+typing, {(:n :p :n1)} &vdash; {:p}  &lt;SL_1&gt;
+typing, {(:n :p :n1)} &vdash; {:p, :q}  &lt;SL_1&gt;
+typing, {(:n :p :n2)} &#x22ac; {:p}  &lt;SL_2&gt;
+</pre>
+<div style="clear:both;"> </div>
+      </div>
+
+
+      <div class="Example">
+	<p>
+	  Examples of satisfying an each-of triple expression.
+	</p>
+<pre class="shex" style="float:left">
+# if typing is such that 
+typing, :n1  &vdash;  &lt;SL_1&gt;  
+typing, :n2  &vdash;  &lt;SL_2&gt;
+typing, :n3  &vdash;  &lt;SL_1&gt;  
+
+# then
+typing, {(:n :p :n1), (:n :p :n2)}  &vdash;  {:p} &lt;SL_1&gt; ; {:q} &lt;SL_2&gt;
+typing, {(:n :p :n1), (:n :p :n3)}  &vdash;  {:p} &lt;SL_1&gt; ; {:p} &lt;SL_1&gt;
+typing, {(:n :p :n1)}               &#x22ac;  {:p} &lt;SL_1&gt; ; {:p} &lt;SL_1&gt
+</pre>
+<div style="clear:both;"> </div>
+      </div>
+
+
+      <div class="Example">
+	<p>
+	  Examples of satisfying a some-of triple expression.
+	</p>
+<pre class="shex" style="float:left">
+# if typing is such that 
+typing, :n1  &vdash;  &lt;SL_1&gt;  
+typing, :n2  &vdash;  &lt;SL_2&gt;
+typing, :n3  &vdash;  &lt;SL_1&gt;  
+
+# then
+typing, {(:n :p :n1)}               &vdash;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
+typing, {(:n :p :n1), (:n :p :n2)}  &#x22ac;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
+</pre>
+<div style="clear:both;"> </div>
+      </div>
+
+
+      <div class="Example">
+	<p>
+	  Examples of satisfying a triple expression with some-of and each-of operators.
+	</p>
+<pre class="shex" style="float:left">
+# if typing is such that 
+typing, :n1  &vdash;  &lt;SL_1&gt;  
+typing, :n2  &vdash;  &lt;SL_2&gt;
+typing, :n3  &vdash;  &lt;SL_1&gt;  
+
+# then
+typing, {(:n :p :n1)}                &vdash;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
+typing, {(:n :p :n1), (:n :p :n2)}   &#x22ac;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
+</pre>
+<div style="clear:both;"> </div>
+      </div>
+
+
+      <div class="Example">
+	<div class="with-highlight">
+	  <p>
+	    Consider the following triple expression and RDF graph.
+	  </p>
+<pre class="shex" style="float:left">
+# graph G
+
+ex:lp    rdf:type     foaf:Person;
+         foaf:name    "Louisa Pavlova";
+         foaf:mbox    "louisa@shex.org";
+         foaf:mbox    "lpavlova@jobs.com";
+         ex:memberOf  ex:gr2 .
+ex:gr2   ex:leader    ex:lp .
+ex:bug   ex:reportedBy  ex:lp .
+</pre>
+<pre class="shex" style="float:left">
+# typing is such that
+
+<span class="hl-all lowlight1">typing, n  &vdash; &lt;SL_all&gt   for all node n in G</span>
+<span class="hl-rdftype lowlight1">typing, foaf:Person         &vdash; &lt;SL_Person&gt;</span>
+<span class="hl-foafname lowlight1">typing, "Louisa Pavlova"    &vdash; &lt;SL_string&gt;</span>
+<div class="hl-foafmbox lowlight1">typing, "louisa@shex.org"   &vdash; &lt;SL_mbox_string&gt;
+typing, "lpavlova@jobs.com" &vdash; &lt;SL_mbox_string&gt;</div><span class="hl-leader lowlight1">typing, ex:gr2              &vdash; &lt;SL_Group&gt;</span>
+
+</pre>
+<pre class="shex" style="float:left">
+# triple expression TExpr
+
+<span class="hl-rdftype lowlight1">{rdf:type}  &lt;SL_Person&gt;</span> ;
+<span class="hl-foafname lowlight1">{foaf:name} &lt;SL_string&gt;</span> ;
+<span class="hl-foafmbox lowlight1">( {foaf:mbox} &lt;SL_mbox_string&gt; {1;3} | {foaf:adress} &lt;SL_adr&gt; )</span> ;
+<span class="hl-leader lowlight1">{^ex:leader} &lt;SL_Group&gt;</span> ;
+<span class="hl-all lowlight1">C{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox, ^ex:leader} &lt;SL_all&gt; *</span>
+</pre>
+<pre class="shex" style="foaf:left">
+# neigh(G, ex:lp), the neighbourhood of ex:lp in G
+
+<span class="hl-rdftype lowlight1">ex:lp  rdf:type     foaf:Person .</span>
+<span class="hl-foafname lowlight1">ex:lp  foaf:name    "Louisa Pavlova" .</span>
+<div class="hl-foafmbox lowlight1">ex:lp  foaf:mbox    "louisa@shex.org" .
+ex:lp  foaf:mbox    "lpavlova@jobs.com" .</div><span class="hl-leader lowlight1">ex:lp  ^ex:leader   ex:gr2</span>
+<div class="hl-all lowlight1">ex:lp  ex:memberOf  ex:gr2
+ex:lp  ^ex:reportedBy  ex:bug</div>
+</pre>
+<div style="clear:both;"> </div>
+
+	  <p>
+	    Then <span class="pre">typing, neigh(G, ex:lp) &vdash; TExpr</span>.
+	    Move the mouse over the triples in <span class="pre">neigh(G, ex:lp)</span> to see which triples contribute to satisfy which of the sub-expressions of <span class="pre">TExpr</span>.
+	  </p>
+	</div>
+	<script type="text/javascript">
+	  <!--
+	      prepareHighlight(["hl-rdftype","hl-foafname", "hl-foafmbox", "hl-leader", "hl-all"], "highlight1", "lowlight1");
+	      prepareHighlight([], "highlight2", "lowlight2");
+	      prepareHighlight([], "highlight3", "lowlight3");
+	      prepareHighlight([], "highlight4", "lowlight4");
+	    -->
+	</script>
       </div>
       </section>
       </section>
@@ -636,7 +770,7 @@ inst:User2
       <section id="stratified-negation">
       <h3>Shapes Schemas with Stratified Negation</h3>
       <p>
-	As we can see from the syntax, value expressions refer to shapes (through a <as>TripleExprRef_</as>), and triple expressions refer to value expressions (through a <as>ValueExprRef_</as> in a triple constraint). 
+	As we can see from the syntax, value expressions refer to shapes (through a <as>TripleExprRef</as>), and triple expressions refer to value expressions (through a <as>ValueExprRef</as> in a triple constraint). 
 	In order to avoid undesirable interaction between recursion and the negation in value expressions, we consider shapes schemas with stratified negation only, as defined in the sequel.
       </p>
       
@@ -665,8 +799,44 @@ inst:User2
       
       <div class="Example">
 	<p>
-	  TODO: An example of a shapes schema and its dependency graph.
+	  The following is an example of a shapes schema and its dependency graph.
 	</p>
+<pre class="shex" style="float:left">
+# a shapes schema
+
+&lt;SL_all&gt;:= IRI &cup; Literal &cup; {blank}
+&lt;SL_1&gt;  := &lt;TE_1&gt;
+&lt;SL_2&gt;  := &lt;TE_2&gt;
+&lt;SL_2'&gt; := NOT &lt;TE_2&gt;
+&lt;SL_3&gt;  := &lt;TE_3&gt;
+&lt;SL_4&gt;  := &lt;TE_4&gt;
+&lt;SL_5&gt;  := &lt;TE_5&gt;
+&lt;SL_5'&gt; := NOT &lt;TE_5&gt;
+
+&lt;TE_1&gt; := {:a} &lt;SL_2'&gt; ; {:b} &lt;SL_3&gt;    ; InvProp &lt;SL_all&gt;
+&lt;TE_2&gt; := {:c} &lt;SL_5&gt;                   ; InvProp &lt;SL_all&gt;
+&lt;TE_3&gt; := {:d} &lt;TE_1&gt; ; {:e} &lt;TE_4&gt;     ; InvProp &lt;SL_all&gt;
+&lt;TE_4&gt; := ({:c} &lt;SL_2&gt; | {:a} &lt;SL_5'&gt;)  ; InvProp &lt;SL_all&gt;
+&lt;TE_5&gt; := {:c} &lt;SL_ALL&gt;                 ; InvProp &lt;SL_all&gt;
+</pre>
+<pre class="shex" style="float:left">
+# the edges of the dependency graph
+# ---&gt is a negative dependency edge
+# -+-&gt is a positive dependency edge
+
+&lt;TE_1&gt; -+-&gt; &lt;TE_3&gt;
+&lt;TE_3&gt; -+-&gt; &lt;TE_1&gt;
+
+&lt;TE_3&gt; -+-&gt; &lt;TE_4&gt;
+
+&lt;TE_1&gt; ---&gt; &lt;TE_2&gt;
+
+&lt;TE_2&gt; -+-&gt; &lt;TE_5&gt;
+&lt;TE_4&gt; -+-&gt; &lt;TE_2&gt;
+
+&lt;TE_4&gt; ---&gt; &lt;TE_5&gt;
+</pre>
+<div style="clear:both;"> </div>
       </div>
 
       <p>
@@ -681,7 +851,25 @@ inst:User2
 
       <div class="Example">
 	<p>
-	  TODO: an example of stratificaiton
+	  A stratification for the schema on the previous example is:
+	</p>
+<pre class="shex" style="float:left">
+strat(&lt;TE_5&gt;) = 1
+strat(&lt;TE_2&gt;) = 2
+strat(&lt;TE_4&gt;) = 3
+strat(&lt;TE_1&gt;) = 4
+strat(&lt;TE_3&gt;) = 4
+</pre>
+<div style="clear:both;"> </div>
+	<p>
+	  That is, there are four stratums.
+	  <span class="pre">&lt;TE_5&gt;</span> is on the lowest stratum 1.
+	  The highest stratum 4 contains two triple expression labels, which are <span class="pre">&lt;TE_1&gt;</span> and <span class="pre">&lt;TE_3&gt;</span>.
+	</p>
+	<p>
+	  In general, there can be different stratifications for the same schema.
+	  For instance, we can have only two stratums, the lowest containing  <span class="pre">&lt;TE_2&gt;</span> and <span class="pre">&lt;TE_5&gt;</span>, and the highest containing the other three triple expression labels.
+	  The semantics defined above is equivalent for all possible stratifications.
 	</p>
       </div>
 
@@ -791,20 +979,20 @@ CLOSED ^CLOSED {
 <pre class="shex" style="float:left">
 # shapes schema
 
-<span class="hl-ve1 lowlight1">&lt;VE_1&gt;  := {ex:unassigned, ex:assigned}</span>
-<span class="hl-ve2 lowlight1">&lt;VE_2&gt;  := @&lt;UserShape&gt;</span>
-<span class="hl-ve3 lowlight1">&lt;VE_3&gt;  := xsd:dateTime OR xsd:date</span>
-<span class="hl-ve4 hl-ve4bis lowlight1">&lt;VE_4&gt;  := @&lt;IssueShape&gt;</span>
+<span class="hl-ve1 lowlight1">&lt;SL_1&gt;  := {ex:unassigned, ex:assigned}</span>
+<span class="hl-ve2 lowlight1">&lt;SL_2&gt;  := @&lt;UserShape&gt;</span>
+<span class="hl-ve3 lowlight1">&lt;SL_3&gt;  := xsd:dateTime OR xsd:date</span>
+<span class="hl-ve4 hl-ve4bis lowlight1">&lt;SL_4&gt;  := @&lt;IssueShape&gt;</span>
 
 <span class="hl-issueshape lowlight2">&lt;IssueShape&gt;    := &lt;TE_Issue&gt; </span>
 
 <span class="hl-issueshape lowlight2">&lt;TE_Issue&gt; </span>:= 
 <div class="hl-te lowlight3">{
-    {ex:state}      <span class="hl-ve1 lowlight1">&lt;VE_1&gt;</span> ;
-    {ex:reportedBy} <span class="hl-ve2 lowlight1">&lt;VE_2&gt;</span> ;
-    {ex:reportedOn} <span class="hl-ve3 lowlight1">&lt;VE_3&gt;</span> ;
-    {ex:related}    <span class="hl-ve4 lowlight1">&lt;VE_4&gt;*</span>  ;
-    {^ex:related}   <span class="hl-ve4bis lowlight1">&lt;VE_4&gt;*</span>
+    {ex:state}      <span class="hl-ve1 lowlight1">&lt;SL_1&gt;</span> ;
+    {ex:reportedBy} <span class="hl-ve2 lowlight1">&lt;SL_2&gt;</span> ;
+    {ex:reportedOn} <span class="hl-ve3 lowlight1">&lt;SL_3&gt;</span> ;
+    {ex:related}    <span class="hl-ve4 lowlight1">&lt;SL_4&gt;*</span>  ;
+    {^ex:related}   <span class="hl-ve4bis lowlight1">&lt;SL_4&gt;*</span>
 }
 </div>
 </pre>
@@ -827,7 +1015,7 @@ CLOSED ^CLOSED {
 	<div class="Example">
 	  <div class="with-highlight">
 	    <p>
-	      As in the previous example, the value expressions of the ShEx schema yield shape labels with the same definition. Here, the resulting fresh shape labels are <span class="pre">&lt;VE_5&gt;, &lt;VE_6&gt;, &lt;VE_7&gt;</span>.
+	      As in the previous example, the value expressions of the ShEx schema yield shape labels with the same definition. Here, the resulting fresh shape labels are <span class="pre">&lt;SL_5&gt;, &lt;SL_6&gt;, &lt;SL_7&gt;, &lt;SL_8&gt;</span>.
 	    </p>
 	    <p>
 	      The <span class="hl-shapexpr lowlight3">shape expression</span> from the ShEx schema is translated into a <span class="hl-shapexpr lowlight3">triple expression</span> in the shapes schema.
@@ -872,13 +1060,13 @@ CLOSED ^CLOSED {
 <pre class="shex" style="float:left">
 # shapes schema
 
-&lt;VE_5&gt; := {foaf:Person}
-&lt;VE_6&gt; := {ex:User}
-&lt;VE_7&gt; := xsd:string
-&lt;VE_8&gt; := IRI
+&lt;SL_5&gt; := {foaf:Person}
+&lt;SL_6&gt; := {ex:User}
+&lt;SL_7&gt; := xsd:string
+&lt;SL_8&gt; := IRI
 
-&lt;VE_User_Extra_1&gt; := <span class="hl-extra-ve1 lowlight2">NOT{foaf:Person} AND NOT{ex:User}</span>
-&lt;VE_User_Extra_2&gt; := <span class="hl-extra-ve2 lowlight2">NOT IRI</span>
+&lt;SL_User_Extra_1&gt; := <span class="hl-extra-ve1 lowlight2">NOT{foaf:Person} AND NOT{ex:User}</span>
+&lt;SL_User_Extra_2&gt; := <span class="hl-extra-ve2 lowlight2">NOT IRI</span>
 
 
 
@@ -886,18 +1074,18 @@ CLOSED ^CLOSED {
 
 &lt;TE_User&gt; := 
 <div class="hl-shapexpr lowlight3">{
-<div class="hl-samete lowlight4">    {rdf:type}  &lt;VE_5&gt; ;
-    {rdf:type}  &lt;VE_6&gt; ;
+<div class="hl-samete lowlight4">    {rdf:type}  &lt;SL_5&gt; ;
+    {rdf:type}  &lt;SL_6&gt; ;
     (
-        {foaf:name}       &lt;VE_7&gt;
+        {foaf:name}       &lt;SL_7&gt;
     |
-        {foaf:givenName}  &lt;VE_7&gt;+ ;
-        {foaf:familyName} &lt;VE_7&gt;
+        {foaf:givenName}  &lt;SL_7&gt;+ ;
+        {foaf:familyName} &lt;SL_7&gt;
     );
-    {foaf:mbox} &lt;VE_8&gt; ;
+    {foaf:mbox} &lt;SL_8&gt; ;
 </div>
-<div class="hl-extra lowlight1">    {rdf:type}  <span class="hl-extra-ve1 lowlight2">&lt;VE_User_Extra_1&gt;</span> * ;
-    {foaf:mbox} <span class="hl-extra-ve2 lowlight2">&lt;VE_User_Extra_2&gt;</span> * ;
+<div class="hl-extra lowlight1">    {rdf:type}  <span class="hl-extra-ve1 lowlight2">&lt;SL_User_Extra_1&gt;</span> * ;
+    {foaf:mbox} <span class="hl-extra-ve2 lowlight2">&lt;SL_User_Extra_2&gt;</span> * ;
 </div>
 }
 </div>
@@ -944,19 +1132,19 @@ CLOSED ^CLOSED {
 <pre class="shex" style="float:left">
 # shapes schema
 
-&lt;VE_9&gt;  := xsd:int
-&lt;VE_10&gt; := IRI
+&lt;SL_9&gt;  := xsd:int
+&lt;SL_10&gt; := IRI
 
-<span class="hl-ve lowlight1">&lt;VE_all_values&gt;  := IRI &cup; Lit &cup; {blank}</span>
+<span class="hl-ve lowlight1">&lt;SL_all_values&gt;  := IRI &cup; Lit &cup; {blank}</span>
 
 &lt;SomeShape&gt; := &lt;TE_SomeShape&gt; 
 
 &lt;TE_SomeShape&gt; := 
 <div class="hl-shapexpr lowlight3">{
-    {ex:p}  &lt;VE_9&gt;* ;
-    ( {ex:q}  &lt;VE_9&gt; | {ex:r} &lt;VE_10&gt; )? ;
+    {ex:p}  &lt;SL_9&gt;* ;
+    ( {ex:q}  &lt;SL_9&gt; | {ex:r} &lt;SL_10&gt; )? ;
 
-<span class="hl-open-tc lowlight4">    <span class="hl-propset lowlight2">PropSet</span>  <span class="hl-ve lowlight1">&lt;VE_all_values&gt;</span>*    </span>
+<span class="hl-open-tc lowlight4">    <span class="hl-propset lowlight2">PropSet</span>  <span class="hl-ve lowlight1">&lt;SL_all_values&gt;</span>*    </span>
 }
 </div>
 
@@ -1013,24 +1201,24 @@ AND
 
 <span class="hl-nc lowlight2">&lt;NC_1&gt;  := PATTERN "^http:/example.org/.*"</span>
 
-&lt;VE_11&gt; := PATTERN "^tel:\\+33"
-&lt;VE_12&gt; := PATTERN "\\.fr$"
-&lt;VE_13&gt; := PATTERN "^tel:\\+44"
-&lt;VE_14&gt; := PATTERN "\\.uk$"
-&lt;VE_15&gt; := IRI
+&lt;SL_11&gt; := PATTERN "^tel:\\+33"
+&lt;SL_12&gt; := PATTERN "\\.fr$"
+&lt;SL_13&gt; := PATTERN "^tel:\\+44"
+&lt;SL_14&gt; := PATTERN "\\.uk$"
+&lt;SL_15&gt; := IRI
 
 &lt;EmployeeShape&gt; := <span class="hl-conj lowlight4"><span class="hl-nc lowlight2">&lt;NC_1&gt;</span> AND <span class="hl-te1 lowlight3">&lt;TE_Employee_1&gt;</span> AND <span class="hl-te2 lowlight3">&lt;TE_Employee_2&gt;</span></span>
 
 <div class="hl-te1 lowlight3">&lt;TE_Employee_1&gt; := {
-    {foaf:phone} &lt;VE_15&gt;* ;
-    {foaf:mbox}  &lt;VE_15&gt;
+    {foaf:phone} &lt;SL_15&gt;* ;
+    {foaf:mbox}  &lt;SL_15&gt;
 }
 </div>
 <div class="hl-te2 lowlight3">&lt;TE_Employee_2&gt; := {
-    ( {foaf:phone} &lt;VE_11&gt; ;
-      {foaf:mbox}  &lt;VE_12&gt; )? ;
-    ( {foaf:phone} &lt;VE_13&gt; ;
-      {foaf:mbox}  &lt;VE_14&gt; )?
+    ( {foaf:phone} &lt;SL_11&gt; ;
+      {foaf:mbox}  &lt;SL_12&gt; )? ;
+    ( {foaf:phone} &lt;SL_13&gt; ;
+      {foaf:mbox}  &lt;SL_14&gt; )?
 }
 </div>
 </pre>
@@ -1071,18 +1259,18 @@ CLOSED ^CLOSED {
 <pre class="shex" style="float:left">
 # shapes schema
 
-&lt;VE_9&gt;  := xsd:int
-&lt;VE_10&gt; := IRI
-&lt;VE_Extra&gt; := NOT xsd:int
+&lt;SL_9&gt;  := xsd:int
+&lt;SL_10&gt; := IRI
+&lt;SL_Extra&gt; := NOT xsd:int
 
 &lt;SomeShape&gt; := &lt;TE_SomeShape&gt; 
 
 &lt;TE_SomeShape&gt; := { 
-    {ex:p}  &lt;VE_9&gt;* ;
-    (<span class="hl-negte lowlight4"> {ex:q}  &lt;VE_9&gt;<span class="hl-zerocard lowlight3">{0;0}</span> </span>
-      | {ex:r} &lt;VE_10&gt; )? ;
+    {ex:p}  &lt;SL_9&gt;* ;
+    (<span class="hl-negte lowlight4"> {ex:q}  &lt;SL_9&gt;<span class="hl-zerocard lowlight3">{0;0}</span> </span>
+      | {ex:r} &lt;SL_10&gt; )? ;
 
-    <span class="hl-prop lowlight2">{ex:q}</span>  &lt;VE_Extra&gt;*
+    <span class="hl-prop lowlight2">{ex:q}</span>  &lt;SL_Extra&gt;*
 }
 
 </pre>
@@ -1140,43 +1328,44 @@ CLOSED ^CLOSED {
 
       <p>
 	The abstract syntax of ShEx schemas is given by the following rules.
+	All non-terminals of the abstract syntax are terminated by an underscore (_), this in order to avoid confusion with the non-terminals of the abstract syntax of the shapes language.
       </p>
 
       <div class="Abstrsynt">
-	<as>ShapeExpressionsSchema ::= (ShapeLabel ShapeDefinition)+</as><br/>
-	<as>ShapeLabel ::= </as> an identifier <br/>
-	<as>ShapeDefinition ::= NodeConstraint* ShapeExpressions?</as><br/>
-	<as>ShapeExpressions ::= ShapeExpression ('AND' ShapeExpression)*</as><br/>
-	<as>NodeConstraint ::= </as> a subset of <as>IRI &cup; Lit &cup; {blank}</as><br/>
+	<as>ShapeExpressionsSchema_ ::= (ShapeLabel_ ShapeDefinition_)+</as><br/>
+	<as>ShapeLabel_ ::= </as> an identifier <br/>
+	<as>ShapeDefinition_ ::= NodeConstraint_* ShapeExpressions_?</as><br/>
+	<as>ShapeExpressions_ ::= ShapeExpression_ ('AND' ShapeExpression_)*</as><br/>
+	<as>NodeConstraint_ ::= </as> a subset of <as>IRI &cup; Lit &cup; {blank}</as><br/>
 	<br/>
-	<as>ShapeExpression ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet)? TripleExpression</as><br/>
-	<as>ExtraPropSet ::= </as> a set of properties and inverse properties<br/>
-	<as>TripleExpression ::= EmptyTripleExpr</as><br/>
-	<as> | TripleConstraint</as><br/>
-	<as> | SomeOfTripleExpr</as><br/>
-	<as> | EachOfTripleExpr</as><br/>
-	<as> | RepeatedTripleExpr</as><br/>
+	<as>ShapeExpression_ ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet_)? TripleExpression_</as><br/>
+	<as>ExtraPropSet_ ::= </as> a set of properties and inverse properties<br/>
+	<as>TripleExpression_ ::= EmptyTripleExpr_</as><br/>
+	<as> | TripleConstraint_</as><br/>
+	<as> | SomeOfTripleExpr_</as><br/>
+	<as> | EachOfTripleExpr_</as><br/>
+	<as> | RepeatedTripleExpr_</as><br/>
 	<br/>
-	<as>EmptyTripleExpr ::= 'EMPTY'</as><br/>
-	<as>TripleConstraint ::= (Property | InvProperty) ValueExpression</as><br/>
-	<as>Property ::=</as> an IRI<br/>
-	<as>InvProperty ::= '^'Property</as><br/>
+	<as>EmptyTripleExpr_ ::= 'EMPTY'</as><br/>
+	<as>TripleConstraint_ ::= (Property_ | InvProperty_) ValueExpression_</as><br/>
+	<as>Property_ ::=</as> an IRI<br/>
+	<as>InvProperty_ ::= '^'Property_</as><br/>
 	<br/>
-	<as>SomeOfTripleExpr ::= TripleExpr '|' TripleExpr</as><br/>
-	<as>EachOfTripleExpr ::= TripleExpr ';' TripleExpr</as><br/>
+	<as>SomeOfTripleExpr_ ::= TripleExpr_ '|' TripleExpr_</as><br/>
+	<as>EachOfTripleExpr_ ::= TripleExpr_ ';' TripleExpr_</as><br/>
 	<br/>
-	<as>RepeatedTipleExpr ::= TripleExpr '{' MinCard ';' MaxCard '}'</as><br/>
-	<as>MinCard ::= </as>a natural number<br/>
-	<as>MaxCard ::= </as>a natural number or '*'<br/>
+	<as>RepeatedTipleExpr_ ::= TripleExpr_ '{' MinCard_ ';' MaxCard_ '}'</as><br/>
+	<as>MinCard_ ::= </as>a natural number<br/>
+	<as>MaxCard_ ::= </as>a natural number or '*'<br/>
 	<br/>
-	<as>ValueExpression ::= ValueConstraint</as><br/>
-	<as> | ConjunctiveValueExpr</as><br/>
-	<as> | DisjunctiveValueExpr</as><br/>
-	<as>ValueConstraint ::= NodeConstraint*</as><br/>
-	<as> | ShapeRef</as><br/>
-	<as>ShapeRef ::= '@' ShapeLabel</as><br/>
-	<as>ConjunctiveValueExpr ::= ValueExpression 'AND' ValueExpression</as><br/>
-	<as>DisjunctiveValueExpr ::= ValueExpression 'OR' ValueExpression</as><br/>
+	<as>ValueExpression_ ::= ValueConstraint_</as><br/>
+	<as> | ConjunctiveValueExpr_</as><br/>
+	<as> | DisjunctiveValueExpr_</as><br/>
+	<as>ValueConstraint_ ::= NodeConstraint_*</as><br/>
+	<as> | ShapeRef_</as><br/>
+	<as>ShapeRef_ ::= '@' ShapeLabel_</as><br/>
+	<as>ConjunctiveValueExpr_ ::= ValueExpression_ 'AND' ValueExpression_</as><br/>
+	<as>DisjunctiveValueExpr_ ::= ValueExpression_ 'OR' ValueExpression_</as><br/>
       </div>
       
       <p>
