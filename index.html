@@ -201,9 +201,6 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
   </head>
   
   <body>
-    <p>
-      <b>Document under construction.</b>
-    </p>
     <section id="abstract">
       <p>
 	This document describes the formal semantics of Shape Expressions (ShEx) schemas.
@@ -219,28 +216,40 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
       </p>
     </section>
 
-    <section id="abstraction-rdf-graphs">
-      <h2>RDF Graphs</h2>
+    <section id="status">
       <p>
-	Let <m>IRI</m> be the set of IRI, <m>Lit</m> be the set of literal values, and <m>Blank</m> be the set of blank nodes.
-	Recall that an RDF graph is a set of triples in <m>(IRI &cup; Blank) &times; IRI &times; (IRI &cup; Blank &cup; Lit)</m>.
-	For a triple <m>(s,p,o)</m>, <m>s</m> is called the subject, <m>p</m> is called the predicate, and <m>o</m> is called the object of the triple.
+        The Shape Expressions language is expected to remain stable with the exception of:
       </p>
+      <ul>
+        <li>addition of a UNIQUE function</li>
+        <li>addition of a mechanism for labeling productions</li>
+        <li>clarification of semantic actions</li>
+      </ul>
+    </section>
+
+    <section id="terminology">
+      <h2>Terminology</h2>
+      <p>Shape expressions are defined using terms from RDF semantics:</p>
+      <ul>
+        <li><m>Node</m>: one of <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-iri" class="math">IRI</a>, <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-blank-node" class="math">BNode</a>, <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-literal" class="math">RDFLiteral</a></li>
+        <li><a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-rdf-graph" class="math">Graph</a>: a set of <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-rdf-triple" class="math">Triples</a> of (<a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-subject" class="math">subject</a>, <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-predicate" class="math">predicate</a>, <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-object" class="math">object</a>)</li>
+        <li></li>
+      </ul>
       <p>
-	For a graph <m>G</m>, we define the following sets:
+	The following sets access the elements of an RDF graph <m>G</m>:
 	<ul>
 	  <li>
-	    <m>Nodes(G)</m> is the set nodes of <m>G</m> and is defined as the set of IRI or blank nodes or literal values that occupy a subject or object position in some triple of <m>G</m>
+	    <m>Nodes(G)</m> is the set nodes of <m>G</m> and is defined as the set of IRI or BNode or RDFLiteral values that occupy a subject or object position in some triple of <m>G</m>
 	  </li>
 	  <li>
 	    <m>Props(G)</m> is the set of properties of <m>G</m> and is defined as the set of IRI that occupy a predicate position in some triple of <m>G</m>
 	  </li>
 	  <li>
-	    <m>InvProps(G)</m> is the set of inverse properties of <m>G</m> and is defined as the properties of <m>G</m> decorated by a hat  <m>^</m>. That is, if <m>prop</m> is a property, then <m>^prop</m> is an inverse property.
+	    <m>InvProps(G)</m> is the set of inverse properties of <m>G</m> and is defined as the properties of <m>G</m>. Inverse properties are indicated by a CIRCUMFLEX ACCENT  <m>^</m>. If <m>prop</m> is a property, then <m>^prop</m> is an inverse property.
 	  </li>
 	  <li>
 	    for a triple <m>(node', prop, node)</m> in <m>G</m>, its inverse triple is the triple <m>(node, ^prop, node')</m>. 
-	    Note that inverse triples are note elements of the graph. 
+	    Note that inverse triples are not elements of the graph.
 	    [FOOTNOTE: inverse triples are going to be used for defining the semantics for inverse triple constraints]
 	  </li>
 	  <li>
@@ -322,7 +331,7 @@ inst:User2
       <section id="shapes-schema">
       <h3>Shapes Schema</h3>
       <p>
-	Formally, a shapes schema <m>Sch</m> is given by a triple <m>Sch = (SLabels, TELabels, def)</m> where 
+	A shapes schema <m>Sch</m> is given by a triple <m>Sch = (SLabels, TELabels, def)</m> where
 	<ul>
 	  <li>
 	    <m>SLabels</m> is a set of shape labels
@@ -385,15 +394,15 @@ inst:User2
       <h4>Abstract Syntax</h4>
 
       <div class="Abstrsynt">
-	<as>ValueExpression ::= TripleExprRef</as></br>
-	<as>| NodeConstraint</as></br>
-	<as>| ConjunctiveValueExpr</as></br>
-	<as>| DisjunctiveValueExpr</as></br>
-	<as>| NegatedValueExpr</as></br>
-	<as>TripleExprRef ::=</as> a triple expression label from <as>TELabels</as></br>
-	<as>NodeConstraint ::=</as> a subset of <as>IRI &cup; Lit &cup; {blank}</as></br>
-	<as>ConjunctiveValueExpr ::= ValueExpression 'AND' ValueExpression</as></br>
-	<as>DisjunctiveValueExpr ::= ValueExpression 'OR' ValueExpression</as></br>
+	<as>ValueExpression ::= TripleExprRef</as><br/>
+	<as>| NodeConstraint</as><br/>
+	<as>| ConjunctiveValueExpr</as><br/>
+	<as>| DisjunctiveValueExpr</as><br/>
+	<as>| NegatedValueExpr</as><br/>
+	<as>TripleExprRef ::=</as> a triple expression label from <as>TELabels</as><br/>
+	<as>NodeConstraint ::=</as> a subset of <as>IRI &cup; RDFLiteral &cup; {BNode}</as><br/>
+	<as>ConjunctiveValueExpr ::= ValueExpression 'AND' ValueExpression</as><br/>
+	<as>DisjunctiveValueExpr ::= ValueExpression 'OR' ValueExpression</as><br/>
 	<as>NegatedValueExpr ::= 'NOT' ValueExpression</as>
       </div>
       <p>
@@ -404,14 +413,14 @@ inst:User2
 	  </li>
 	  <li>
 	    a node constraint (<m>NodeConstraint</m>) that defines the set of allowed values for a node. 
-	    In shapes schemas, a node constraint can be an arbitrary set that contains IRIs, literal values, or the special value <m>blank</m> that stands for any blank node. 
+	    In shapes schemas, a node constraint can be an arbitrary set that contains IRIs, literal values, or the special value <m>BNode</m> that stands for any BNode.
 	    In practice, in ShEx schemas, a node constraint is given as [TODO: reference to ShEx concrete syntax or primer]
 	  </li>
 	</ul>
       </p>
       
       <div class="Example">
-	<p>Let <m>U, V, <span class="pre">int</span></m> be node constraints, that is, subests of <m>IRI &cup; Lit &cup; {blank}</m>, with 
+	<p>Let <m>U, V, <span class="pre">int</span></m> be node constraints, that is, subests of <m>IRI &cup; RDFLiteral &cup; {blank}</m>, with
 	  <ul>
 	    <li>
 	      <m>U = { <span class="pre">ex:unassigned, ex:assigned, ex:unknown</span> }</m>
@@ -510,7 +519,7 @@ inst:User2
 	<as>| EachOfTripleExpr</as><br/>
 	<as>| RepeatedTripleExpr</as><br/>
 	<br/>
-	<as>EmptyTripleExpr ::= 'EMPTY'</as></br>
+	<as>EmptyTripleExpr ::= 'EMPTY'</as><br/>
 	<as>TripleConstraint ::= PropertySet ShapeRef</as><br/>
 	<as>PropertySet ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
 	<as>ShapeRef ::= </as> a shape label from <as>SLabels</as><br/>
@@ -1135,7 +1144,7 @@ CLOSED ^CLOSED {
 &lt;SL_9&gt;  := xsd:int
 &lt;SL_10&gt; := IRI
 
-<span class="hl-ve lowlight1">&lt;SL_all_values&gt;  := IRI &cup; Lit &cup; {blank}</span>
+<span class="hl-ve lowlight1">&lt;SL_all_values&gt;  := IRI &cup; RDFLiteral &cup; {blank}</span>
 
 &lt;SomeShape&gt; := &lt;TE_SomeShape&gt; 
 
@@ -1336,7 +1345,7 @@ CLOSED ^CLOSED {
 	<as>ShapeLabel_ ::= </as> an identifier <br/>
 	<as>ShapeDefinition_ ::= NodeConstraint_* ShapeExpressions_?</as><br/>
 	<as>ShapeExpressions_ ::= ShapeExpression_ ('AND' ShapeExpression_)*</as><br/>
-	<as>NodeConstraint_ ::= </as> a subset of <as>IRI &cup; Lit &cup; {blank}</as><br/>
+	<as>NodeConstraint_ ::= </as> a subset of <as>IRI &cup; RDFLiteral &cup; {blank}</as><br/>
 	<br/>
 	<as>ShapeExpression_ ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet_)? TripleExpression_</as><br/>
 	<as>ExtraPropSet_ ::= </as> a set of properties and inverse properties<br/>
