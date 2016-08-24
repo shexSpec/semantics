@@ -205,14 +205,17 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
       <p>
 	This document describes the formal semantics of Shape Expressions (ShEx) schemas.
 	The semantics is defined on a slight generalization of ShEx schemas, called the shapes language.
-	The generalization consists in:
+	The generalization allows for a more succinct abstract syntax on which the semantics of the shapes language is defined.
+	In the generalization, 
 	<ul>
-	  <li>triple constraints use sets of predicates, instead of a single predicate;</li>
-	  <li>value expressions are generalized to arbitrary Boolean combinations of constraints on the value of the focus node and constraints the neighbour triples of the focus node.</li>
+	  <li>
+	    a triple constraint uses a set of predicates, instead of a single predicate. This allows to get rid of the CLOSED and EXTRA modifiers of ShEx schemas;
+	  </li>
+	  <li>
+	    a node constraint is an arbitrary set of RDF nodes. This allows to abstract from the various ways of defining a node constraint.
+	  </li>
 	</ul>
-	The generalization allows to have a simpler syntax, by seeing some of the ShEx constructs as syntactic abbreviations.
-	This makes the description of the semantics shorter.
-	After defining the shapes language and its semantics, we show how ShEx schemas translate to it.
+	The semantics of ShEx schemas is then defined as a translation to the shapes language.
       </p>
     </section>
 
@@ -323,24 +326,20 @@ inst:User2
     <section id="shapes-language">
       <h2>The Shapes Language</h2>
       <p>
-	A shapes schema defines a set of named value constraints, and a set of named shapes.
-	The names are used to refer to value constraints and shapes.
-	The name of a value constraint is called value constraint label, and the name of a shape is called shape label.
+	A shapes schema defines a set of named constraints, called shapes.
+	The name of a shape is also called shape label.
       </p>
 
       <section id="shapes-schema">
       <h3>Shapes Schema</h3>
       <p>
-	A shapes schema <m>Sch</m> is given by a triple <m>Sch = (SLabels, TELabels, def)</m> where
+	A shapes schema <m>Sch</m> is given by a couple <m>Sch = (SLabels, def)</m> where
 	<ul>
 	  <li>
-	    <m>SLabels</m> is a set of shape labels
+	    <m>SLabels</m> is a set of shape labels,
 	  </li>
 	  <li>
-	    <m>TELabels</m> is a set of triple expression labels, and
-	  </li>
-	  <li>
-	    <m>def</m> is a definition function that with every shape label associates a value expression, and with every triple expression label associates a triple expression. 
+	    <m>def</m> is a definition function that with every shape label associates a shape expression.
 	  </li>
 	</ul>
       </p>
@@ -349,7 +348,7 @@ inst:User2
 	The structure of a shapes schema is captured by the following abstract syntax.
       </p>
       <div class="Abstrsynt">
-	<as>ShapesSchema ::= (ShapeLabel ValueExpression)+ (TripleConstraintLabel TripleExpression)*</as><br/>
+	<as>ShapesSchema ::= (ShapeLabel ShapeExpression)+</as><br/>
 <!-- 	<as>ValueConstraintDefinition ::= ValueConstraintLabel ValueExpression</as><br/> -->
 <!-- 	<as>ShapeDefinition ::= ShapeLabel TripleExpression -->
 <!-- </m><br/> -->
@@ -360,67 +359,68 @@ inst:User2
       <h3>Typing of a Graph by a Shapes Schema</h3>
 
       <p>
-	A typing is a set of node-label associations of the form <m>(node,T)</m> where <m>node</m> is a node in a graph, and <m>T</m> is a triple expression label from a schema.
-	A node-label association intuitively indicates that the node <m>node</m> satisfies the constraint given by the definition of the triple expression label <m>T</m>.
+	A typing is a set of node-label associations of the form <m>(node,T)</m> where <m>node</m> is a node in a graph, and <m>T</m> is a shape label from a schema.
+	A node-label association intuitively indicates that the node <m>node</m> satisfies the constraint given by the definition of the shape label <m>T</m>.
       </p>
       <p>
-	Formally, let <m>Sch = (SLabels, TELabels, def)</m> be a shapes schema and <m>G</m> be a graph.
-	A typing of <m>G</m> by <m>Sch</m> is a subset of <m>Nodes(G) &times; TELabels</m>.
+	Formally, let <m>Sch = (SLabels, def)</m> be a shapes schema and <m>G</m> be a graph.
+	A typing of <m>G</m> by <m>Sch</m> is a subset of <m>Nodes(G) &times; SLabels</m>.
       </p>
 
 
       <div class="Example">
 	<p>
-	  Consider a shapes schema <m>Sch =  (SLabels, TELabels, def)</m> with 
-	  <m>TELabels = {<span class="pre">&lt;TE_Issue&gt;, &lt;TE_User&gt;, &lt;TE_Employee&gt;</span>}</m>.
+	  Consider a shapes schema <m>Sch =  (SLabels, def)</m> with 
+	  <m>SLabels = {<span class="pre">&lt;IssueShape&gt;, &lt;UserShape&gt;, &lt;EmployeeShape&gt;</span>}</m>.
 	</p>
 	<p>
 	  An example of a typing of the graph <m>G</m> by <m>Sch</m> is:
 	  <ul>
 	    <li>
-	      <m>typing = { (<span class="pre">inst:Issue1, &lt;TE_Issue&gt;</span>), (<span class="pre">inst:User2, &lt;TE_User&gt;</span>), (<span class="pre">inst:User2, &lt;TE_Employee&gt;</span>) }</m>
+	      <m>typing = { (<span class="pre">inst:Issue1, &lt;IssueShape&gt;</span>), (<span class="pre">inst:User2, &lt;UserShape&gt;</span>), (<span class="pre">inst:User2, &lt;EmployeeShape&gt;</span>) }</m>
 	    </li>
 	  </ul>
 	</p>
       </div>
       </section>
 
-      <section id="value-expressions">
-      <h3>Value Expressions</h3>
+      <section id="shape-expressions">
+      <h3>Shape Expressions</h3>
       <p>
-	Value expressions are associated with shape labels by the <m>def</m> function of a shapes schema.
+	The <m>def</m> function associates a shape expression with every shape label in a shapes schema.
       </p>
-      <section id="value-expressions-abstract-syntax">
+      <section id="shape-expressions-abstract-syntax">
       <h4>Abstract Syntax</h4>
 
       <div class="Abstrsynt">
-	<as>ValueExpression ::= TripleExprRef</as><br/>
-	<as>| NodeConstraint</as><br/>
-	<as>| ConjunctiveValueExpr</as><br/>
-	<as>| DisjunctiveValueExpr</as><br/>
-	<as>| NegatedValueExpr</as><br/>
-	<as>TripleExprRef ::=</as> a triple expression label from <as>TELabels</as><br/>
-	<as>NodeConstraint ::=</as> a subset of <as>IRI &cup; RDFLiteral &cup; {BNode}</as><br/>
-	<as>ConjunctiveValueExpr ::= ValueExpression 'AND' ValueExpression</as><br/>
-	<as>DisjunctiveValueExpr ::= ValueExpression 'OR' ValueExpression</as><br/>
-	<as>NegatedValueExpr ::= 'NOT' ValueExpression</as>
+	<as>ShapeExpression ::= AtomicShape</as><br/>
+	<as>| ShapeAnd</as><br/>
+	<as>| ShapeOr</as><br/>
+	<as>| ShapeNot</as><br/>
+	<as>AtomicShape ::= NodeConstraint | NeighbourhoodConstraint</as><br/>
+	<as>NodeConstraint ::=</as> a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as><br/>
+	<as>NeighbourhoodConstraint ::= TripleExpression</as><br/>
+	<as>ShapeAnd ::= ShapeExpression 'AND' ShapeExpression</as><br/>
+	<as>ShapeOr ::= ShapeExpression 'OR' ShapeExpression</as><br/>
+	<as>ShapeNot ::= 'NOT' ShapeExpression</as><br/>
       </div>
       <p>
-	That is, a value expression is any Boolean combination of two kinds of atomic components:
+	A shape expression is a Boolean combination of two kinds of atomic components:
 	<ul>
 	  <li>
-	   a triple expression label (<m>TripleExprRef</m>) that refers to a triple expression defined in the shapes schema, or
+	    a node constraint (<m>NodeConstraint</m>) that defines the set of allowed values of a node. 
+	    In shapes schemas, a node constraint can be an arbitrary set that contains IRIs or RDFLiteral, or the special value <m>blank</m> that stands for any BNode.
+	    In practice (in the concrete syntax), a node constraint can be defined using different ways of restraining the type of a node: string facet, numeric facet, node kind, a stem [TODO: reference to the concrete syntax].
 	  </li>
 	  <li>
-	    a node constraint (<m>NodeConstraint</m>) that defines the set of allowed values for a node. 
-	    In shapes schemas, a node constraint can be an arbitrary set that contains IRIs, literal values, or the special value <m>BNode</m> that stands for any BNode.
-	    In practice, in ShEx schemas, a node constraint is given as [TODO: reference to ShEx concrete syntax or primer]
+	   a neighbourhood constraint (<m>NeighbourhoodConstraint</m>) that defines a constraint on the allowed neighbourhood of a node, that is, the allowed triples that contain this node as subject or object.
+	   A neighbourhood constraint is itself defined as a (<m>TripleExpression</m>).
 	  </li>
 	</ul>
       </p>
       
       <div class="Example">
-	<p>Let <m>U, V, <span class="pre">int</span></m> be node constraints, that is, subests of <m>IRI &cup; RDFLiteral &cup; {blank}</m>, with
+	<p>Let <m>U, V, <span class="pre">int</span></m> be node constraints, that is, sets which elements are <m>IRI</m> or <m>RDFLiteral</m> or the special value <m>blank</m>, with
 	  <ul>
 	    <li>
 	      <m>U = { <span class="pre">ex:unassigned, ex:assigned, ex:unknown</span> }</m>
@@ -434,13 +434,13 @@ inst:User2
 	  </ul>
 	</p>
 	<p>
-	  Let <m>S</m> and <m>T</m> be a shape labels.<br/>
+	  Let <m>E<sub>1</sub></m>, <m>E<sub>2</sub></m> be triple expressions.
 	</p>
 	<p>
 	  Examples of value expressions are
 	  <ul>
 	    <li><m>int AND (NOT V)</m></li>
-	    <li><m>U AND (S AND (NOT T))</m></li> 
+	    <li><m>U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>))</m></li> 
 	  </ul>
 	</p>
       </div>
@@ -448,22 +448,27 @@ inst:User2
       <section id="value-expressions-semantics">
       <h4>Semantics</h4>
       <p>
-	A value expression defines a property of a single node.
-	The semantics of a value expression is defined relative to a typing.
+	The semantics of a shape expression is defined relative to a typing.
       </p>
 
       <p>
-	Formally, let <m>Sch = (SLabels, TELabels, def)</m> be a shapes schema and <m>G</m> be a graph.
-	For a <m>node</m> in <m>Nodes(G)</m>, a <m>typing</m> of <m>G</m> by <m>Sch</m>, and a value expression <m>VExpr</m>, we say that <m>node</m> satisfies <m>VExpr</m> with <m>typing</m>, written <m>typing, node &vdash; VExpr</m>, as defined recursively on the structure of <m>VExpr</m> on the figure above, where:
+	Let <m>Sch = (SLabels, def)</m> be a shapes schema and <m>G</m> be a graph.
+	For a <m>node</m> in <m>Nodes(G)</m>, a <m>typing</m> of <m>G</m> by <m>Sch</m>, and a shape expression <m>S</m>, we say that <m>node</m> satisfies <m>S</m> with <m>typing</m>, written <m>typing, node &vdash; S</m>, as defined recursively on the structure of <m>S</m> on the figure above, where:
 	<ul>
 	  <li>
-	    <m>S</m> is a <as>TripleExprRef</as> (in the ve-shaperef rule);
+	    <m>V</m> is a <as>NodeConstraint</as> (in the se-node-constr and se-node-constr-blank rules); 
 	  </li>
 	  <li>
-	    <m>NC</m> is a <as>NodeConstraint</as> (in the ve-nodeconstr and ve-nodeconstr-brank rules); 
+	    <m>E</m> is a <as>TripleExpression</as> (in rule se-neighb-constr);
 	  </li>
 	  <li>
-	    the <m>typing, node &#x22ac; VExpr</m> in the premise of the ve-neg rule means that it is impossible to construct a proof for <m>typing, node &vdash; VExpr</m>.
+	    the &#x22A7; symbol in the premise of the se-neighb-constr rue the relation that defines whether the neighbourhood of a node matches a triple expression, and is defined below;
+	  </li>
+	  <li>
+	    <m>S</m>, <m>S<sub>1</sub></m>, <m>S<sub>2</sub></m> are <as>ShapeExpression</as>s;
+	  </li>
+	  <li>
+	    the <m>typing, node &#x22ac; S</m> in the premise of the se-shape-not rule means that it is impossible to construct a proof for <m>typing, node &vdash; S</m>.
 	  </li>
 	</ul>
       </p>
@@ -474,7 +479,7 @@ inst:User2
 
       <div class="Example">
 	<p>
-	  Let <m>U, V, <span class="pre">int</span>, S, T</m> be as in the previous example.
+	  Let <m>U, V, <span class="pre">int</span>, E<sub>1</sub>, E<sub>2</sub></m> be as in the previous example.
 	</p>
 	<p>
 	  Whatever the value of <m>typing</m>, it holds
@@ -485,16 +490,16 @@ inst:User2
 	  </ul>
 	</p>
 
-	<p> If <m>typing = { (<span class="pre">ex:assigned</span>, S), (<span class="pre">ex:assigned</span>, T), (<span class="pre">ex:unknown</span>, S), (<span class="pre">ex:somenode</span>, S) }</m>, then 
+	<p> If <m>typing = { (<span class="pre">ex:assigned</span>, E<sub>1</sub>), (<span class="pre">ex:assigned</span>, E<sub>2</sub>), (<span class="pre">ex:unknown</span>, E<sub>1</sub>), (<span class="pre">ex:somenode</span>, E<sub>1</sub>) }</m>, then 
 	  <ul>
 	    <li>
-	      <m>typing, ex:assigned &#x22ac; U AND (S AND (NOT T))</m><br/>
+	      <m>typing, ex:assigned &#x22ac; U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>))</m><br/>
 	    </li>
 	    <li>
-	      <m>typing, ex:unknown &vdash; U AND (S AND (NOT T))</m><br/>
+	      <m>typing, ex:unknown &vdash; U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>T))</m><br/>
 	    </li>
 	    <li>
-	      <m>typing, ex:somenode &#x22ac; U AND (S AND (NOT T))</m><br/>
+	      <m>typing, ex:somenode &#x22ac; U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>))</m><br/>
 	    </li>
 	  </ul>
 	</p>
@@ -506,7 +511,7 @@ inst:User2
       <h3>Triple Expressions</h3>
       
       <p>
-	Triple expressions are associated with triple expression labels in a shapes schema.
+	Triple expressions are used for defining neighbourhood constraints within a shape expression.
       </p>
       
       <section id="triple-expressions-abstract-syntax">
@@ -524,40 +529,44 @@ inst:User2
 	<as>PropertySet ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
 	<as>ShapeRef ::= </as> a shape label from <as>SLabels</as><br/>
 	<br/>
-	<as>SomeOfTripleExpr ::= TripleExpression '|' TripleExpression ('|' TripleExpression)*</as><br/>
-	<as>EachOfTripleExpr ::= TripleExpression ';' TripleExpression (';' TripleExpression)*</as><br/>
+	<as>SomeOfTripleExpr ::= TripleExpression '|' TripleExpression</as><br/>
+	<as>EachOfTripleExpr ::= TripleExpression ';' TripleExpression</as><br/>
 	<br/>
 	<as>RepeatedTripleExpr ::= TripleExpression '{' MinCard ';' MaxCard '}'</as><br/>
 	<as>MinCard ::= </as> a natural number<br/>
 	<as>MaxCard ::= </as> a natural number or <as>'*'</as><br/>
       </div>
+
       <p>
-	That is, an atomic triple expression can be
+	A triple expression is matched by a set of triples that come from the neighbourhood of a node in an RDF graph.
+      </p>
+      <p>
+	An atomic triple expression can be
 	<ul>
 	  <li>
-	     the empty triple expression, that is only satisfied by a node which neighbourhood is empty, or
+	     the empty triple expression, that is matched only by an empty set of triples;
 	  </li>
 	  <li>
-	    a triple constraint, that defines a constraint on a single triple. 
-	    A triple constraint is composed of a set of properties or inverse properties, that define the allowed values for the predicate of a triple, as well as a reference to value constraint, that is to be satisfied by the node in the triple opposite to the focus node.
+	    a triple constraint, that is matched by a set containing a single triple.
+	    A triple constraint is composed of a set of properties or inverse properties, that define the allowed values for the predicate of a triple, as well as a shape label, that is a reference to shape expression to be satisfied by the node in the triple opposite to the focus node.
 	  </li>
 	</ul>
       </p>
       <p>
-	Then, two or more triple expressions can be combined using the some-of operator, denoted <m>|</m>, or the each-of operator, denoted as a semicolon <m>;</m>. Intuitively, 
+	Triple expressions allow for two binary operators, the some-of operator, denoted <m>|</m>, and the each-of operator, denoted as a semicolon <m>;</m>.
 	<ul>
 	  <li>
-	    a some-of triple expression is satisfied if the neighbourhood of the node satisfies one of its sub-expressions, and
+	    A some-of triple expression is matched by a set of triples if one or the other of its sub-expressions is matched by that set of triples.
 	  </li>
 	  <li>
-	    an each-of triple expression is satisfied if the neighbourhood of the focus node can be split in two parts, and each part satisfies one of the sub-expressions.
+	    An each-of triple expression is matched by a set of triples if that set can be split into two disjoint subsets such that one of the subsets matches the first sub-expression of the each-of expression, and the other subset matches the other sub-expression.
 	  </li>
 	</ul>
 	These however should not be considered as disjunction and conjunction, as we will see later on when the semantics will be formally defined.
       </p>
       <p>
 	Finally, a triple expression can be repeated by specifying a minimal cardinality that is a natural number, and a maximal cardinality that is a natural number of an unbounded value denoted as a star <m>*</m>. 
-	Intuitively, a repeated triple expression <m>TExpr{min;max}</m> is satisfied if the neighbourhood of the focus node can be split into <m>n</m> parts such that <m>min &le; n &le; max</m>  and each of the parts satisfies the inner triple expression <m>TExpr</m>.
+	A repeated triple expression <m>TExpr{min;max}</m> is satisfied by a set of triples if that set can be split into <m>k</m> disjoint subsets such that <m>min &le; k &le; max</m>, and each of these subsets matches the sub-expression <m>TExpr</m>.
       </p>
     
 
@@ -607,23 +616,16 @@ inst:User2
       <section id="triple-expressions-semantics">
       <h4>Semantics</h4>
       <p>
-	A triple expression defines a property on the neighbourhood of a node in a graph.
-      </p>
-
-      <p>
-	A set of triples <m>Neigh</m> is called a neighbourhood set of triples if there exists a <m>node</m> such that all triple in <m>Neigh</m> is either of the form <m>(node, prop, node')</m> or of the form <m>(node, ^prop, node')</m> for some <m>node'</m> in <m>G</m> and some property <m>prop</m> or inverse property <m>^prop</m>.
-	Intuitively, a neighbourhood set of triples is a subset of <m>neigh(G,node)</m> for some <m>node</m> in the graph <m>G</m>.
+	A triple expression is matched by a set of triples and inverse triples.
+	In practice, the set will be obtained as the neighbourhood of some node in an RDF graph, or will be a subset of such neighbourhood.
+	Such set is composed of triples of the form <m>(node, prop, node')</m> or <m>(node, ^prop, node')</m>, where <m>prop</m> is a property and <m>^prop</m> is an inverse property.
       </p>
       
       <p>
-	For a neighbourhood set of triples <m>Neigh</m> from the graph <m>G</m>, a triple expression <m>TExpr</m>, and a <m>typing</m> of <m>G</m> by <m>Sch</m>, we say that <m>Neigh</m> satisfies <m>TEXpr</m> for <m>typing</m>, written <m>typing, Neigh &vdash; TExpr</m>, as defined above recursively on the structure of <m>TExpr</m>, where
+	For a set of triples or inverse triples <m>N</m> from a graph <m>G</m>, a triple expression <m>E</m>, and a <m>typing</m> of <m>G</m> by <m>Sch</m>, we say that <m>N</m> matches <m>E</m> for <m>typing</m>, written <m>typing, Neigh &#x22A7; E</m>, as defined on the figure above recursively on the structure of <m>E</m>, where
 	<ul>
 	  <li>
-	    <m>P</m> is a subset of <m>Prop &cup; InvProp</m> and <m>V</m> is a shape label (in rule te-tripleconstr), and <m>def</m> is a function that associates a value expression with <m>V</m>;
-	  </li>
-	  <li>
-	    <m>&uplus;</m> is the disjoint union of sets (in rules te-eachof and te-repet); 
-	  </li>
+	    in rule te-triple-constr, <m>P L</m> is a triple constraint, with <m>P</m> a subset of <m>Prop &cup; InvProp</m>, and  <m>L</m> a shape label in <m>SLabels</m>;
 	  <li>
 	    <m>min</m> and <m>max</m> are the minimum, respectively maximum cardinality in a <m>RepetedTripleExpr</m> (in rule te-repet);
 	  </li>
@@ -634,24 +636,20 @@ inst:User2
       <p>
 	<img src="images/te-rules.png" style="width: 65%"/>
       </p>
-
-      <p>
-	A <m>typing</m> of <m>G</m> by <m>Sch</m> is called locally valid if for all node-label association <m>(node, T)</m> in <m>typing</m>, it is the case that <m>typing, neigh(node) &vdash; def(T)</m>.
-      </p>
       
       <div class="Example">
 	<p>
-	  Example of satisfying a triple constraint.
+	  Example of matching a triple constraint.
 	</p>
 <pre class="shex" style="float:left">
 # if typing is such that
-typing, :n1  &vdash; &lt;SL_1&gt;
-typing, :n2  &#x22ac; &lt;SL_2&gt;
+(:n1, &lt;SL_1&gt;) belongs to typing
+(:n2, &lt;SL_2&gt;) does not belong to typing
 
 # then 
-typing, {(:n :p :n1)} &vdash; {:p}  &lt;SL_1&gt;
-typing, {(:n :p :n1)} &vdash; {:p, :q}  &lt;SL_1&gt;
-typing, {(:n :p :n2)} &#x22ac; {:p}  &lt;SL_2&gt;
+typing, {(:n :p :n1)} &#x22A7; {:p}  &lt;SL_1&gt;
+typing, {(:n :p :n1)} &#x22A7; {:p, :q}  &lt;SL_1&gt;
+typing, {(:n :p :n2)} &#x22AD; {:p} &lt;SL_2&gt;
 </pre>
 <div style="clear:both;"> </div>
       </div>
@@ -662,15 +660,13 @@ typing, {(:n :p :n2)} &#x22ac; {:p}  &lt;SL_2&gt;
 	  Examples of satisfying an each-of triple expression.
 	</p>
 <pre class="shex" style="float:left">
-# if typing is such that 
-typing, :n1  &vdash;  &lt;SL_1&gt;  
-typing, :n2  &vdash;  &lt;SL_2&gt;
-typing, :n3  &vdash;  &lt;SL_1&gt;  
+# if typing is such that it contains the following node-label associations
+(:n1, &lt;SL_1&gt;), (:n2, &lt;SL_2&gt;), (:n3, &lt;SL_1&gt;)
 
 # then
-typing, {(:n :p :n1), (:n :p :n2)}  &vdash;  {:p} &lt;SL_1&gt; ; {:q} &lt;SL_2&gt;
-typing, {(:n :p :n1), (:n :p :n3)}  &vdash;  {:p} &lt;SL_1&gt; ; {:p} &lt;SL_1&gt;
-typing, {(:n :p :n1)}               &#x22ac;  {:p} &lt;SL_1&gt; ; {:p} &lt;SL_1&gt
+typing, {(:n :p :n1), (:n :p :n2)}  &#x22A7;  {:p} &lt;SL_1&gt; ; {:q} &lt;SL_2&gt;
+typing, {(:n :p :n1), (:n :p :n3)}  &#x22A7;  {:p} &lt;SL_1&gt; ; {:p} &lt;SL_1&gt;
+typing, {(:n :p :n1)}               &#x22AD;  {:p} &lt;SL_1&gt; ; {:p} &lt;SL_1&gt
 </pre>
 <div style="clear:both;"> </div>
       </div>
@@ -681,14 +677,12 @@ typing, {(:n :p :n1)}               &#x22ac;  {:p} &lt;SL_1&gt; ; {:p} &lt;SL_1&
 	  Examples of satisfying a some-of triple expression.
 	</p>
 <pre class="shex" style="float:left">
-# if typing is such that 
-typing, :n1  &vdash;  &lt;SL_1&gt;  
-typing, :n2  &vdash;  &lt;SL_2&gt;
-typing, :n3  &vdash;  &lt;SL_1&gt;  
+# if typing is such that it contains the following node-label associations
+(:n1, &lt;SL_1&gt;), (:n2, &lt;SL_2&gt;), (:n3, &lt;SL_1&gt;)
 
 # then
-typing, {(:n :p :n1)}               &vdash;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
-typing, {(:n :p :n1), (:n :p :n2)}  &#x22ac;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
+typing, {(:n :p :n1)}               &#x22A7;   {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
+typing, {(:n :p :n1), (:n :p :n2)}  &#x22AD;   {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
 </pre>
 <div style="clear:both;"> </div>
       </div>
@@ -699,14 +693,12 @@ typing, {(:n :p :n1), (:n :p :n2)}  &#x22ac;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&
 	  Examples of satisfying a triple expression with some-of and each-of operators.
 	</p>
 <pre class="shex" style="float:left">
-# if typing is such that 
-typing, :n1  &vdash;  &lt;SL_1&gt;  
-typing, :n2  &vdash;  &lt;SL_2&gt;
-typing, :n3  &vdash;  &lt;SL_1&gt;  
+# if typing is such that it contains the following node-label associations
+(:n1, &lt;SL_1&gt;), (:n2, &lt;SL_2&gt;), (:n3, &lt;SL_1&gt;) 
 
 # then
-typing, {(:n :p :n1)}                &vdash;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
-typing, {(:n :p :n1), (:n :p :n2)}   &#x22ac;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
+typing, {(:n :p :n1)}                &#x22A7;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
+typing, {(:n :p :n1), (:n :p :n2)}   &#x22AD;  {:p} &lt;SL_1&gt; | {:q} &lt;SL_2&gt;
 </pre>
 <div style="clear:both;"> </div>
       </div>
@@ -729,13 +721,13 @@ ex:gr2   ex:leader    ex:lp .
 ex:bug   ex:reportedBy  ex:lp .
 </pre>
 <pre class="shex" style="float:left">
-# typing is such that
+# typing is such that it contains the following node-label associations
 
-<span class="hl-all lowlight1">typing, n  &vdash; &lt;SL_all&gt   for all node n in G</span>
-<span class="hl-rdftype lowlight1">typing, foaf:Person         &vdash; &lt;SL_Person&gt;</span>
-<span class="hl-foafname lowlight1">typing, "Louisa Pavlova"    &vdash; &lt;SL_string&gt;</span>
-<div class="hl-foafmbox lowlight1">typing, "louisa@shex.org"   &vdash; &lt;SL_mbox_string&gt;
-typing, "lpavlova@jobs.com" &vdash; &lt;SL_mbox_string&gt;</div><span class="hl-leader lowlight1">typing, ex:gr2              &vdash; &lt;SL_Group&gt;</span>
+<span class="hl-all lowlight1">(n, &lt;SL_all&gt)  for all node n in G</span>
+<span class="hl-rdftype lowlight1">(foaf:Person, &lt;SL_Person&gt;)</span>
+<span class="hl-foafname lowlight1">("Louisa Pavlova", &lt;SL_string&gt;)</span>
+<div class="hl-foafmbox lowlight1">("louisa@shex.org", &lt;SL_mbox_string&gt;)
+("lpavlova@jobs.com", &lt;SL_mbox_string&gt;)</div><span class="hl-leader lowlight1">(ex:gr2, &lt;SL_Group&gt;)</span>
 
 </pre>
 <pre class="shex" style="float:left">
@@ -775,37 +767,42 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
       </div>
       </section>
       </section>
+      
+      <section id="correct-typing">
+      <h3>Correct typing</h3>
+      <p>
+	A <m>typing</m> of <m>G</m> by <m>Sch</m> is called correct if for all node-label association <m>(node, T)</m> in <m>typing</m>, it is the case that <m>typing, neigh(node) &vdash; def(T)</m>.
+      </p>
+      </section>
+
 
       <section id="stratified-negation">
       <h3>Shapes Schemas with Stratified Negation</h3>
       <p>
-	As we can see from the syntax, value expressions refer to shapes (through a <as>TripleExprRef</as>), and triple expressions refer to value expressions (through a <as>ValueExprRef</as> in a triple constraint). 
+	As we can see from the syntax, shape expressions can refer other shape definitions through a <as>ShapeRef</as> within a <as>TripleConstraint</as>.
 	In order to avoid undesirable interaction between recursion and the negation in value expressions, we consider shapes schemas with stratified negation only, as defined in the sequel.
       </p>
       
       <p>
-	We start by some definitions that will allow us to define the stratification.
+	We start by defining the dependency graph for a shapes schema, based on which we will define the stratification.
       </p>
 
       <p>
-	If <m>VExpr</m> is a value expression, and <m>S</m> is a triple expression label, we say that <m>S</m> appears negated in <m>VExpr</m> if <m>S</m> appears in <m>VExpr</m> under an odd number of negations, that is, under an odd number of occurrences of the <m>NOT</m> operator.
-	We then define two dependency relations over the triple expression labels in a shapes schema, namely positive dependency <m>dep+</m>, and negative dependency <m>dep-</m>.
-	Formally, for a shapes schema <m>Sch = (SLabels, TELabels, def)</m>, and two triple expression labels <m>S</m> and <m>T</m> in <m>TELabels</m>, we define:
+	For a schema <m>Sch = (SLabels, def)</m>, its dependency graph is a graph which set of nodes is <m>SLabels</m> and that has an edge from the shape label <m>L<sub>1</sub></m> to the shape label <m>L<sub>2</sub></m> if and only if <m>L<sub>2</sub></m> appears in the shape expression <m>def(L<sub>1</sub>)</m>.
+	There are two kinds of edges in the graph:
 	<ul>
 	  <li>
-	    <m>dep+(S,T)</m> if there exists a shape label <m>V</m> such that <m>V</m> appears in <m>def(S)</m>, and <m>T</m> appears in <m>def(V)</m>, but <m>T</m> does not appear negated in <m>def(V)</m>. 
-	    Recall that <m>def(S)</m> is a triple expression that defines the triple expression label <m>S</m>, and <m>def(V)</m> is a value expression that defines the shape label <m>V</m>.
+	    a negative dependency edge <m>dep-(L<sub>1</sub>,L<sub>2</sub>)</m> if <m>L<sub>2</sub></m> appears in <m>def(L<sub>1</sub>)</m> under an odd number of occurrences of the <m>NOT</m> operator;
 	  </li>
 	  <li>
-	    <m>dep-(S,T)</m> if there exists a shape label <m>V</m> such that <m>V</m> appears in <m>def(S)</m>, and <m>T</m> appears negated in <m>def(V)</m>.
+	    a positive dependency edge <m>dep+(L<sub>1</sub>,L<sub>2</sub>)</m> if <m>L<sub>2</sub></m> appears in <m>def(L<sub>1</sub>)</m> under an even number of occurrences of the <m>NOT</m> operator.
 	  </li>
 	</ul>	
       </p>
       <p>
-	Then the dependency relations <m>dep+</m> and <m>dep-</m> define a dependency graph between triple expression labels of the shapes schema <m>Sch</m>.
-	We say that the shapes schema <m>Sch</m> is with stratified negation if its dependency graph does not contain a cycle that contains a <m>dep-</m> edge.
+	We say that the shapes schema <m>Sch</m> is with stratified negation if its dependency graph does not contain a cycle that goes through a <m>dep-</m> edge.
       </p>
-      
+
       <div class="Example">
 	<p>
 	  The following is an example of a shapes schema and its dependency graph.
@@ -813,49 +810,46 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
 <pre class="shex" style="float:left">
 # a shapes schema
 
-&lt;SL_all&gt;:= IRI &cup; Literal &cup; {blank}
-&lt;SL_1&gt;  := &lt;TE_1&gt;
-&lt;SL_2&gt;  := &lt;TE_2&gt;
-&lt;SL_2'&gt; := NOT &lt;TE_2&gt;
-&lt;SL_3&gt;  := &lt;TE_3&gt;
-&lt;SL_4&gt;  := &lt;TE_4&gt;
-&lt;SL_5&gt;  := &lt;TE_5&gt;
-&lt;SL_5'&gt; := NOT &lt;TE_5&gt;
-
-&lt;TE_1&gt; := {:a} &lt;SL_2'&gt; ; {:b} &lt;SL_3&gt;    ; InvProp &lt;SL_all&gt;
-&lt;TE_2&gt; := {:c} &lt;SL_5&gt;                   ; InvProp &lt;SL_all&gt;
-&lt;TE_3&gt; := {:d} &lt;TE_1&gt; ; {:e} &lt;TE_4&gt;     ; InvProp &lt;SL_all&gt;
-&lt;TE_4&gt; := ({:c} &lt;SL_2&gt; | {:a} &lt;SL_5'&gt;)  ; InvProp &lt;SL_all&gt;
-&lt;TE_5&gt; := {:c} &lt;SL_ALL&gt;                 ; InvProp &lt;SL_all&gt;
+&lt;SL_all&gt;:= IRI &cup; RDFLiteral &cup; {blank}
+&lt;SL_1&gt; := NOT ({:c} &lt;SL_5&gt;)
+&lt;SL_2&gt; := {:a} &lt;SL_4&gt; ; {:c} &lt;SL_5&gt; 
+&lt;SL_3&gt; := NOT ({:c} &lt;SL_all&gt;) AND {:a} &lt;SL_2&gt;
+&lt;SL_4&gt; := {:a} &lt;SL_3&gt;
+&lt;SL_5&gt; := {:c} &lt;SL_all&gt;
 </pre>
 <pre class="shex" style="float:left">
 # the edges of the dependency graph
 # ---&gt is a negative dependency edge
 # -+-&gt is a positive dependency edge
 
-&lt;TE_1&gt; -+-&gt; &lt;TE_3&gt;
-&lt;TE_3&gt; -+-&gt; &lt;TE_1&gt;
+&lt;SL_1&gt; ---&gt; &lt;SL_5&gt;
 
-&lt;TE_3&gt; -+-&gt; &lt;TE_4&gt;
+&lt;SL_2&gt; -+-&gt; &lt;SL_4&gt;
+&lt;SL_2&gt; -+-&gt; &lt;SL_5&gt;
 
-&lt;TE_1&gt; ---&gt; &lt;TE_2&gt;
+&lt;SL_3&gt; ---&gt; &lt;SL_all&gt;
+&lt;SL_3&gt; -+-&gt; &lt;SL_2&gt;
 
-&lt;TE_2&gt; -+-&gt; &lt;TE_5&gt;
-&lt;TE_4&gt; -+-&gt; &lt;TE_2&gt;
+&lt;SL_4&gt; -+-&gt; &lt;SL_3&gt;
 
-&lt;TE_4&gt; ---&gt; &lt;TE_5&gt;
+&lt;SL_5&gt; -+-&gt; &lt;SL_all&gt;
 </pre>
 <div style="clear:both;"> </div>
       </div>
 
       <p>
-	It is well known that in case of stratified negation, one can define what is called a stratification. 
-	If the schema <m>Sch = (SLabels, TELabels, def)</m> is with stratified negation, then there exists a natural number <m>k</m> and a partitioning function <m>strat: TELabels &#8594; 1..k</m> that with every triple expression label from <m>TELabels</m> associates a natural number between <m>1</m> and <m>k</m>, called the stratum of that label. 
-	Moreover, the partitioning function <m>strat</m> satisfies the following property: for all triple expression labels <m>S,T</m> in <m>TELabels</m>, if <m>dep-(S,T)</m>, then <m>strat(S) &gt; strat(T)</m>, and if <m>dep+(S,T)</m>, then <m>strat(S) &ge; strat(T)</m>. 
-	Such a partitioning function is called a stratification.
+	If a schema is with stratified negation, then there exists a partition of the shape labels of the schema such that there does not exist a negative dependency edge between the shape labels of the same part of the partition.
+	Moreover, the parts of the partition can be ranked in a way that all negative dependency edges always go from a partition with a higher rank to a partition with a lower rank.
+	Such partitioning is called a stratification.
       </p>
       <p>
-	A stratification guarantees the following property: a triple expression label can depend negatively only on triple expression labels that are in strictly lower stratums, and a triple expression label can depend positively only on triple expression labels that are on lower or on the same stratum.
+	More formally, if <m>Sch = (SLabels, def)</m> is a shapes schema with stratified negation, then there exists a natural number <m>k</m> and a partitioning function <m>strat: SLLabels &#8594; 1..k</m> that with every shape label from <m>SLabels</m> associates a natural number between <m>1</m> and <m>k</m>, called the stratum of that label. 
+	Moreover, the partitioning function <m>strat</m> satisfies the following property: for all shape labels <m>L,L'</m> in <m>SLabels</m>, if <m>dep-(L,L')</m>, then <m>strat(L) &gt; strat(L')</m>, and if <m>dep+(L,L')</m>, then <m>strat(L) &ge; strat(L')</m>. 
+	The partitioning function <m>strat</m> is called a stratification of <m>Sch</m>.
+      </p>
+      <p>
+	A stratification guarantees the following property: the definition of a shape label can depend negatively only on shape labels that are in strictly lower stratums, and can depend positively only on shape labels that are on the same stratum or on a lower stratum.
+	In particular, every circular dependency (the definition of a shape label depends on itself) enforces that all the intermediate shape labels are on the same stratum.
       </p>
 
       <div class="Example">
@@ -863,75 +857,73 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
 	  A stratification for the schema on the previous example is:
 	</p>
 <pre class="shex" style="float:left">
-strat(&lt;TE_5&gt;) = 1
-strat(&lt;TE_2&gt;) = 2
-strat(&lt;TE_4&gt;) = 3
-strat(&lt;TE_1&gt;) = 4
-strat(&lt;TE_3&gt;) = 4
+strat(&lt;SL_2&gt;) = 3
+strat(&lt;SL_3&gt;) = 3
+strat(&lt;SL_4&gt;) = 3
+
+strat(&lt;SL_1&gt;) = 2
+
+strat(&lt;SL_5&gt;) = 1
+strat(&lt;SL_all&gt;) = 1
 </pre>
 <div style="clear:both;"> </div>
 	<p>
-	  That is, there are four stratums.
-	  <span class="pre">&lt;TE_5&gt;</span> is on the lowest stratum 1.
-	  The highest stratum 4 contains two triple expression labels, which are <span class="pre">&lt;TE_1&gt;</span> and <span class="pre">&lt;TE_3&gt;</span>.
+	  The shape labels  <span class="pre">&lt;SL_2&gt;, &lt;SL_3&gt;, &lt;SL_4&gt;</span> are on the same stratum.
+	  One can see that there is a circular dependency between these three shape labels.
+	  The two negative dependencies in that schema go from <span class="pre">&lt;SL_1&gt;</span> to <span class="pre">&lt;SL_5&gt;</span> (from stratum 2 to stratum 1), and from <span class="pre">&lt;SL_3&gt;</span> to <span class="pre">&lt;SL_all&gt;</span> (from stratum 3 to stratum 1).
 	</p>
 	<p>
-	  In general, there can be different stratifications for the same schema.
-	  For instance, we can have only two stratums, the lowest containing  <span class="pre">&lt;TE_2&gt;</span> and <span class="pre">&lt;TE_5&gt;</span>, and the highest containing the other three triple expression labels.
-	  The semantics defined above is equivalent for all possible stratifications.
+	  Another possible stratification for that schema is to have only two stratums, and <span class="pre">&lt;SL_1&gt;</span> on the same stratum as <span class="pre">&lt;SL_2&gt;, &lt;SL_3&gt;, &lt;SL_4&gt;</span>.
 	</p>
       </div>
 
       <p>
-	Shapes schemas with stratified negation are guaranteed to have well founded semantics as it will be defined in the sequel.
-	It is not necessarily the case for shapes schemas that might contain cycles of negative dependencies.
-	Therefore, a shapes schema is allowed only if it has stratified negation, and we consider only shapes schemas with stratified negation in the sequel.
 	Remark that it is easy to check whether a schema is with stratified negation: it is enough to construct the dependency graph, and check that it does not contain any cycle that goes through a negative dependency.
       </p>
-      </section>
 
       <section id="maximal-typing">
       <h3>Maximal Typing</h3>
       <p>
-	Stratified schemas allow for the definition of a unique typing, which is the one used to determine whether a node in a graph satisfies the constraint defined by a value expression.
-	This typing is called the maximal typing, as intuitively it forces to add in the typing every provable node-label association.
+	A schema with stratified negation admits a unique typing defined here after.
+	This typing is used for defining the semantics of shapes schemas: we say that a node in an RDF graph satisfies the constraint of a shape label if and only if the corresponding node-label association belongs to this particular typing.
+	This typing is maximal as it forces to add in the typing every provable node-label association.
       </p>
 
       <p>
-	The maximal typing is defined using a stratification. 
-	Let <m>Sch = (SLabels, TELabels, def)</m> be a schema, <m>strat: TELabels &#8594; 1..k</m> be a stratification for <m>Sch</m>, and <m>G</m> be a graph.
+	Let <m>Sch = (SLabels, def)</m> be a schema with stratified negation and let <m>strat: TELabels &#8594; 1..k</m> be a stratification for <m>Sch</m>.
+	Consider a graph <m>G</m>.
 	We define a sequence <m>Sch<sub>1</sub>, ...., Sch<sub>k</sub></m> of sub-schemas of <m>Sch</m> following the stratification <m>strat</m>, as follows. 
-	For all <m>i</m> in <m>1..k</m>, <m>Sch<sub>i</sub> = (SLabels<sub>i</sub>, TELabels<sub>i</sub>, def<sub>i</sub>)</m> where <m>TELabels<sub>i</sub></m> is the subset of <m>TELabels</m> composed of the triple expression labels on the stratums <m>1..i</m>, and <m>SLabels<sub>i</sub></m> and <m>def<sub>i</sub></m> are restricted on these labels only.
-	Formally, 
+	For all <m>i</m> in <m>1..k</m>, <m>Sch<sub>i</sub> = (SLabels<sub>i</sub>, def<sub>i</sub>)</m> where <m>SLabels<sub>i</sub></m> is the subset of <m>SLabels</m> composed of the shape labels on the stratums <m>1..i</m>.
+	More formally, 
 	<ul>
 	  <li>
-	    <m>TELabels<sub>i</sub> = strat<sup>-1</sup>(1) &cup; ... &cup; strat<sup>-1</sup>(i)</m>,
+	    <m>SLabels<sub>i</sub> = strat<sup>-1</sup>(1) &cup; ... &cup; strat<sup>-1</sup>(i)</m>,
 	  </li>
 	  <li>
-	    <m>SLabels<sub>i</sub></m> are the shape labels that appear in <m>def(S)</m> for some <m>S</m> in <m>TELabels<sub>i</sub></m>, and
-	  </li>
-	  <li>
-	    <m>def<sub>1</sub></m> is <m>def</m> restricted on <m>TELabels<sub>i</sub></m> and <m>SLabels<sub>i</sub></m> only.
+	    <m>def<sub>i</sub></m> is <m>def</m> restricted on <m>SLabels<sub>i</sub></m>.
 	  </li>
 	</ul>
+	where <m>strat<sup>-1</sup></m> is the inverse of the stratification function, thus <m>strat<sup>-1</sup>(i)</m> is the set of all shape labels which stratum is <m>i</m>.
+      </p>
+      <p>
 	It follows from this definition that <m>Sch<sub>k</sub></m> is equal to <m>Sch</m>.
       </p>
-      
+
       <p>
-	Then we define a sequence of typings <m>typing<sub>1</sub>, ..., typing<sub>k</sub></m> such that for all <m>i</m> in <m>1..k</m>, <m>typing<sub>1</sub></m> is the maximum typing for <m>Sch<sub>i</sub></m>.
+	Then we define a sequence of typings <m>typing<sub>1</sub>, ..., typing<sub>k</sub></m> such that for all <m>i</m> in <m>1..k</m>, <m>typing<sub>1</sub></m> is the maximal typing for <m>Sch<sub>i</sub></m>.
 	Formally, 
 	<ul>
 	  <li>
-	    <m>typing<sub>1</sub></m> is the union of all locally valid <m>typing</m>s of <m>G</m> by <m>Sch<sub>1</sub></m>;
+	    <m>typing<sub>1</sub></m> is the union of all correct <m>typing</m>s of <m>G</m> by <m>Sch<sub>1</sub></m>;
 	  </li>
 	  <li>
-	    for <m>i</m> in <m>2..k</m>, <m>typing<sub>i</sub></m> is the union of all locally valid typings of <m>G</m> by <m>Sch<sub>i</sub></m> that coincide with <m>typing<sub>i-1</sub></m> on the <m>TELabels<sub>i-1</sub></m>.
+	    for <m>i</m> in <m>2..k</m>, <m>typing<sub>i</sub></m> is the union of all correct typings of <m>G</m> by <m>Sch<sub>i</sub></m> that coincide with <m>typing<sub>i-1</sub></m> on the <m>SLabels<sub>i-1</sub></m>.
 	  </li>
 	</ul>
       </p>
       
       <p>
-	Note that because <m>Sch</m> is stratified and because of the way the sub-schemas <m>Sch<sub>i</sub></m> were defined, it is the case that all the typings <m>typing<sub>i</sub></m> are locally valid.
+	Note that because <m>Sch</m> is stratified and because of the way the sub-schemas <m>Sch<sub>i</sub></m> were defined, it is the case that all the typings <m>typing<sub>i</sub></m> are correct.
       </p>
 
       <p>
@@ -946,6 +938,8 @@ strat(&lt;TE_3&gt;) = 4
       </section>
     </section>
     
+      <hr/>
+
     <section id="compilation-shex-shapes">
       <h2>Compilation of a ShEx Schema into a Shapes Schema</h2>
       <section id="compilation-shex-shapes-examples">
@@ -957,60 +951,59 @@ strat(&lt;TE_3&gt;) = 4
 	  <div class="Example">
 	    <div class="with-highlight">
 	      <p>
-		Every <span class="hl-ve1 hl-ve2 hl-ve3 hl-ve4 hl-ve4bis lowlight1">value expression</span> that appears in a triple constraint of the ShEx schema yields a <span class="hl-ve1  hl-ve2 hl-ve3 hl-ve4 hl-ve4bis">fresh shape label having the same definition</span> in the shapes schema.
+		Every <span class="hl-issueshape hl-usershape lowlight2">shape label</span> from the ShEx schema is used as <span class="hl-issueshape lowlight2">shape label</span> in the shapes schema, which definition is the compilation of the definition from the ShEx schema.
 	      </p>
 	      <p>
-		Every <span class="hl-issueshape lowlight2">shape label</span> from the ShEx schema also yields a <span class="hl-issueshape lowlight2">value expression</span> in the shapes schema, which definition is a <span class="hl-issueshape lowlight2">reference to a triple expression</span>.
+		Every <span class="hl-ve1 hl-ve3 lowlight1">shape expression</span> that appears in a triple constraint of the ShEx schema yields a <span class="hl-ve1  hl-ve2 hl-ve3 hl-ve4 hl-ve4bis">fresh shape label having the same definition</span> in the shapes schema.
+		This does not apply to shape expressions that are references.
 	      </p>
 	      <p>
-		A CLOSED and ^CLOSED <span class="hl-te lowlight3">triple expression</span> in the ShEx schema translates almost directly to a <span class="hl-te lowlight3">triple expression</span> in the shapes schema, exept that predicates are replaced with singleton sets, and <span class="hl-ve1 hl-ve2 hl-ve3 hl-ve4 hl-ve4bis lowlight1">value expressions</span> are replaced with <span class="hl-ve1 hl-ve2 hl-ve3 hl-ve4 hl-ve4bis lowlight1">shape labels</span> referencig to the definition of that value expression.
+		The translation of a CLOSED <span class="hl-te lowlight3">triple expression</span> in the ShEx schema translates almost directly to a <span class="hl-te lowlight3">triple expression</span> in the shapes schema, exept that predicates are replaced with singleton sets, and <span class="hl-ve1 hl-ve3 lowlight1">value expressions</span> are replaced with the corresponding freshly introduced <span class="hl-ve1 hl-ve3 lowlight1">shape labels</span> 
 	      </p>
 
 <pre class="shex" style="float:left">
 # ShEx schema
 
-
-
-
-
-
-
 <span class="hl-issueshape lowlight2">&lt;IssueShape&gt;</span>
 <div class="hl-te lowlight3">
-CLOSED ^CLOSED {                 
+CLOSED {                 
     ex:state      <span class="hl-ve1 lowlight1">[ex:unassigned ex:assigned]</span> ; 
-    ex:reportedBy <span class="hl-ve2 lowlight1">@&lt;UserShape&gt;</span> ;   
+    ex:reportedBy @&lt;UserShape&gt; ;   
     ex:reportedOn <span class="hl-ve3 lowlight1">xsd:dateTime OR xsd:date</span> ;
-    ex:related    <span class="hl-ve4 lowlight1">@&lt;IssueShape&gt;</span>* ;
-    ^ex:related   <span class="hl-ve4bis lowlight1">@&lt;IssueShape&gt;</span>*
+    ex:related    @&lt;IssueShape&gt;* ;
+    ^ex:related   @&lt;IssueShape&gt;*
 }</div>
+<span class="hl-usershape lowlight2">&lt;UserShape&gt;</span> {
+    PATTERN "http://example.org/User#.*"
+}
 </pre>
 <pre class="shex" style="float:left">
 # shapes schema
 
-<span class="hl-ve1 lowlight1">&lt;SL_1&gt;  := {ex:unassigned, ex:assigned}</span>
-<span class="hl-ve2 lowlight1">&lt;SL_2&gt;  := @&lt;UserShape&gt;</span>
-<span class="hl-ve3 lowlight1">&lt;SL_3&gt;  := xsd:dateTime OR xsd:date</span>
-<span class="hl-ve4 hl-ve4bis lowlight1">&lt;SL_4&gt;  := @&lt;IssueShape&gt;</span>
-
-<span class="hl-issueshape lowlight2">&lt;IssueShape&gt;    := &lt;TE_Issue&gt; </span>
-
-<span class="hl-issueshape lowlight2">&lt;TE_Issue&gt; </span>:= 
+<span class="hl-issueshape lowlight2">&lt;IssueShape&gt; </span>:= 
 <div class="hl-te lowlight3">{
     {ex:state}      <span class="hl-ve1 lowlight1">&lt;SL_1&gt;</span> ;
-    {ex:reportedBy} <span class="hl-ve2 lowlight1">&lt;SL_2&gt;</span> ;
+    {ex:reportedBy} &lt;UserShape&gt;
     {ex:reportedOn} <span class="hl-ve3 lowlight1">&lt;SL_3&gt;</span> ;
-    {ex:related}    <span class="hl-ve4 lowlight1">&lt;SL_4&gt;*</span>  ;
-    {^ex:related}   <span class="hl-ve4bis lowlight1">&lt;SL_4&gt;*</span>
+    {ex:related}    &lt;IssueShape&gt;*  ;
+    {^ex:related}   &lt;IssueShape&gt;*
 }
 </div>
+
+<span class="hl-usershape lowlight2">&lt;UserShape&gt;</span> {
+    Set(PATTERN "http://example.org/User#.*")
+}
+
+
+<span class="hl-ve1 lowlight1">&lt;SL_1&gt;  := {ex:unassigned, ex:assigned}</span>
+<span class="hl-ve3 lowlight1">&lt;SL_3&gt;  := xsd:dateTime OR xsd:date</span>
 </pre>
 
 	    </div>
 	    <script type="text/javascript">
 	      <!--
-		  prepareHighlight(["hl-ve1", "hl-ve2", "hl-ve3", "hl-ve4", "hl-ve4bis"], "highlight1", "lowlight1");
-		  prepareHighlight(["hl-issueshape"], "highlight2", "lowlight2");
+		  prepareHighlight(["hl-ve1", "hl-ve3" ], "highlight1", "lowlight1");
+		  prepareHighlight(["hl-issueshape", "hl-usershape"], "highlight2", "lowlight2");
 		  prepareHighlight(["hl-te"], "highlight3", "lowlight3");
 		-->
 	    </script>
@@ -1027,7 +1020,7 @@ CLOSED ^CLOSED {
 	      As in the previous example, the value expressions of the ShEx schema yield shape labels with the same definition. Here, the resulting fresh shape labels are <span class="pre">&lt;SL_5&gt;, &lt;SL_6&gt;, &lt;SL_7&gt;, &lt;SL_8&gt;</span>.
 	    </p>
 	    <p>
-	      The <span class="hl-shapexpr lowlight3">shape expression</span> from the ShEx schema is translated into a <span class="hl-shapexpr lowlight3">triple expression</span> in the shapes schema.
+	      The <span class="hl-shapexpr lowlight3">triple expression</span> from the ShEx schema is translated into a <span class="hl-shapexpr lowlight3">triple expression</span> in the shapes schema.
 	      <span class="hl-samete lowlight1">One part of that triple expression</span> is a direct translation of <span class="hl-samete lowlight1">the triple expression from the ShEx schema</span>.
 	    </p>
 	    <p>
@@ -1048,7 +1041,7 @@ CLOSED ^CLOSED {
 
 
 &lt;UserShape&gt;
-<div class="hl-shapexpr lowlight3">CLOSED ^CLOSED
+<div class="hl-shapexpr lowlight3">CLOSED 
 <span class="hl-extra">EXTRA rdf:type foaf:mbox</span> {
 <div class="hl-samete lowlight4">
     rdf:type <span class="hl-extra-ve1 lowlight2">[foaf:Person]</span> ;
@@ -1074,14 +1067,11 @@ CLOSED ^CLOSED {
 &lt;SL_7&gt; := xsd:string
 &lt;SL_8&gt; := IRI
 
-&lt;SL_User_Extra_1&gt; := <span class="hl-extra-ve1 lowlight2">NOT{foaf:Person} AND NOT{ex:User}</span>
-&lt;SL_User_Extra_2&gt; := <span class="hl-extra-ve2 lowlight2">NOT IRI</span>
+&lt;SL_UserShape_Extra_rdftype&gt; := <span class="hl-extra-ve1 lowlight2">NOT{foaf:Person} AND NOT{ex:User}</span>
+&lt;SL_UserShape_Extra_foafmxbox&gt; := <span class="hl-extra-ve2 lowlight2">NOT IRI</span>
 
 
-
-&lt;UserShape&gt; := &lt;TE_User&gt; 
-
-&lt;TE_User&gt; := 
+&lt;UserShape&gt; := 
 <div class="hl-shapexpr lowlight3">{
 <div class="hl-samete lowlight4">    {rdf:type}  &lt;SL_5&gt; ;
     {rdf:type}  &lt;SL_6&gt; ;
@@ -1093,8 +1083,8 @@ CLOSED ^CLOSED {
     );
     {foaf:mbox} &lt;SL_8&gt; ;
 </div>
-<div class="hl-extra lowlight1">    {rdf:type}  <span class="hl-extra-ve1 lowlight2">&lt;SL_User_Extra_1&gt;</span> * ;
-    {foaf:mbox} <span class="hl-extra-ve2 lowlight2">&lt;SL_User_Extra_2&gt;</span> * ;
+<div class="hl-extra lowlight1">    {rdf:type}  <span class="hl-extra-ve1 lowlight2">&lt;SL_UserShape_Extra_rdftype&gt;</span> * ;
+    {foaf:mbox} <span class="hl-extra-ve2 lowlight2">&lt;SL_UserShape_Extra_foafmbox&gt;</span> * ;
 </div>
 }
 </div>
@@ -1146,9 +1136,7 @@ CLOSED ^CLOSED {
 
 <span class="hl-ve lowlight1">&lt;SL_all_values&gt;  := IRI &cup; RDFLiteral &cup; {blank}</span>
 
-&lt;SomeShape&gt; := &lt;TE_SomeShape&gt; 
-
-&lt;TE_SomeShape&gt; := 
+&lt;SomeShape&gt; := 
 <div class="hl-shapexpr lowlight3">{
     {ex:p}  &lt;SL_9&gt;* ;
     ( {ex:q}  &lt;SL_9&gt; | {ex:r} &lt;SL_10&gt; )? ;
@@ -1179,8 +1167,8 @@ CLOSED ^CLOSED {
 	<div class="Example">
 	  <div class="with-highlight">
 	    <p>
-	      The shape label <span class="pre">&lt;EmployeeShape&gt;</span> is defined as a list of <span class="hl-nc lowlight2">node constrints</span> and <span class="hl-te1 hl-te2 lowlight3">triple expressions</span>.
-	      In the shapes schema, this yields a <span class="hl-conj lowlight4">conjunctive value expression</span> with one conjunct per element of the list.
+	      The shape label <span class="pre">&lt;EmployeeShape&gt;</span> is defined as a conjunction of <span class="hl-nc lowlight2">node constrints</span> and <span class="hl-te1 hl-te2 lowlight3">triple expressions</span>.
+	      In the shapes schema, this yields a <span class="hl-conj lowlight4">ShapeAnd shape expression</span> with one conjunct per conjunct in the ShEx schema.
 	    </p>
 	    
 <pre class="shex" style="float:left">
@@ -1189,14 +1177,14 @@ CLOSED ^CLOSED {
 &lt;EmployeeShape&gt;
 <span class="hl-nc lowlight2">PATTERN "^http:/example.org/.*"</span>
 
-<div class="hl-te1 lowlight3">CLOSED ^CLOSED {        
+<div class="hl-te1 lowlight3">CLOSED {        
     foaf:phone IRI*;          
     foaf:mbox IRI             
 }
 </div>
 AND 
 
-<div class="hl-te2 lowlight3">CLOSED ^CLOSED {
+<div class="hl-te2 lowlight3">CLOSED {
     ( foaf:phone PATTERN "^tel:\\+33" ; 
       foaf:mbox  PATTERN "\\.fr$" )?   ;
     ( foaf:phone PATTERN "^tel:\\+44" ; 
@@ -1208,26 +1196,27 @@ AND
 <pre class="shex" style="float:left">
 # shapes schema
 
-<span class="hl-nc lowlight2">&lt;NC_1&gt;  := PATTERN "^http:/example.org/.*"</span>
-
-&lt;SL_11&gt; := PATTERN "^tel:\\+33"
-&lt;SL_12&gt; := PATTERN "\\.fr$"
-&lt;SL_13&gt; := PATTERN "^tel:\\+44"
-&lt;SL_14&gt; := PATTERN "\\.uk$"
+&lt;SL_11&gt; := Set(PATTERN "^tel:\\+33")
+&lt;SL_12&gt; := Set(PATTERN "\\.fr$")
+&lt;SL_13&gt; := Set(PATTERN "^tel:\\+44")
+&lt;SL_14&gt; := Set(PATTERN "\\.uk$")
 &lt;SL_15&gt; := IRI
 
-&lt;EmployeeShape&gt; := <span class="hl-conj lowlight4"><span class="hl-nc lowlight2">&lt;NC_1&gt;</span> AND <span class="hl-te1 lowlight3">&lt;TE_Employee_1&gt;</span> AND <span class="hl-te2 lowlight3">&lt;TE_Employee_2&gt;</span></span>
+&lt;EmployeeShape&gt; := {<div class="hl-conj lowlight4">
+    <span class="hl-nc lowlight2">Set(PATTERN "^http:/example.org/.*")</span>
 
-<div class="hl-te1 lowlight3">&lt;TE_Employee_1&gt; := {
+    AND 
+<div class="hl-te1 lowlight3">
     {foaf:phone} &lt;SL_15&gt;* ;
     {foaf:mbox}  &lt;SL_15&gt;
-}
 </div>
-<div class="hl-te2 lowlight3">&lt;TE_Employee_2&gt; := {
+    AND 
+<div class="hl-te2 lowlight3">
     ( {foaf:phone} &lt;SL_11&gt; ;
       {foaf:mbox}  &lt;SL_12&gt; )? ;
     ( {foaf:phone} &lt;SL_13&gt; ;
       {foaf:mbox}  &lt;SL_14&gt; )?
+</div>
 }
 </div>
 </pre>
@@ -1259,7 +1248,7 @@ AND
 # ShEx schema
 
 &lt;SomeShape&gt; 
-CLOSED ^CLOSED {
+CLOSED {
     ex:p xsd:int* ;
     (<span class="hl-negte lowlight4"> ! <span class="hl-prop lowlight2">ex:q</span> xsd:int </span> 
       | ex:r IRI )? 
@@ -1272,9 +1261,7 @@ CLOSED ^CLOSED {
 &lt;SL_10&gt; := IRI
 &lt;SL_Extra&gt; := NOT xsd:int
 
-&lt;SomeShape&gt; := &lt;TE_SomeShape&gt; 
-
-&lt;TE_SomeShape&gt; := { 
+&lt;SomeShape&gt; := { 
     {ex:p}  &lt;SL_9&gt;* ;
     (<span class="hl-negte lowlight4"> {ex:q}  &lt;SL_9&gt;<span class="hl-zerocard lowlight3">{0;0}</span> </span>
       | {ex:r} &lt;SL_10&gt; )? ;
@@ -1333,7 +1320,7 @@ CLOSED ^CLOSED {
 
 
     <section id="shex-abstrsynt">
-      <h2>Appendix: Abstract Syntax of ShEx Schemas</h2>
+      <h2>Appendix: Abstract Syntax of ShEx Schemas [OBSOLETE]</h2>
 
       <p>
 	The abstract syntax of ShEx schemas is given by the following rules.
