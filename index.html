@@ -152,7 +152,7 @@
       border: thin dotted #888888;
       }
       
-      .Abstrsynt{
+      .abstrsynt{
       margin-left: 0;
       margin-right: 2ex;
       margin-top: 0.1ex;
@@ -167,7 +167,7 @@
       .math{
       font-style: normal;
       font-family: sans-serif;
-      color: #006666;
+      color: #003333;
       }
 
       .as{
@@ -175,7 +175,25 @@
       font-family: sans-serif;
       color: #000066
       }
-      
+
+      pre.schema.hljs.css { color: #070; border: thin solid #0f0; }
+        pre.data.hljs.css { color: #007; border: thin solid #00f; }
+      th.schema { color: #070; }
+        th.data { color: #007; }
+/*      pre.schema:before { content: schema }
+        pre.data:before { content: data   }
+*/
+      table td { vertical-align: top; }
+      table th { text-align: center; }
+      table { border-collapse: collapse; }
+      td, th { border-style: solid; }
+      .pass { background-color: #cfc; }
+      .fail { background-color: #fcc; }
+      span.fail { background-color: #fcc; }
+
+      .param { color: #3500c8; }
+      .var { color: #056800; }
+      .rdf { border-left: thick solid #77f; padding-left: .5em; }
     </style>
     
     <script src="jquery.min.js" type= "text/javascript"></script>
@@ -347,10 +365,11 @@ inst:User2
       <p>
 	The structure of a shapes schema is captured by the following abstract syntax.
       </p>
-      <div class="Abstrsynt">
-	<as>ShapesSchema ::= (ShapeLabel ShapeExpression)+</as><br/>
+      <div class="abstrsynt">
+	<as><a href="dfn-ShapesSchema">ShapesSchema</a> ::= Map[<a href="#dfn-ShapeLabel">ShapeLabel</a>-><a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
+	<as><a id="dfn-ShapeLabel">ShapeLabel</a> ::= IRI|BNode</as><br/>
 <!-- 	<as>ValueConstraintDefinition ::= ValueConstraintLabel ValueExpression</as><br/> -->
-<!-- 	<as>ShapeDefinition ::= ShapeLabel TripleExpression -->
+<!-- 	<as>ShapeDefinition ::= <a href="#dfn-ShapeLabel">ShapeLabel</a> TripleExpression -->
 <!-- </m><br/> -->
       </div>
       </section>
@@ -392,29 +411,29 @@ inst:User2
       <section id="shape-expressions-abstract-syntax">
       <h4>Abstract Syntax</h4>
 
-      <div class="Abstrsynt">
-	<as>ShapeExpression ::= AtomicShape</as><br/>
-	<as>| ShapeAnd</as><br/>
-	<as>| ShapeOr</as><br/>
-	<as>| ShapeNot</as><br/>
-	<as>AtomicShape ::= NodeConstraint | NeighbourhoodConstraint</as><br/>
-	<as>NodeConstraint ::=</as> a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as><br/>
-	<as>NeighbourhoodConstraint ::= TripleExpression</as><br/>
-	<as>ShapeAnd ::= ShapeExpression 'AND' ShapeExpression</as><br/>
-	<as>ShapeOr ::= ShapeExpression 'OR' ShapeExpression</as><br/>
-	<as>ShapeNot ::= 'NOT' ShapeExpression</as><br/>
+      <div class="abstrsynt">
+	<as><a id="dfn-ShapeExpression">ShapeExpression</a> ::= <a href="#dfn-AtomicShape">AtomicShape</a></as>
+	<as>| <a href="#dfn-ShapeAnd">ShapeAnd</a></as>
+	<as>| <a href="#dfn-ShapeOr">ShapeOr</a></as>
+	<as>| <a href="#dfn-ShapeNot">ShapeNot</a></as><br/>
+	<as><a id="dfn-AtomicShape">AtomicShape</a> ::= <a href="#dfn-NodeConstraint">NodeConstraint</a> | <a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></as><br/>
+	<as><a id="dfn-NodeConstraint">NodeConstraint</a> ::=</as> a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as><br/>
+	<as><a id="dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
+	<as><a id="dfn-ShapeAnd">ShapeAnd</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'AND' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
+	<as><a id="dfn-ShapeOr">ShapeOr</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'OR' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
+	<as><a id="dfn-ShapeNot">ShapeNot</a> ::= 'NOT' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
       </div>
       <p>
 	A shape expression is a Boolean combination of two kinds of atomic components:
 	<ul>
 	  <li>
-	    a node constraint (<m>NodeConstraint</m>) that defines the set of allowed values of a node. 
+	    a node constraint (<m><a href="#dfn-NodeConstraint">NodeConstraint</a></m>) that defines the set of allowed values of a node.
 	    In shapes schemas, a node constraint can be an arbitrary set that contains IRIs or RDFLiteral, or the special value <m>blank</m> that stands for any BNode.
 	    In practice (in the concrete syntax), a node constraint can be defined using different ways of restraining the type of a node: string facet, numeric facet, node kind, a stem [TODO: reference to the concrete syntax].
 	  </li>
 	  <li>
-	   a neighbourhood constraint (<m>NeighbourhoodConstraint</m>) that defines a constraint on the allowed neighbourhood of a node, that is, the allowed triples that contain this node as subject or object.
-	   A neighbourhood constraint is itself defined as a (<m>TripleExpression</m>).
+	   a neighbourhood constraint (<m><a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></m>) that defines a constraint on the allowed neighbourhood of a node, that is, the allowed triples that contain this node as subject or object.
+	   A neighbourhood constraint is itself defined as a (<m><a href="#dfn-TripleExpression">TripleExpression</a></m>).
 	  </li>
 	</ul>
       </p>
@@ -456,16 +475,16 @@ inst:User2
 	For a <m>node</m> in <m>Nodes(G)</m>, a <m>typing</m> of <m>G</m> by <m>Sch</m>, and a shape expression <m>S</m>, we say that <m>node</m> satisfies <m>S</m> with <m>typing</m>, written <m>typing, node &vdash; S</m>, as defined recursively on the structure of <m>S</m> on the figure above, where:
 	<ul>
 	  <li>
-	    <m>V</m> is a <as>NodeConstraint</as> (in the se-node-constr and se-node-constr-blank rules); 
+	    <m>V</m> is a <as><a href="#dfn-NodeConstraint">NodeConstraint</a></as> (in the se-node-constr and se-node-constr-blank rules);
 	  </li>
 	  <li>
-	    <m>E</m> is a <as>TripleExpression</as> (in rule se-neighb-constr);
+	    <m>E</m> is a <as><a href="#dfn-TripleExpression">TripleExpression</a></as> (in rule se-neighb-constr);
 	  </li>
 	  <li>
 	    the &#x22A7; symbol in the premise of the se-neighb-constr rue the relation that defines whether the neighbourhood of a node matches a triple expression, and is defined below;
 	  </li>
 	  <li>
-	    <m>S</m>, <m>S<sub>1</sub></m>, <m>S<sub>2</sub></m> are <as>ShapeExpression</as>s;
+	    <m>S</m>, <m>S<sub>1</sub></m>, <m>S<sub>2</sub></m> are <as><a href="#dfn-ShapeExpression">ShapeExpression</a></as>s;
 	  </li>
 	  <li>
 	    the <m>typing, node &#x22ac; S</m> in the premise of the se-shape-not rule means that it is impossible to construct a proof for <m>typing, node &vdash; S</m>.
@@ -517,24 +536,24 @@ inst:User2
       <section id="triple-expressions-abstract-syntax">
       <h4>Abstract syntax</h4>
 
-      <div class="Abstrsynt">
-	<as>TripleExpression ::= EmptyTripleExpr</as><br/>
-	<as>| TripleConstraint</as><br/>
-	<as>| SomeOfTripleExpr</as><br/>
-	<as>| EachOfTripleExpr</as><br/>
-	<as>| RepeatedTripleExpr</as><br/>
+      <div class="abstrsynt">
+	<as><a id="dfn-TripleExpression">TripleExpression</a> ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a></as>
+	<as>| <a href="#dfn-TripleConstraint">TripleConstraint</a></as>
+	<as>| <a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a></as>
+	<as>| <a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a></as>
+	<as>| <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a></as><br/>
 	<br/>
-	<as>EmptyTripleExpr ::= 'EMPTY'</as><br/>
-	<as>TripleConstraint ::= PropertySet ShapeRef</as><br/>
-	<as>PropertySet ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
-	<as>ShapeRef ::= </as> a shape label from <as>SLabels</as><br/>
+	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= 'EMPTY'</as><br/>
+	<as><a id="dfn-TripleConstraint">TripleConstraint</a> ::= <a href="#dfn-PropertySet">PropertySet</a> <a href="#dfn-ShapeRef">ShapeRef</a></as><br/>
+	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
+	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape label from <as>SLabels</as><br/>
 	<br/>
-	<as>SomeOfTripleExpr ::= TripleExpression '|' TripleExpression</as><br/>
-	<as>EachOfTripleExpr ::= TripleExpression ';' TripleExpression</as><br/>
+	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '|' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
+	<as><a id="dfn-EachOfTripleExpr">EachOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> ';' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
 	<br/>
-	<as>RepeatedTripleExpr ::= TripleExpression '{' MinCard ';' MaxCard '}'</as><br/>
-	<as>MinCard ::= </as> a natural number<br/>
-	<as>MaxCard ::= </as> a natural number or <as>'*'</as><br/>
+	<as><a id="dfn-RepeatedTripleExpr">RepeatedTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '{' <a href="#dfn-MinCard">MinCard</a> ';' <a href="#dfn-MaxCard">MaxCard</a> '}'</as><br/>
+	<as><a id="dfn-MinCard">MinCard</a> ::= </as> a natural number<br/>
+	<as><a id="dfn-MaxCard">MaxCard</a> ::= </as> a natural number or <as>'*'</as><br/>
       </div>
 
       <p>
@@ -575,13 +594,13 @@ inst:User2
 	  <p>
 	    Moving the mouse over the elements of the list below will highlight the corresponding elements in the triple expression.
 	    <ul>
-	      <li><span class="hl-tc lowlight1">triple constraint</span> (<as>TripleConstraint</as>)</li>
-	      <li><span class="hl-someof lowlight2">some-of triple expression</span> (<as>SomeOfTripleExpr</as>)</li>
-	      <li><span class="hl-eachof lowlight2">each-of triple expression</span> (<as>EachOfTripleExpr</as>)</li>
-	      <li><span class="hl-repet lowlight3">repeated triple expression</span> (<as>RepeatedTripleExpr</as>)</li>
+	      <li><span class="hl-tc lowlight1">triple constraint</span> (<as><a href="#dfn-TripleConstraint">TripleConstraint</a></as>)</li>
+	      <li><span class="hl-someof lowlight2">some-of triple expression</span> (<as><a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a></as>)</li>
+	      <li><span class="hl-eachof lowlight2">each-of triple expression</span> (<as><a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a></as>)</li>
+	      <li><span class="hl-repet lowlight3">repeated triple expression</span> (<as><a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a></as>)</li>
 	      <li><span class="hl-inverse-tc lowlight1">triple constraint with an inverse property</span></li>
 	      <li><span class="hl-tc-cofinite lowlight1">triple constraint with a non-singleton co-finite set of properties</span></li>
-	      <li><span class="hl-shref lowlight4">shape reference</span> (<as>ShapeRef</as>)</li>
+	      <li><span class="hl-shref lowlight4">shape reference</span> (<as><a href="#dfn-ShapeRef">ShapeRef</a></as>)</li>
 	    </ul>
 	  </p>
 <pre class="shex">
@@ -779,7 +798,7 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
       <section id="stratified-negation">
       <h3>Shapes Schemas with Stratified Negation</h3>
       <p>
-	As we can see from the syntax, shape expressions can refer other shape definitions through a <as>ShapeRef</as> within a <as>TripleConstraint</as>.
+	As we can see from the syntax, shape expressions can refer other shape definitions through a <as><a href="#dfn-ShapeRef">ShapeRef</a></as> within a <as><a href="#dfn-TripleConstraint">TripleConstraint</a></as>.
 	In order to avoid undesirable interaction between recursion and the negation in value expressions, we consider shapes schemas with stratified negation only, as defined in the sequel.
       </p>
       
@@ -1168,7 +1187,7 @@ CLOSED {
 	  <div class="with-highlight">
 	    <p>
 	      The shape label <span class="pre">&lt;EmployeeShape&gt;</span> is defined as a conjunction of <span class="hl-nc lowlight2">node constrints</span> and <span class="hl-te1 hl-te2 lowlight3">triple expressions</span>.
-	      In the shapes schema, this yields a <span class="hl-conj lowlight4">ShapeAnd shape expression</span> with one conjunct per conjunct in the ShEx schema.
+	      In the shapes schema, this yields a <span class="hl-conj lowlight4"><a href="#dfn-ShapeAnd">ShapeAnd</a> shape expression</span> with one conjunct per conjunct in the ShEx schema.
 	    </p>
 	    
 <pre class="shex" style="float:left">
@@ -1327,39 +1346,39 @@ CLOSED {
 	All non-terminals of the abstract syntax are terminated by an underscore (_), this in order to avoid confusion with the non-terminals of the abstract syntax of the shapes language.
       </p>
 
-      <div class="Abstrsynt">
-	<as>ShapeExpressionsSchema_ ::= (ShapeLabel_ ShapeDefinition_)+</as><br/>
-	<as>ShapeLabel_ ::= </as> an identifier <br/>
-	<as>ShapeDefinition_ ::= NodeConstraint_* ShapeExpressions_?</as><br/>
-	<as>ShapeExpressions_ ::= ShapeExpression_ ('AND' ShapeExpression_)*</as><br/>
-	<as>NodeConstraint_ ::= </as> a subset of <as>IRI &cup; RDFLiteral &cup; {blank}</as><br/>
+      <div class="abstrsynt">
+	<as>ShapeExpressionsSchema_ ::= (<a href="#dfn-ShapeLabel">ShapeLabel</a>_ ShapeDefinition_)+</as><br/>
+	<as><a href="#dfn-ShapeLabel">ShapeLabel</a>_ ::= </as> an identifier <br/>
+	<as>ShapeDefinition_ ::= <a href="#dfn-NodeConstraint">NodeConstraint</a>_* ShapeExpressions_?</as><br/>
+	<as>ShapeExpressions_ ::= <a href="#dfn-ShapeExpression">ShapeExpression</a>_ ('AND' <a href="#dfn-ShapeExpression">ShapeExpression</a>_)*</as><br/>
+	<as><a href="#dfn-NodeConstraint">NodeConstraint</a>_ ::= </as> a subset of <as>IRI &cup; RDFLiteral &cup; {blank}</as><br/>
 	<br/>
-	<as>ShapeExpression_ ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet_)? TripleExpression_</as><br/>
+	<as><a href="#dfn-ShapeExpression">ShapeExpression</a>_ ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet_)? <a href="#dfn-TripleExpression">TripleExpression</a>_</as><br/>
 	<as>ExtraPropSet_ ::= </as> a set of properties and inverse properties<br/>
-	<as>TripleExpression_ ::= EmptyTripleExpr_</as><br/>
-	<as> | TripleConstraint_</as><br/>
-	<as> | SomeOfTripleExpr_</as><br/>
-	<as> | EachOfTripleExpr_</as><br/>
-	<as> | RepeatedTripleExpr_</as><br/>
+	<as><a href="#dfn-TripleExpression">TripleExpression</a>_ ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a>_</as><br/>
+	<as> | <a href="#dfn-TripleConstraint">TripleConstraint</a>_</as><br/>
+	<as> | <a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a>_</as><br/>
+	<as> | <a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a>_</as><br/>
+	<as> | <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a>_</as><br/>
 	<br/>
-	<as>EmptyTripleExpr_ ::= 'EMPTY'</as><br/>
-	<as>TripleConstraint_ ::= (Property_ | InvProperty_) ValueExpression_</as><br/>
+	<as><a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a>_ ::= 'EMPTY'</as><br/>
+	<as><a href="#dfn-TripleConstraint">TripleConstraint</a>_ ::= (Property_ | InvProperty_) ValueExpression_</as><br/>
 	<as>Property_ ::=</as> an IRI<br/>
 	<as>InvProperty_ ::= '^'Property_</as><br/>
 	<br/>
-	<as>SomeOfTripleExpr_ ::= TripleExpr_ '|' TripleExpr_</as><br/>
-	<as>EachOfTripleExpr_ ::= TripleExpr_ ';' TripleExpr_</as><br/>
+	<as><a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a>_ ::= TripleExpr_ '|' TripleExpr_</as><br/>
+	<as><a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a>_ ::= TripleExpr_ ';' TripleExpr_</as><br/>
 	<br/>
-	<as>RepeatedTipleExpr_ ::= TripleExpr_ '{' MinCard_ ';' MaxCard_ '}'</as><br/>
-	<as>MinCard_ ::= </as>a natural number<br/>
-	<as>MaxCard_ ::= </as>a natural number or '*'<br/>
+	<as>RepeatedTipleExpr_ ::= TripleExpr_ '{' <a href="#dfn-MinCard">MinCard</a>_ ';' <a href="#dfn-MaxCard">MaxCard</a>_ '}'</as><br/>
+	<as><a href="#dfn-MinCard">MinCard</a>_ ::= </as>a natural number<br/>
+	<as><a href="#dfn-MaxCard">MaxCard</a>_ ::= </as>a natural number or '*'<br/>
 	<br/>
 	<as>ValueExpression_ ::= ValueConstraint_</as><br/>
 	<as> | ConjunctiveValueExpr_</as><br/>
 	<as> | DisjunctiveValueExpr_</as><br/>
-	<as>ValueConstraint_ ::= NodeConstraint_*</as><br/>
-	<as> | ShapeRef_</as><br/>
-	<as>ShapeRef_ ::= '@' ShapeLabel_</as><br/>
+	<as>ValueConstraint_ ::= <a href="#dfn-NodeConstraint">NodeConstraint</a>_*</as><br/>
+	<as> | <a href="#dfn-ShapeRef">ShapeRef</a>_</as><br/>
+	<as><a href="#dfn-ShapeRef">ShapeRef</a>_ ::= '@' <a href="#dfn-ShapeLabel">ShapeLabel</a>_</as><br/>
 	<as>ConjunctiveValueExpr_ ::= ValueExpression_ 'AND' ValueExpression_</as><br/>
 	<as>DisjunctiveValueExpr_ ::= ValueExpression_ 'OR' ValueExpression_</as><br/>
       </div>
