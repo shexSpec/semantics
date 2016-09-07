@@ -1624,31 +1624,54 @@ CLOSED {
       <h2>Denotational Semantics</h2>
 
       <div class="abstrsynt">
-	<as><a id="dfn-Schema">Schema</a> ::= <parm>startActs</parm>:[<a href="#dfn-SemAct">SemAct</a>]? <parm>start</parm>:<a href="#dfn-shapeLabel">shapeLabel</a>? <parm>shapes</parm>Map[<a href="#dfn-shapeLabel">shapeLabel</a>-><a href="#dfn-shapeExpression">shapeExpression</a>]</as><br/>
+	<as><a id="dfn-Schema">Schema</a> ::= <parm>startActs</parm>:List[<a href="#dfn-SemAct">SemAct</a>]?, <parm>start</parm>:<a href="#dfn-shapeLabel">shapeLabel</a>?, <parm>shapes</parm>:Map[<a href="#dfn-shapeLabel">shapeLabel</a>-><a href="#dfn-shapeExpr">shapeExpr</a>]</as><br/>
 	<as><a id="dfn-shapeLabel">shapeLabel</a> ::= IRI|BNode</as><br/>
-	<as><a id="dfn-shapeExpression">shapeExpression</a> ::= <a href="#dfn-atomicShape">atomicShape</a></as>
-	<as>| <a href="#dfn-ShapeAnd">ShapeAnd</a></as>
-	<as>| <a href="#dfn-ShapeOr">ShapeOr</a></as>
-	<as>| <a href="#dfn-ShapeNot">ShapeNot</a></as><br/>
-	<as><a id="dfn-atomicShape">atomicShape</a> ::= <a href="#dfn-NodeConstraint">NodeConstraint</a> | <a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></as><br/>
-	<as><a id="dfn-NodeConstraint">NodeConstraint</a> ::=</as> a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as><br/>
-	<as><a id="dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a> ::= <a href="#dfn-tripleExpr">tripleExpr</a></as><br/>
+	<as><a id="dfn-shapeExpr">shapeExpr</a> ::=
+	<a href="#dfn-ShapeAnd">ShapeAnd</a>
+	| <a href="#dfn-ShapeOr">ShapeOr</a>
+	| <a href="#dfn-ShapeNot">ShapeNot</a>
+  | <a href="#dfn-NodeConstraint">NodeConstraint</a>
+  | <a href="#dfn-Shape">Shape</a></as><br/>
 	<as><a id="dfn-ShapeAnd">ShapeAnd</a> ::= <parm>shapeExprs</parm>:List[<a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
 	<as><a id="dfn-ShapeOr">ShapeOr</a> ::= <parm>shapeExprs</parm>:List[<a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
 	<as><a id="dfn-ShapeNot">ShapeNot</a> ::= <parm>shapeExpr</parm>:<a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
+  <br/>
+  <span class="comment" style="color: #e30"># a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as></span><br/>
+	<as><a id="dfn-NodeConstraint">NodeConstraint</a> ::=</as> <parm>constraints</parm>:List[<a href="#dfn-constraint">constraint</a>]<br/>
+	<as><a id="dfn-constraint">constraint</a> ::= <a href="#dfn-nodeKind">nodeKind</a>
+  | <a href="#dfn-datatype">datatype</a>
+  | <a href="#dfn-xsFacet">xsFacet</a>
+  | <a href="#dfn-values">values</a></as><br/>
+	<as><a id="dfn-nodeKind">nodeKind</a> ::= <a href="#dfn-IRI_KIND">IRI_KIND</a> | <a href="#dfn-BNode_KIND">BNode_KIND</a> | <a href="#dfn-nonLiteral_KIND">nonLiteral_KIND</a> | <a href="#dfn-literal_KIND">literal_KIND</a></as><br/>
+	<as><a id="dfn-datatype">datatype</a> ::= IRI</as><br/>
+	<as><a id="dfn-xsFacet">xsFacet</a> ::= <a href="#dfn-stringFacet">stringFacet</a>
+  | <a href="#dfn-numericFacet">numericFacet</a><br/>
+	<as><a id="dfn-stringFacet">stringFacet</a> ::= <parm>length</parm>:numeric
+  | <parm>minLength</parm>:numeric
+  | <parm>maxLength</parm>:numeric
+  | <parm>pattern</parm>:string</as><br/>
+	<as><a id="dfn-numericFacet">numericFacet</a> ::= <parm>minExclusive</parm>:numeric
+  | <parm>minInclusive</parm>:numeric
+  | <parm>maxInclusive</parm>:numeric
+  | <parm>maxExclusive</parm>:numeric</as><br/>
+	<as><a id="dfn-values">values</a> ::= <parm>values</parm>:Set[<a href="#dfn-valueSetValue">valueSetValue</a>]</as><br/>
+  <as><a id="dfn-valueSetValue">valueSetValue</a> ::= IRI|RDFLiteral|<a href="#dfn-StemRange">StemRange</a></as><br/>
+  <as><a id="dfn-StemRange">StemRange</a> ::= <parm>stem</parm>:IRI|<a href="#dfn-Wildcard">Wildcard</a>, <parm>exclusions</parm>:Set[<a href="#dfn-valueSetValue">valueSetValue</a>]</as><br/>
+  <br/>
+	<as><a id="dfn-Shape">Shape</a> ::= <parm>closed</parm>:boolean, <parm>extra</parm>:Set[IRI], <parm>expression</parm>:<a href="#dfn-tripleExpr">tripleExpr</a></as><br/>
 	<as><a id="dfn-tripleExpr">tripleExpr</a> ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a></as>
 	<as>| <a href="#dfn-TripleConstraint">TripleConstraint</a></as>
-	<as>| <a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a></as>
-	<as>| <a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a></as>
+	<as>| <a href="#dfn-SomeOfTripleExpr">SomeOf</a></as>
+	<as>| <a href="#dfn-EachOfTripleExpr">EachOf</a></as>
 	<as>| <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a></as><br/>
 	<br/>
-	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= 'EMPTY'</as><br/>
+	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= </as><br/>
 	<as><a id="dfn-TripleConstraint">TripleConstraint</a> ::= <a href="#dfn-PropertySet">PropertySet</a> <a href="#dfn-ShapeRef">ShapeRef</a></as><br/>
 	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
 	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape expression label from <as>SLabels</as><br/>
 	<br/>
-	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <a href="#dfn-tripleExpr">tripleExpr</a> '|' <a href="#dfn-tripleExpr">tripleExpr</a></as><br/>
-	<as><a id="dfn-EachOfTripleExpr">EachOfTripleExpr</a> ::= <a href="#dfn-tripleExpr">tripleExpr</a> ';' <a href="#dfn-tripleExpr">tripleExpr</a></as><br/>
+	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <parm>expressions</parm>:List[<a href="#dfn-tripleExpr">tripleExpr</a>]</as><br/>
+	<as><a id="dfn-EachOfTripleExpr">EachOfTripleExpr</a> ::= <parm>expressions</parm>:List[<a href="#dfn-tripleExpr">tripleExpr</a>]</as><br/>
 	<br/>
 	<as><a id="dfn-RepeatedTripleExpr">RepeatedTripleExpr</a> ::= <a href="#dfn-tripleExpr">tripleExpr</a> '{' <a href="#dfn-MinCard">MinCard</a> ';' <a href="#dfn-MaxCard">MaxCard</a> '}'</as><br/>
 	<as><a id="dfn-MinCard">MinCard</a> ::= </as> a natural number<br/>
