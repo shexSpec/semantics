@@ -1452,8 +1452,8 @@ CLOSED {
     <section id="shexj">
       <h2>ShEx Abstract Syntax</h2>
 
-      <div class="shexj">
-<table>
+      <div class="shexjTable">
+<table class="shexj">
   <tr class="obj"><th id="dfn-Schema" class="obj">Schema</th><td>{</td><td><span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}? <span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <span class="param">startActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">start</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">shapes</span>:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }</td></tr>
   <tr class="nob"><th id="dfn-shapeExpr" class="nob">shapeExpr</th><td>=</td><td><a class="objref" href="#dfn-ShapeOr">ShapeOr</a> ;</td></tr>
     <tr><th></th><td>|</td><td><a class="objref" href="#dfn-ShapeAnd">ShapeAnd</a></td></tr>
@@ -1477,9 +1477,9 @@ CLOSED {
   <tr class="obj"><th id="dfn-NodeConstraint" class="obj">NodeConstraint</th><td>{</td><td><span class="param">nodeKind</span>:(<span class="literal">"iri"</span> | <span class="literal">"bnode"</span> | <span class="literal">"nonliteral"</span> | <span class="literal">"literal"</span>)? <span class="param">datatype</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <a class="nobref" href="#dfn-xsFacet">xsFacet</a>* <span class="param">values</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
   <tr class="obj"><th id="dfn-Annotation" class="obj">Annotation</th><td>{</td><td><span class="param">predicate</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">object</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
   <tr class="nob"><th id="dfn-xsFacet" class="nob">xsFacet</th><td>=</td><td><a class="nobref" href="#dfn-stringFacet">stringFacet</a> | <a class="nobref" href="#dfn-numericFacet">numericFacet</a> ;</td></tr>
-  <tr class="nob"><th id="dfn-stringFacet" class="nob">stringFacet</th><td>=</td><td>(length|minlength|maxlength):<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="param">pattern</span>:<a class="trmref" href="#dfn-STRING">STRING</a> ;</td></tr>
-  <tr class="nob"><th id="dfn-numericFacet" class="nob">numericFacet</th><td>=</td><td>(mininclusive|minexclusive|maxinclusive|maxexclusive):<a class="nobref" href="#dfn-numericLiteral">numericLiteral</a> ;</td></tr>
-    <tr><th></th><td>|</td><td>(totaldigits|fractiondigits):<a class="trmref" href="#dfn-INTEGER">INTEGER</a> ;</td></tr>
+  <tr class="nob"><th id="dfn-stringFacet" class="nob">stringFacet</th><td>=</td><td>(<span class="param">"length"</span>|<span class="param">"minlength"</span>|<span class="param">"maxlength"</span>):<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="param">pattern</span>:<a class="trmref" href="#dfn-STRING">STRING</a> ;</td></tr>
+  <tr class="nob"><th id="dfn-numericFacet" class="nob">numericFacet</th><td>=</td><td>(<span class="param">"mininclusive"</span>|<span class="param">"minexclusive"</span>|<span class="param">"maxinclusive"</span>|<span class="param">"maxexclusive"</span>):<a class="nobref" href="#dfn-numericLiteral">numericLiteral</a> ;</td></tr>
+    <tr><th></th><td>|</td><td>(<span class="param">"totaldigits"</span>|<span class="param">"fractiondigits"</span>):<a class="trmref" href="#dfn-INTEGER">INTEGER</a> ;</td></tr>
   <tr class="nob"><th id="dfn-shapeLabel" class="nob">shapeLabel</th><td>=</td><td><a class="trmref" href="#dfn-IRI">IRI</a> | <a class="trmref" href="#dfn-BNODE">BNODE</a> ;</td></tr>
   <tr class="nob"><th id="dfn-numericLiteral" class="nob">numericLiteral</th><td>=</td><td><a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <a class="trmref" href="#dfn-DECIMAL">DECIMAL</a> | <a class="trmref" href="#dfn-DOUBLE">DOUBLE</a> ;</td></tr>
   <tr class="nob"><th id="dfn-valueSetValue" class="nob">valueSetValue</th><td>=</td><td><a class="trmref" href="#dfn-IRI">IRI</a> ;</td></tr>
@@ -1491,17 +1491,17 @@ CLOSED {
   <tr class="obj"><th id="dfn-Stem" class="obj">Stem</th><td>{</td><td><span class="param">stem</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
   <tr class="obj"><th id="dfn-StemRange" class="obj">StemRange</th><td>{</td><td><span class="param">stem</span>:(<a class="trmref" href="#dfn-IRI">IRI</a> | <a class="objref" href="#dfn-Wildcard">Wildcard</a>) <span class="param">exclusions</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
   <tr class="obj"><th id="dfn-Wildcard" class="obj">Wildcard</th><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
-  <tr><th></th><th colspan="2" style="text-align: left;">Terminals</th></tr>
-<tr class="trm"><th id="dfn-PREFIX" class="trm">PREFIX</th><td>:</td><td>^.*$</td></tr>
-  <tr class="trm"><th id="dfn-IRI" class="trm">IRI</th><td>:</td><td>^.*$</td></tr>
-  <tr class="trm"><th id="dfn-BNODE" class="trm">BNODE</th><td>:</td><td>^.*$</td></tr>
-  <tr class="trm"><th id="dfn-BOOL" class="trm">BOOL</th><td>:</td><td>^(true|false)$</td></tr>
-  <tr class="trm"><th id="dfn-INTEGER" class="trm">INTEGER</th><td>:</td><td>^.*$</td></tr>
-  <tr class="trm"><th id="dfn-DECIMAL" class="trm">DECIMAL</th><td>:</td><td>^.*$</td></tr>
-  <tr class="trm"><th id="dfn-DOUBLE" class="trm">DOUBLE</th><td>:</td><td>^.*$</td></tr>
-  <tr class="trm"><th id="dfn-STRING" class="trm">STRING</th><td>:</td><td>^.*$</td></tr>
-  <tr class="trm"><th id="dfn-DATATYPE_STRING" class="trm">DATATYPE_STRING</th><td>:</td><td>^.*$</td></tr>
-  <tr class="trm"><th id="dfn-LANG_STRING" class="trm">LANG_STRING</th><td>:</td><td>^.*$</td></tr>
+  <tr style="background-color:white;"><th colspan="1" style="text-align: left;">Terminals</th><td></td><td>constrained by the <a href="#terminals">terminal rules in the compact syntax</a></td></tr>
+<tr class="trm"><th id="dfn-PREFIX" class="trm">PREFIX</th><td>:</td><td><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></td></tr>
+  <tr class="trm"><th id="dfn-IRI" class="trm">IRI</th><td>:</td><td>( [^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> )* <span class="comment"># (<a class="grammarRef" href="#term-IRIREF">IRIREF</a> without the enclosing "&lt;&gt;"s)</span></td></tr>
+  <tr class="trm"><th id="dfn-BNODE" class="trm">BNODE</th><td>:</td><td><a class="grammarRef" href="#term-BLANK_NODE_LABEL">BLANK_NODE_LABEL</a></td></tr>
+  <tr class="trm"><th id="dfn-BOOL" class="trm">BOOL</th><td>:</td><td>"true" | "false" <span class="comment"># a JSON boolean value</span></td></tr>
+  <tr class="trm"><th id="dfn-INTEGER" class="trm">INTEGER</th><td>:</td><td><a class="grammarRef" href="#term-INTEGER">INTEGER</a> <span class="comment"># a JSON string matching the lexical form of an integer</span></td></tr>
+  <tr class="trm"><th id="dfn-DECIMAL" class="trm">DECIMAL</th><td>:</td><td><a class="grammarRef" href="#term-DECIMAL">DECIMAL</a> <span class="comment"># a JSON string matching the lexical form of an decimal</span></td></tr>
+  <tr class="trm"><th id="dfn-DOUBLE" class="trm">DOUBLE</th><td>:</td><td><a class="grammarRef" href="#term-DOUBLE">DOUBLE</a> <span class="comment"># a JSON string matching the lexical form of an double</span></td></tr>
+  <tr class="trm"><th id="dfn-STRING" class="trm">STRING</th><td>:</td><td>'"' .* '"' <span class="comment"># a JSON string starting and ending with the U+0022 (") character</span></td></tr>
+  <tr class="trm"><th id="dfn-DATATYPE_STRING" class="trm">DATATYPE_STRING</th><td>:</td><td>'"' .* '"' ( [^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> )* <span class="comment"># a JSON string starting with U+0022 ("), followed by the lexical form of the string, then U+0022 U+005E U+005E ("^^) and the <a href="#dfn-IRI">IRI</a> of the datatype</span></td></tr>
+  <tr class="trm"><th id="dfn-LANG_STRING" class="trm">LANG_STRING</th><td>:</td><td>'"' .* '"@' <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span> <span class="comment"># a JSON string starting with U+0022 ("), followed by the lexical form of the string, then U+0022 U+0040 ("@) and the <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span></span></td></tr>
 </table>
 </div>
 <div style="display:none; ">
@@ -1572,10 +1572,20 @@ CLOSED {
 <td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
 <td><code class="content">(<span class="prod"><a class="grammarRef" href="#prod-directive">directive</a></span>)* (( ( <span class="prod"><a class="grammarRef" href="#prod-notStartAction">notStartAction</a></span> | <span class="prod"><a class="grammarRef" href="#prod-startActions">startActions</a></span> ) (<span class="prod"><a class="grammarRef" href="#prod-statement">statement</a></span>)* ))?</code></td>
 </tr>
-<tr class="obj"><td></td><th id="dfn-Schema" class="obj shexj" style="text-align: left">Schema</th><td style="text-align: right" class="shexj">{</td><td class="shexj"><span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}? base:<a class="trmref" href="#dfn-IRI">IRI</a>? startActs:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? start:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? shapes:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }</td></tr>
-<tr class="obj"><td></td><th id="dfn-Schema" class="obj shexj" style="text-align: left">Schema</th><td style="text-align: right" class="shexj">{</td><td class="shexj"><span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}? <span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <span class="param">startActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">start</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">shapes</span>:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }</td></tr>
+<tr class="obj"><td></td><td href="#dfn-Schema" class="obj">Schema</td><td>{</td><td>
+<span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}?
+<span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>?
+<span class="param">startActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]?
+<span class="param">start</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>?
+<span class="param">shapes</span>:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }
+</td></tr>
 
-<tr><td colspan="1"></td><td colspan="3" class="shexj"></td></tr>
+  <tr><td colspan="1"></td><td colspan="3"><ul>
+  <li><span class="param">prefixes</span> and <span class="param">base</span> come from the <a class="grammarRef" href="#prod-directive">directive</a> production.</li>
+<li><span class="param">startActs</span> comes from <span class="prod"><a class="grammarRef" href="#prod-startActions">startActions</a></span> production.</li>
+<li><span class="param">start</span> comes from </li>
+<li><span class="param">shapes</span> comes from </li>
+  </ul></td></tr>
 </tbody>
 
 <tbody class="prod">
@@ -2037,7 +2047,7 @@ CLOSED {
 <td><a id="prod-rdfLiteral" name="prod-rdfLiteral"></a>[<span class="prodNo">48</span>]&nbsp;&nbsp;&nbsp;</td>
 <td><code class="production prod">rdfLiteral</code></td>
 <td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-string">string</a></span> (( <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span> | "^^" <span class="prod"><a class="grammarRef" href="#prod-datatype">datatype</a></span> ))?</code></td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-string">string</a></span> ( <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span> | "^^" <span class="prod"><a class="grammarRef" href="#prod-datatype">datatype</a></span> )?</code></td>
 </tr>
 </tbody>
 
