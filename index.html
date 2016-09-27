@@ -2317,6 +2317,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"&lt;" ([^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>)* "&gt;"</code></td>
 </tr>
+    <tr id="handle-IRIREF"><td></td><td>returns: <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-iri" class="math">RDF IRI</a></td><td></td><td>The characters between "&lt;" and "&gt;" are taken, with the <a href="http://www.w3.org/TR/2014/REC-turtle-20140225/#numeric">numeric escape sequences</a> unescaped, to form the unicode string of the IRI. Relative IRI resolution is performed per Turtle <a class="sectionRef" href="http://www.w3.org/TR/2014/REC-turtle-20140225/#sec-iri-references">Section 6.3</a>.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2326,6 +2327,8 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></span>? ":"</code></td>
 </tr>
+    <tr id="handle-PNAME_NS"><td></td><td>returns: <a href="#dfn-Schema">                                 PREFIX      </a></td><td></td><td>When used in a <a href="#prod-prefixDecl">prefixDecl</a> production, the <code>prefix</code> is a potentially empty unicode string matching the first argument of the rule and serves as a key into the <a href="#dfn-Schema">prefixes map</a>.</td></tr>
+    <tr id="handle-PNAME_NS2"><td></td><td> returns: <a href="http://www.w3.org/TR/rdf11-concepts/#dfn-iri">      IRI </a></td><td></td><td>When used elsewhere, the <code>iri</code> is the value in the <a href="#dfn-Schema">prefixes map</a> corresponding to the first argument of the rule.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2335,6 +2338,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PNAME_NS">PNAME_NS</a></span> <span class="prod"><a class="grammarRef" href="#term-PN_LOCAL">PN_LOCAL</a></span></code></td>
 </tr>
+    <tr id="handle-PNAME_LN"><td></td><td><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-iri">      IRI         </a></td><td></td><td>A potentially empty <a href="#dfn-Schema">prefix</a> is identified by the first sequence, <code>PNAME_NS</code>. The <a href="#dfn-Schema">prefixes map</a> <em class="rfc2119"><em class="rfc2119" title="MUST">MUST</em></em> have a corresponding <code>namespace</code>. The unicode string of the IRI is formed by unescaping the <a href="#reserved">reserved characters</a> in the second argument, <code>PN_LOCAL</code>, and concatenating this onto the <code>namespace</code>.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2416,6 +2420,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"'" ([^'\\\n\r] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>)* "'"</code></td>
 </tr>
+    <tr id="handle-STRING_LITERAL1"><td></td><td>returns: <a href="http://www.w3.org/TR/rdf11-concepts/#dfn-lexical-form">                         lexical form</a></td><td></td><td>The characters between the outermost "'"s   are taken, with <a href="#numeric">numeric</a> and <a href="#string">string</a> escape sequences unescaped, to form the unicode string of a lexical form.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2425,6 +2430,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">'"' ([^\"\\\n\r] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>)* '"'</code></td>
 </tr>
+    <tr id="handle-STRING_LITERAL2"><td></td><td>returns: <a href="http://www.w3.org/TR/rdf11-concepts/#dfn-lexical-form">                         lexical form</a></td><td></td><td>The characters between the outermost '"'s   are taken, with <a href="#numeric">numeric</a> and <a href="#string">string</a> escape sequences unescaped, to form the unicode string of a lexical form.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2434,15 +2440,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"'''" ( ("'" | "''")? ([^\\'\\] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>) )* "'''"</code></td>
 </tr>
-</tbody>
-
-<tbody class="term">
-<tr valign="baseline">
-<td><a id="term-STRING_LITERAL_LONG1X" name="term-STRING_LITERAL_LONG1X"></a>[<span class="prodNo">82</span>]   </td>
-<td>&lt;<code class="production term">STRING_LITERAL_LONG1X</code>&gt;</td>
-<td>   ::=   </td>
-<td><code class="content">"'''"</code></td>
-</tr>
+    <tr id="handle-STRING_LITERAL_LONG1"><td></td><td>returns: <a href="http://www.w3.org/TR/rdf11-concepts/#dfn-lexical-form">                         lexical form</a></td><td></td><td>The characters between the outermost "'''"s are taken, with <a href="#numeric">numeric</a> and <a href="#string">string</a> escape sequences unescaped, to form the unicode string of a lexical form.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2452,15 +2450,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">'"""' ( ('"' | '""')? ([^\"\\] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>) )* '"""'</code></td>
 </tr>
-</tbody>
-
-<tbody class="term">
-<tr valign="baseline">
-<td><a id="term-STRING_LITERAL_LONG2X" name="term-STRING_LITERAL_LONG2X"></a>[<span class="prodNo">84</span>]   </td>
-<td>&lt;<code class="production term">STRING_LITERAL_LONG2X</code>&gt;</td>
-<td>   ::=   </td>
-<td><code class="content">'"""'</code></td>
-</tr>
+    <tr id="handle-STRING_LITERAL_LONG2"><td></td><td>returns: <a href="http://www.w3.org/TR/rdf11-concepts/#dfn-lexical-form">                         lexical form</a></td><td></td><td>The characters between the outermost '"""'s are taken, with <a href="#numeric">numeric</a> and <a href="#string">string</a> escape sequences unescaped, to form the unicode string of a lexical form.</td></tr>
 </tbody>
 
 <tbody class="term">
