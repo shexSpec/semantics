@@ -1450,8 +1450,16 @@ CLOSED {
     </section>
 
     <section id="shexj">
-      <h2>ShEx Abstract Syntax</h2>
-
+      <h2>ShEx JSON Syntax (ShExJ)</h2>
+      <p>
+        The JSON Syntax serves as a serializable proxy for the ShEx abstract syntax.
+        Optional parameters are suffixed with a "<code>?</code>".
+        For instance, "<span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}?" indicates that prefixes is optional and if present is a mapping from the terminal <a class="trmref" href="#dfn-PREFIX">PREFIX</a> to the terminal <a class="trmref" href="#dfn-IRI">IRI</a>.
+        "<span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>?" indicates that <span class="param">base</span> is optional and, if present, is an <a class="trmref" href="#dfn-IRI">IRI</a>.
+      </p>
+      <p>
+        For brevity, it is preferred that empty maps and lists are elided in serializations of ShExJ.
+      </p>
       <div class="shexjTable">
 <table class="shexj">
   <tr class="obj"><th id="dfn-Schema" class="obj">Schema</th><td>{</td><td><span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}? <span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <span class="param">startActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">start</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">shapes</span>:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }</td></tr>
@@ -1481,7 +1489,7 @@ CLOSED {
   <tr class="obj"><th id="dfn-Stem" class="obj">Stem</th><td>{</td><td><span class="param">stem</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
   <tr class="obj"><th id="dfn-StemRange" class="obj">StemRange</th><td>{</td><td><span class="param">stem</span>:(<a class="trmref" href="#dfn-IRI">IRI</a> | <a class="objref" href="#dfn-Wildcard">Wildcard</a>) <span class="param">exclusions</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
   <tr class="obj"><th id="dfn-Wildcard" class="obj">Wildcard</th><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
-  <tr style="background-color:white;"><th colspan="1" style="text-align: left;">Terminals</th><td></td><td>constrained by the <a href="#terminals">terminal rules in the compact syntax</a></td></tr>
+  <tr style="background-color:white; border-left: thin solid white; border-right: thin solid white; "><th colspan="1" style="text-align: left;">Terminals</th><td></td><td>constrained by the <a href="#terminals">terminal rules in the compact syntax</a></td></tr>
 <tr class="trm"><th id="dfn-PREFIX" class="trm">PREFIX</th><td>:</td><td><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></td></tr>
   <tr class="trm"><th id="dfn-IRI" class="trm">IRI</th><td>:</td><td>( [^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> )* <span class="comment"># (<a class="grammarRef" href="#term-IRIREF">IRIREF</a> without the enclosing "&lt;&gt;"s)</span></td></tr>
   <tr class="trm"><th id="dfn-BNODE" class="trm">BNODE</th><td>:</td><td><a class="grammarRef" href="#term-BLANK_NODE_LABEL">BLANK_NODE_LABEL</a></td></tr>
@@ -1494,6 +1502,7 @@ CLOSED {
   <tr class="trm"><th id="dfn-LANG_STRING" class="trm">LANG_STRING</th><td>:</td><td>'"' .* '"@' <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span> <span class="comment"># a JSON string starting with U+0022 ("), followed by the lexical form of the string, then U+0022 U+0040 ("@) and the <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span></span></td></tr>
 </table>
 </div>
+
 <div style="display:none; ">
 	<as><a id="dfn-Schema">Schema</a> ::= <parm>startActs</parm>:List[<a href="#dfn-SemAct">SemAct</a>]?, <parm>start</parm>:<a href="#dfn-shapeLabel">shapeLabel</a>?, <parm>shapes</parm>:Map[<a href="#dfn-shapeLabel">shapeLabel</a>-><a href="#dfn-shapeExpr">shapeExpr</a>]</as><br/>
 	<as><a id="dfn-shapeLabel">shapeLabel</a> ::= IRI|BNode</as><br/>
@@ -1555,11 +1564,21 @@ CLOSED {
       <div class="grammarTable">
 <table border="0">
 
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      A ShEx document produces a schema.
+      Semantic actions before the first <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shape expression declaration</a></span> are <span class="param"><a href="#dfn-Schema">startActs</a></span>.
+      After the first <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shape expression declaration</a></span>, semantic actions are associated with the previous declaration.
+    </p>
+  </td></tr>
+</tbody>
+
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-shexDoc" name="prod-shexDoc"></a>[<span class="prodNo">1</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shexDoc" name="prod-shexDoc"></a>[<span class="prodNo">1</span>]   </td>
 <td><code class="production prod">shexDoc</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-directive">directive</a></span>* ((<span class="prod"><a class="grammarRef" href="#prod-notStartAction">notStartAction</a></span> | <span class="prod"><a class="grammarRef" href="#prod-startActions">startActions</a></span>) <span class="prod"><a class="grammarRef" href="#prod-statement">statement</a></span>*)?</code></td>
 </tr>
 <tr class="obj"><td></td><td><a href="#dfn-Schema" class="obj">Schema</a></td><td>{</td><td>
@@ -1570,473 +1589,200 @@ CLOSED {
 <span class="param">shapes</span>:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }
 </td></tr>
   <tr><td colspan="1"></td><td colspan="3"><ul>
-  <li><span class="param">prefixes</span> and <span class="param">base</span> come from the <a class="grammarRef" href="#prod-directive">directive</a> production.</li>
+  <li><span class="param">prefixes</span> and <span class="param">base</span> come from the <a class="grammarRef" href="#prod-prefixDecl">prefixDecl</a> production with the map key of <span class="prod"><a class="grammarRef" href="#term-PNAME_NS">PNAME_NS</a></span> and the value of <span class="prod"><a class="grammarRef" href="#term-IRIREF">IRIREF</a></span>.</li>
 <li><span class="param">startActs</span> comes from <span class="prod"><a class="grammarRef" href="#prod-startActions">startActions</a></span> production.</li>
-<li><span class="param">start</span> comes from the last <span class="prod"><a class="grammarRef" href="#prod-start">start</a></span> production</li>
-<li><span class="param">shapes</span> come from the <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shapeExprDecl</a></span> production</li>
+<li><span class="param">start</span> comes from the last <span class="prod"><a class="grammarRef" href="#prod-start">start</a></span> production.</li>
+<li><span class="param">shapes</span> come from the <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shapeExprDecl</a></span> production.</li>
   </ul></td></tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-directive" name="prod-directive"></a>[<span class="prodNo">2</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-directive" name="prod-directive"></a>[<span class="prodNo">2</span>]   </td>
 <td><code class="production prod">directive</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-baseDecl">baseDecl</a></span><br/>
 | <span class="prod"><a class="grammarRef" href="#prod-prefixDecl">prefixDecl</a></span></code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-baseDecl" name="prod-baseDecl"></a>[<span class="prodNo">3</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-baseDecl" name="prod-baseDecl"></a>[<span class="prodNo">3</span>]   </td>
 <td><code class="production prod">baseDecl</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"BASE" <span class="prod"><a class="grammarRef" href="#term-IRIREF">IRIREF</a></span></code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-prefixDecl" name="prod-prefixDecl"></a>[<span class="prodNo">4</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-prefixDecl" name="prod-prefixDecl"></a>[<span class="prodNo">4</span>]   </td>
 <td><code class="production prod">prefixDecl</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"PREFIX" <span class="prod"><a class="grammarRef" href="#term-PNAME_NS">PNAME_NS</a></span> <span class="prod"><a class="grammarRef" href="#term-IRIREF">IRIREF</a></span></code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-notStartAction" name="prod-notStartAction"></a>[<span class="prodNo">5</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-notStartAction" name="prod-notStartAction"></a>[<span class="prodNo">5</span>]   </td>
 <td><code class="production prod">notStartAction</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-start">start</a></span><br/>
 | <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shapeExprDecl</a></span></code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-start" name="prod-start"></a>[<span class="prodNo">6</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-start" name="prod-start"></a>[<span class="prodNo">6</span>]   </td>
 <td><code class="production prod">start</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"start" "=" <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span></code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-startActions" name="prod-startActions"></a>[<span class="prodNo">7</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-startActions" name="prod-startActions"></a>[<span class="prodNo">7</span>]   </td>
 <td><code class="production prod">startActions</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-codeDecl">codeDecl</a></span>+</code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-statement" name="prod-statement"></a>[<span class="prodNo">8</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-statement" name="prod-statement"></a>[<span class="prodNo">8</span>]   </td>
 <td><code class="production prod">statement</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-directive">directive</a></span><br/>
 | <span class="prod"><a class="grammarRef" href="#prod-notStartAction">notStartAction</a></span></code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-shapeExprDecl" name="prod-shapeExprDecl"></a>[<span class="prodNo">9</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shapeExprDecl" name="prod-shapeExprDecl"></a>[<span class="prodNo">9</span>]   </td>
 <td><code class="production prod">shapeExprDecl</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-shapeLabel">shapeLabel</a></span> (<span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span> | "EXTERNAL")</code></td>
 </tr>
+  <tr><td colspan="1"></td><td colspan="3">If the "<code>EXTERNAL</code>" keyword is present, <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shapeExprDecl</a></span> returns a <a href="#dfn-ShapeExternal" class="obj">ShapeExternal</a> object:</td></tr>
+  <tr class="obj"><td></td><td><a href="#dfn-ShapeExternal" class="obj">ShapeExternal</a></td><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
+  <tr><td colspan="1"></td><td colspan="3">otherwise <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shapeExprDecl</a></span> returns <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span>.</td></tr>
+</tbody>
+
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Shape expressions are logical combinations of shape atoms.
+      Inline variants of shape expressions are used in <span class="prod"><a class="grammarRef" href="#prod-tripleConstraint">tripleConstraint</a></span>s and are not permitted to have annotations or semantic actions.
+    </p>
+  </td></tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-shapeExpression" name="prod-shapeExpression"></a>[<span class="prodNo">10</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shapeExpression" name="prod-shapeExpression"></a>[<span class="prodNo">10</span>]   </td>
 <td><code class="production prod">shapeExpression</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-shapeOr">shapeOr</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-inlineShapeExpression" name="prod-inlineShapeExpression"></a>[<span class="prodNo">14</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-inlineShapeExpression" name="prod-inlineShapeExpression"></a>[<span class="prodNo">14</span>]   </td>
 <td><code class="production prod">inlineShapeExpression</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-inlineShapeOr">inlineShapeOr</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-shapeOr" name="prod-shapeOr"></a>[<span class="prodNo">11</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shapeOr" name="prod-shapeOr"></a>[<span class="prodNo">11</span>]   </td>
 <td><code class="production prod">shapeOr</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a></span> ("OR" <span class="prod"><a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a></span>)*</code></td>
 </tr>
 <tr valign="baseline">
-<td><a id="prod-inlineShapeOr" name="prod-inlineShapeOr"></a>[<span class="prodNo">15</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-inlineShapeOr" name="prod-inlineShapeOr"></a>[<span class="prodNo">15</span>]   </td>
 <td><code class="production prod">inlineShapeOr</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-inlineShapeAnd">inlineShapeAnd</a></span> ("OR" <span class="prod"><a class="grammarRef" href="#prod-inlineShapeAnd">inlineShapeAnd</a></span>)*</code></td>
 </tr>
+<tr><td colspan="1"></td><td colspan="3">
+If the right <a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a> matches one or more times, the result is a <a href="#dfn-ShapeOr" class="obj">ShapeOr</a> object with <span class="param">shapeExprs</span> containing the first <a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a> followed by the ordered list from the second <a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a>:
+</td></tr>
 <tr class="obj"><td></td><td><a href="#dfn-ShapeOr" class="obj">ShapeOr</a></td><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
 <tr><td colspan="1"></td><td colspan="3">
-If the 2nd <a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a> matches one or more times, the result is a <a href="#dfn-ShapeOr" class="obj">ShapeOr</a> with <span class="param">shapeExprs</span> containing the first <a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a> followed by the ordered list from the second <a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a>, otherwise the result is the left <a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a>.
+otherwise the result is the left <a class="grammarRef" href="#prod-shapeAnd">shapeAnd</a>.
 </td></tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-shapeAnd" name="prod-shapeAnd"></a>[<span class="prodNo">12</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shapeAnd" name="prod-shapeAnd"></a>[<span class="prodNo">12</span>]   </td>
 <td><code class="production prod">shapeAnd</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-shapeNot">shapeNot</a></span> ("AND" <span class="prod"><a class="grammarRef" href="#prod-shapeNot">shapeNot</a></span>)*</code></td>
 </tr>
 <tr valign="baseline">
-<td><a id="prod-inlineShapeAnd" name="prod-inlineShapeAnd"></a>[<span class="prodNo">16</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-inlineShapeAnd" name="prod-inlineShapeAnd"></a>[<span class="prodNo">16</span>]   </td>
 <td><code class="production prod">inlineShapeAnd</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-inlineShapeNot">inlineShapeNot</a></span> ("AND" <span class="prod"><a class="grammarRef" href="#prod-inlineShapeNot">inlineShapeNot</a></span>)*</code></td>
 </tr>
+<tr><td colspan="1"></td><td colspan="3">
+If the right <a class="grammarRef" href="#prod-shapeNot">shapeNot</a> matches one or more times, the result is a <a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a> object with <span class="param">shapeExprs</span> containing the first <a class="grammarRef" href="#prod-shapeNot">shapeNot</a> followed by the ordered list from the second <a class="grammarRef" href="#prod-shapeNot">shapeNot</a>:
+</td></tr>
 <tr class="obj"><td></td><td><a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a></td><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
 <tr><td colspan="1"></td><td colspan="3">
-If the 2nd <a class="grammarRef" href="#prod-shapeNot">shapeNot</a> matches one or more times, the result is a <a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a> with <span class="param">shapeExprs</span> containing the first <a class="grammarRef" href="#prod-shapeNot">shapeNot</a> followed by the ordered list from the second <a class="grammarRef" href="#prod-shapeNot">shapeNot</a>, otherwise the result is the left <a class="grammarRef" href="#prod-shapeNot">shapeNot</a>.
+otherwise the result is the left <a class="grammarRef" href="#prod-shapeNot">shapeNot</a>.
 </td></tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-shapeNot" name="prod-shapeNot"></a>[<span class="prodNo">13</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shapeNot" name="prod-shapeNot"></a>[<span class="prodNo">13</span>]   </td>
 <td><code class="production prod">shapeNot</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">("NOT" | "!")? <span class="prod"><a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a></span></code></td>
+<td>   ::=   </td>
+<td><code class="content">"NOT"? <span class="prod"><a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a></span></code></td>
 </tr>
 <tr valign="baseline">
-<td><a id="prod-inlineShapeNot" name="prod-inlineShapeNot"></a>[<span class="prodNo">17</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-inlineShapeNot" name="prod-inlineShapeNot"></a>[<span class="prodNo">17</span>]   </td>
 <td><code class="production prod">inlineShapeNot</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">("NOT" | "!")? <span class="prod"><a class="grammarRef" href="#prod-inlineShapeAtom">inlineShapeAtom</a></span></code></td>
+<td>   ::=   </td>
+<td><code class="content">"NOT"? <span class="prod"><a class="grammarRef" href="#prod-inlineShapeAtom">inlineShapeAtom</a></span></code></td>
 </tr>
+<tr><td colspan="1"></td><td colspan="3">
+If the left "<code>NOT</code>" matches, the result is a <a href="#dfn-ShapeNot" class="obj">ShapeNot</a> object with <span class="param">shapeExpr</span> containing the <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a>:</td></tr>
 <tr class="obj"><td></td><td><a href="#dfn-ShapeNot" class="obj">ShapeNot</a></td><td>{</td><td><span class="param">shapeExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a> }</td></tr>
 <tr><td colspan="1"></td><td colspan="3">
-If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches one or more times, the result is a <a href="#dfn-ShapeNot" class="obj">ShapeNot</a> with <span class="param">shapeExpr</span> containing the <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a>, otherwise the result is the left <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a>.
+otherwise the result is the <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a>.
 </td></tr>
 </tbody>
 
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-shapeDefinition" name="prod-shapeDefinition"></a>[<span class="prodNo">18</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">shapeDefinition</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">(<span class="prod"><a class="grammarRef" href="#prod-includeSet">includeSet</a></span> | <span class="prod"><a class="grammarRef" href="#prod-extraPropertySet">extraPropertySet</a></span> | "CLOSED")* "{" <span class="prod"><a class="grammarRef" href="#prod-someOfShape">someOfShape</a></span>? "}" <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span>* <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span></code></td>
-</tr>
-<tr valign="baseline">
-<td><a id="prod-inlineShapeDefinition" name="prod-inlineShapeDefinition"></a>[<span class="prodNo">19</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">inlineShapeDefinition</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">(<span class="prod"><a class="grammarRef" href="#prod-includeSet">includeSet</a></span> | <span class="prod"><a class="grammarRef" href="#prod-extraPropertySet">extraPropertySet</a></span> | "CLOSED")* "{" <span class="prod"><a class="grammarRef" href="#prod-someOfShape">someOfShape</a></span>? "}"</code></td>
-</tr>
-<tr class="obj"><td></td><td><a href="#dfn-Shape" class="obj">Shape</a></td><td>{</td><td>
-<!-- <span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? -->
-<span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>?
-<span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]?
-<span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>?
-<!-- <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>]? -->
-<span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
-  <tr><td colspan="1"></td><td colspan="3"><ul>
-  <li><span class="param">closed</span> is true if the "CLOSED" choice was matched.</li>
-  <li><span class="param">extra</span> is the set of IRIs matching the <a class="grammarRef" href="#prod-includeSet">includeSet</a> production.</li>
-  <li><span class="param">expression</span> comes from the <a class="grammarRef" href="#prod-someOfShape">someOfShape</a> production.</li>
-  <li><span class="param">semActs</span> is the set of semantic actions matching the </li>
-  </ul></td></tr>
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Shape atoms are shape references (indicated by "<code>@</code>"), definitions, or nested expressions.
+    </p>
+  </td></tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-extraPropertySet" name="prod-extraPropertySet"></a>[<span class="prodNo">20</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">extraPropertySet</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"EXTRA" <span class="prod"><a class="grammarRef" href="#prod-predicate">predicate</a></span>+</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-someOfShape" name="prod-someOfShape"></a>[<span class="prodNo">21</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">someOfShape</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-groupShape">groupShape</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-multiElementSomeOf">multiElementSomeOf</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-multiElementSomeOf" name="prod-multiElementSomeOf"></a>[<span class="prodNo">22</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">multiElementSomeOf</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-groupShape">groupShape</a></span> ("|" <span class="prod"><a class="grammarRef" href="#prod-groupShape">groupShape</a></span>)+</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-innerShape" name="prod-innerShape"></a>[<span class="prodNo">23</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">innerShape</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-multiElementGroup">multiElementGroup</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-multiElementSomeOf">multiElementSomeOf</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-groupShape" name="prod-groupShape"></a>[<span class="prodNo">24</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">groupShape</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-singleElementGroup">singleElementGroup</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-multiElementGroup">multiElementGroup</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-singleElementGroup" name="prod-singleElementGroup"></a>[<span class="prodNo">25</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">singleElementGroup</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-unaryShape">unaryShape</a></span> ";"?</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-multiElementGroup" name="prod-multiElementGroup"></a>[<span class="prodNo">26</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">multiElementGroup</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-unaryShape">unaryShape</a></span> (";" <span class="prod"><a class="grammarRef" href="#prod-unaryShape">unaryShape</a></span>)+ ";"?</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-unaryShape" name="prod-unaryShape"></a>[<span class="prodNo">27</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">unaryShape</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-productionLabel">productionLabel</a></span>? (<span class="prod"><a class="grammarRef" href="#prod-tripleConstraint">tripleConstraint</a></span> | <span class="prod"><a class="grammarRef" href="#prod-encapsulatedShape">encapsulatedShape</a></span>)<br/>
-| <span class="prod"><a class="grammarRef" href="#prod-include">include</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-encapsulatedShape" name="prod-encapsulatedShape"></a>[<span class="prodNo">28</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">encapsulatedShape</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"(" <span class="prod"><a class="grammarRef" href="#prod-innerShape">innerShape</a></span> ")" <span class="prod"><a class="grammarRef" href="#prod-cardinality">cardinality</a></span>? <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span>* <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-shapeAtom" name="prod-shapeAtom"></a>[<span class="prodNo">29</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shapeAtom" name="prod-shapeAtom"></a>[<span class="prodNo">29</span>]   </td>
 <td><code class="production prod">shapeAtom</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span> <span class="prod"><a class="grammarRef" href="#prod-shapeOrRef">shapeOrRef</a></span>?<br>
-| <span class="prod"><a class="grammarRef" href="#prod-shapeOrRef">shapeOrRef</a></span><br>
-| "(" <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span> ")"<br>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span> <span class="prod"><a class="grammarRef" href="#prod-shapeOrRef">shapeOrRef</a></span>?<br/>
+| <span class="prod"><a class="grammarRef" href="#prod-shapeOrRef">shapeOrRef</a></span><br/>
+| "(" <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span> ")"<br/>
 | "."</code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-inlineShapeAtom" name="prod-inlineShapeAtom"></a>[<span class="prodNo">30</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-inlineShapeAtom" name="prod-inlineShapeAtom"></a>[<span class="prodNo">30</span>]   </td>
 <td><code class="production prod">inlineShapeAtom</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span> <span class="prod"><a class="grammarRef" href="#prod-inlineShapeOrRef">inlineShapeOrRef</a></span>?<br>
-| <span class="prod"><a class="grammarRef" href="#prod-inlineShapeOrRef">inlineShapeOrRef</a></span> <span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span>?<br>
-| "(" <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span> ")"<br>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span> <span class="prod"><a class="grammarRef" href="#prod-inlineShapeOrRef">inlineShapeOrRef</a></span>?<br/>
+| <span class="prod"><a class="grammarRef" href="#prod-inlineShapeOrRef">inlineShapeOrRef</a></span> <span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span>?<br/>
+| "(" <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span> ")"<br/>
 | "."</code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
+<tr><td colspan="1"></td><td colspan="3">
+<ul>
+  <li>If the matching production inludes both a <span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span> and a <span class="prod"><a class="grammarRef" href="#prod-shapeOrRef">shapeOrRef</a></span>, the result is a <a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a>.</li>
+  <li>If the "(" <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span> ")" production matches, the result is the result of <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span>.</li>
+  <li>If the <code>"."</code> production matches, the result is an empty shape: <code>{"type": "Shape"}</code>.</li>
+</ul>
+</td></tr>
 <tr valign="baseline">
-<td><a id="prod-nodeConstraint" name="prod-nodeConstraint"></a>[<span class="prodNo">31</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">nodeConstraint</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"LITERAL" <span class="prod"><a class="grammarRef" href="#prod-xsFacet">xsFacet</a></span>*<br>
-| <span class="prod"><a class="grammarRef" href="#prod-nonLiteralKind">nonLiteralKind</a></span> <span class="prod"><a class="grammarRef" href="#prod-stringFacet">stringFacet</a></span>*<br>
-| <span class="prod"><a class="grammarRef" href="#prod-datatype">datatype</a></span> <span class="prod"><a class="grammarRef" href="#prod-xsFacet">xsFacet</a></span>*<br>
-| <span class="prod"><a class="grammarRef" href="#prod-valueSet">valueSet</a></span> <span class="prod"><a class="grammarRef" href="#prod-xsFacet">xsFacet</a></span>*<br>
-| <span class="prod"><a class="grammarRef" href="#prod-xsFacet">xsFacet</a></span>+</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-nonLiteralKind" name="prod-nonLiteralKind"></a>[<span class="prodNo">32</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">nonLiteralKind</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"IRI"<br/>
-| "BNODE"<br/>
-| "NONLITERAL"</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-xsFacet" name="prod-xsFacet"></a>[<span class="prodNo">33</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">xsFacet</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-stringFacet">stringFacet</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-numericFacet">numericFacet</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-stringFacet" name="prod-stringFacet"></a>[<span class="prodNo">34</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">stringFacet</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-stringLength">stringLength</a></span> <span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span><br/>
-| "PATTERN" <span class="prod"><a class="grammarRef" href="#prod-string">string</a></span><br/>
-| "~" <span class="prod"><a class="grammarRef" href="#prod-string">string</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-stringLength" name="prod-stringLength"></a>[<span class="prodNo">35</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">stringLength</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"LENGTH"<br/>
-| "MINLENGTH"<br/>
-| "MAXLENGTH"</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-numericFacet" name="prod-numericFacet"></a>[<span class="prodNo">36</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">numericFacet</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-numericRange">numericRange</a></span> ( <span class="prod"><a class="grammarRef" href="#prod-numericLiteral">numericLiteral</a></span> | <span class="prod"><a class="grammarRef" href="#prod-string">string</a></span> "^^" <span class="prod"><a class="grammarRef" href="#prod-datatype">datatype</a></span> )<br/>
-| <span class="prod"><a class="grammarRef" href="#prod-numericLength">numericLength</a></span> <span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-numericRange" name="prod-numericRange"></a>[<span class="prodNo">37</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">numericRange</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"MININCLUSIVE"<br/>
-| "MINEXCLUSIVE"<br/>
-| "MAXINCLUSIVE"<br/>
-| "MAXEXCLUSIVE"</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-numericLength" name="prod-numericLength"></a>[<span class="prodNo">38</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">numericLength</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"TOTALDIGITS"<br/>
-| "FRACTIONDIGITS"</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-tripleConstraint" name="prod-tripleConstraint"></a>[<span class="prodNo">39</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">tripleConstraint</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">(<span class="prod"><a class="grammarRef" href="#prod-senseFlags">senseFlags</a></span>)? <span class="prod"><a class="grammarRef" href="#prod-predicate">predicate</a></span> <span class="prod"><a class="grammarRef" href="#prod-inlineShapeExpression">inlineShapeExpression</a></span> (<span class="prod"><a class="grammarRef" href="#prod-cardinality">cardinality</a></span>)? (<span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span>)* <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-senseFlags" name="prod-senseFlags"></a>[<span class="prodNo">40</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">senseFlags</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"!" ("^")?<br/>
-| "^" ("!")?</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-valueSet" name="prod-valueSet"></a>[<span class="prodNo">41</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">valueSet</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"[" (<span class="prod"><a class="grammarRef" href="#prod-valueSetValue">valueSetValue</a></span>)* "]"</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-valueSetValue" name="prod-valueSetValue"></a>[<span class="prodNo">42</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">valueSetValue</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iriRange">iriRange</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-literal">literal</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-iriRange" name="prod-iriRange"></a>[<span class="prodNo">43</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">iriRange</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> (( "~" (<span class="prod"><a class="grammarRef" href="#prod-exclusion">exclusion</a></span>)* ))?<br/>
-| "." (<span class="prod"><a class="grammarRef" href="#prod-exclusion">exclusion</a></span>)+</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-exclusion" name="prod-exclusion"></a>[<span class="prodNo">44</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">exclusion</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"-" <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> ("~")?</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-literal" name="prod-literal"></a>[<span class="prodNo">45</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">literal</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-rdfLiteral">rdfLiteral</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-numericLiteral">numericLiteral</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-booleanLiteral">booleanLiteral</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-shapeOrRef" name="prod-shapeOrRef"></a>[<span class="prodNo">46</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shapeOrRef" name="prod-shapeOrRef"></a>[<span class="prodNo">46</span>]   </td>
 <td><code class="production prod">shapeOrRef</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-ATPNAME_LN">ATPNAME_LN</a></span><br/>
 | <span class="prod"><a class="grammarRef" href="#term-ATPNAME_NS">ATPNAME_NS</a></span><br/>
 | "@" <span class="prod"><a class="grammarRef" href="#prod-shapeLabel">shapeLabel</a></span><br/>
 | <span class="prod"><a class="grammarRef" href="#prod-shapeDefinition">shapeDefinition</a></span></code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-inlineShapeOrRef" name="prod-inlineShapeOrRef"></a>[<span class="prodNo">47</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-inlineShapeOrRef" name="prod-inlineShapeOrRef"></a>[<span class="prodNo">47</span>]   </td>
 <td><code class="production prod">inlineShapeOrRef</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-ATPNAME_LN">ATPNAME_LN</a></span><br/>
 | <span class="prod"><a class="grammarRef" href="#term-ATPNAME_NS">ATPNAME_NS</a></span><br/>
 | "@" <span class="prod"><a class="grammarRef" href="#prod-shapeLabel">shapeLabel</a></span><br/>
@@ -2044,358 +1790,671 @@ If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches on
 </tr>
 </tbody>
 
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Node constraints identify a (possibly infinite) set of matching RDF nodes.
+    </p>
+  </td></tr>
+</tbody>
+
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-include" name="prod-include"></a>[<span class="prodNo">48</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-nodeConstraint" name="prod-nodeConstraint"></a>[<span class="prodNo">31</span>]   </td>
+<td><code class="production prod">nodeConstraint</code></td>
+<td>   ::=   </td>
+<td><code class="content">"LITERAL" <span class="prod"><a class="grammarRef" href="#prod-xsFacet">xsFacet</a></span>*<br/>
+| <span class="prod"><a class="grammarRef" href="#prod-nonLiteralKind">nonLiteralKind</a></span> <span class="prod"><a class="grammarRef" href="#prod-stringFacet">stringFacet</a></span>*<br/>
+| <span class="prod"><a class="grammarRef" href="#prod-datatype">datatype</a></span> <span class="prod"><a class="grammarRef" href="#prod-xsFacet">xsFacet</a></span>*<br/>
+| <span class="prod"><a class="grammarRef" href="#prod-valueSet">valueSet</a></span> <span class="prod"><a class="grammarRef" href="#prod-xsFacet">xsFacet</a></span>*<br/>
+| <span class="prod"><a class="grammarRef" href="#prod-xsFacet">xsFacet</a></span>+</code></td>
+</tr>
+<tr class="obj"><td></td><td><a href="#dfn-NodeConstraint" class="obj">NodeConstraint</a></td><td>{</td><td><span class="param">nodeKind</span>:(<span class="literal">"iri"</span> | <span class="literal">"bnode"</span> | <span class="literal">"nonliteral"</span> | <span class="literal">"literal"</span>)? <span class="param">datatype</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <a class="nobref" href="#dfn-xsFacet">xsFacet</a>* <span class="param">values</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
+<tr valign="baseline">
+<td><a id="prod-nonLiteralKind" name="prod-nonLiteralKind"></a>[<span class="prodNo">32</span>]   </td>
+<td><code class="production prod">nonLiteralKind</code></td>
+<td>   ::=   </td>
+<td><code class="content">"IRI"<br/>
+| "BNODE"<br/>
+| "NONLITERAL"</code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-xsFacet" name="prod-xsFacet"></a>[<span class="prodNo">33</span>]   </td>
+<td><code class="production prod">xsFacet</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-stringFacet">stringFacet</a></span><br/>
+| <span class="prod"><a class="grammarRef" href="#prod-numericFacet">numericFacet</a></span></code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-stringFacet" name="prod-stringFacet"></a>[<span class="prodNo">34</span>]   </td>
+<td><code class="production prod">stringFacet</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-stringLength">stringLength</a></span> <span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span><br/>
+| "PATTERN" <span class="prod"><a class="grammarRef" href="#prod-string">string</a></span><br/>
+| "~" <span class="prod"><a class="grammarRef" href="#prod-string">string</a></span></code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-stringLength" name="prod-stringLength"></a>[<span class="prodNo">35</span>]   </td>
+<td><code class="production prod">stringLength</code></td>
+<td>   ::=   </td>
+<td><code class="content">"LENGTH"<br/>
+| "MINLENGTH"<br/>
+| "MAXLENGTH"</code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-numericFacet" name="prod-numericFacet"></a>[<span class="prodNo">36</span>]   </td>
+<td><code class="production prod">numericFacet</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-numericRange">numericRange</a></span> ( <span class="prod"><a class="grammarRef" href="#prod-numericLiteral">numericLiteral</a></span> | <span class="prod"><a class="grammarRef" href="#prod-string">string</a></span> "^^" <span class="prod"><a class="grammarRef" href="#prod-datatype">datatype</a></span> )<br/>
+| <span class="prod"><a class="grammarRef" href="#prod-numericLength">numericLength</a></span> <span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span></code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-numericRange" name="prod-numericRange"></a>[<span class="prodNo">37</span>]   </td>
+<td><code class="production prod">numericRange</code></td>
+<td>   ::=   </td>
+<td><code class="content">"MININCLUSIVE"<br/>
+| "MINEXCLUSIVE"<br/>
+| "MAXINCLUSIVE"<br/>
+| "MAXEXCLUSIVE"</code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-numericLength" name="prod-numericLength"></a>[<span class="prodNo">38</span>]   </td>
+<td><code class="production prod">numericLength</code></td>
+<td>   ::=   </td>
+<td><code class="content">"TOTALDIGITS"<br/>
+| "FRACTIONDIGITS"</code></td>
+</tr>
+</tbody>
+
+<tbody class="grammarParagraph" style="border-left:thin solid white; border-right:thin solid white;">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Shape defintions associate a triple expression with a closed flag and a list of partially constrained (extra) predicates.
+      Any predicate appearing in a triple expression is fully constrained unless it appears in the list of extras.
+    </p>
+  </td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-shapeDefinition" name="prod-shapeDefinition"></a>[<span class="prodNo">18</span>]   </td>
+<td><code class="production prod">shapeDefinition</code></td>
+<td>   ::=   </td>
+<td><code class="content">(<!-- <span class="prod"><a class="grammarRef" href="#prod-includeSet">includeSet</a></span> | --><span class="prod"><a class="grammarRef" href="#prod-extraPropertySet">extraPropertySet</a></span> | "CLOSED")* "{" <span class="prod"><a class="grammarRef" href="#prod-someOfShape">someOfShape</a></span>? "}" <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span>* <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span></code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-inlineShapeDefinition" name="prod-inlineShapeDefinition"></a>[<span class="prodNo">19</span>]   </td>
+<td><code class="production prod">inlineShapeDefinition</code></td>
+<td>   ::=   </td>
+<td><code class="content">(<!-- <span class="prod"><a class="grammarRef" href="#prod-includeSet">includeSet</a></span> | --><span class="prod"><a class="grammarRef" href="#prod-extraPropertySet">extraPropertySet</a></span> | "CLOSED")* "{" <span class="prod"><a class="grammarRef" href="#prod-someOfShape">someOfShape</a></span>? "}"</code></td>
+</tr>
+<tr class="obj"><td></td><td><a href="#dfn-Shape" class="obj">Shape</a></td><td>{</td><td>
+<!-- <span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? -->
+<span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>?
+<span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]?
+<span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>?
+<!-- <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>]? -->
+<span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]?
+<span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
+  <tr><td colspan="1"></td><td colspan="3"><ul>
+  <li><span class="param">closed</span> is true if the "CLOSED" choice was matched one or more times.</li>
+  <li><span class="param">extra</span> is the set of IRIs matching the <a class="grammarRef" href="#prod-extraPropertySet">extraPropertySet</a> production.</li>
+  <li><span class="param">expression</span> comes from the <a class="grammarRef" href="#prod-someOfShape">someOfShape</a> production.</li>
+  <li><span class="param">annotations</span> is the set of <a class="objref" href="#dfn-Annotation">Annotation</a>s matching the <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span> production.</li>
+  <li><span class="param">semActs</span> is the set of semantic actions matching the <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span> production.</li>
+</ul>
+  </td></tr>
+<tr valign="baseline">
+<td><a id="prod-extraPropertySet" name="prod-extraPropertySet"></a>[<span class="prodNo">20</span>]   </td>
+<td><code class="production prod">extraPropertySet</code></td>
+<td>   ::=   </td>
+<td><code class="content">"EXTRA" <span class="prod"><a class="grammarRef" href="#prod-predicate">predicate</a></span>+</code></td>
+</tr>
+</tbody>
+
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Triple expressions are arrangements of triple constraints.
+    </p>
+  </td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-someOfShape" name="prod-someOfShape"></a>[<span class="prodNo">21</span>]   </td>
+<td><code class="production prod">someOfShape</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-groupShape">groupShape</a></span><br/>
+| <span class="prod"><a class="grammarRef" href="#prod-multiElementSomeOf">multiElementSomeOf</a></span></code></td>
+</tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-multiElementSomeOf" name="prod-multiElementSomeOf"></a>[<span class="prodNo">22</span>]   </td>
+<td><code class="production prod">multiElementSomeOf</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-groupShape">groupShape</a></span> ("|" <span class="prod"><a class="grammarRef" href="#prod-groupShape">groupShape</a></span>)+</code></td>
+</tr>
+<tr><td colspan="1"></td><td colspan="3">
+If the right <a class="grammarRef" href="#prod-groupShape">groupShape</a> matches one or more times, the result is a <a href="#dfn-SomeOf" class="obj">SomeOf</a> object with <span class="param">expressions</span> containing the first <a class="grammarRef" href="#prod-groupShape">groupShape</a> followed by the ordered list from the second <a class="grammarRef" href="#prod-groupShape">groupShape</a>:
+</td></tr>
+<tr class="obj"><td></td><td><a href="#dfn-SomeOf" class="obj">SomeOf</a></td><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] }</td></tr>
+<tr><td colspan="1"></td><td colspan="3">
+otherwise the result is the left <a class="grammarRef" href="#prod-groupShape">groupShape</a>.
+</td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-innerShape" name="prod-innerShape"></a>[<span class="prodNo">23</span>]   </td>
+<td><code class="production prod">innerShape</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-multiElementGroup">multiElementGroup</a></span><br/>
+| <span class="prod"><a class="grammarRef" href="#prod-multiElementSomeOf">multiElementSomeOf</a></span></code></td>
+</tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-groupShape" name="prod-groupShape"></a>[<span class="prodNo">24</span>]   </td>
+<td><code class="production prod">groupShape</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-singleElementGroup">singleElementGroup</a></span><br/>
+| <span class="prod"><a class="grammarRef" href="#prod-multiElementGroup">multiElementGroup</a></span></code></td>
+</tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-singleElementGroup" name="prod-singleElementGroup"></a>[<span class="prodNo">25</span>]   </td>
+<td><code class="production prod">singleElementGroup</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-unaryShape">unaryShape</a></span> ";"?</code></td>
+</tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-multiElementGroup" name="prod-multiElementGroup"></a>[<span class="prodNo">26</span>]   </td>
+<td><code class="production prod">multiElementGroup</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-unaryShape">unaryShape</a></span> (";" <span class="prod"><a class="grammarRef" href="#prod-unaryShape">unaryShape</a></span>)+ ";"?</code></td>
+</tr>
+<tr><td colspan="1"></td><td colspan="3">
+If the right <a class="grammarRef" href="#prod-unaryShape">unaryShape</a> matches one or more times, the result is a <a href="#dfn-EachOf" class="obj">EachOf</a> object with <span class="param">expressions</span> containing the first <a class="grammarRef" href="#prod-unaryShape">unaryShape</a> followed by the ordered list from the second <a class="grammarRef" href="#prod-unaryShape">unaryShape</a>:
+</td></tr>
+<tr class="obj"><td></td><td><a href="#dfn-EachOf" class="obj">EachOf</a></td><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] }</td></tr>
+<tr><td colspan="1"></td><td colspan="3">
+otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">unaryShape</a>.
+</td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-unaryShape" name="prod-unaryShape"></a>[<span class="prodNo">27</span>]   </td>
+<td><code class="production prod">unaryShape</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-productionLabel">productionLabel</a></span>? (<span class="prod"><a class="grammarRef" href="#prod-tripleConstraint">tripleConstraint</a></span> | <span class="prod"><a class="grammarRef" href="#prod-encapsulatedTripleExpression">encapsulatedTripleExpression</a></span>)<br/>
+| <span class="prod"><a class="grammarRef" href="#prod-include">include</a></span></code></td>
+</tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-encapsulatedTripleExpression" name="prod-encapsulatedTripleExpression"></a>[<span class="prodNo">28</span>]   </td>
+<td><code class="production prod">encapsulatedTripleExpression</code></td>
+<td>   ::=   </td>
+<td><code class="content">"(" <span class="prod"><a class="grammarRef" href="#prod-innerShape">innerShape</a></span> ")" <span class="prod"><a class="grammarRef" href="#prod-cardinality">cardinality</a></span>? <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span>* <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span></code></td>
+</tr>
+</tbody>
+
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Triple constraints are matched against RDF triples.
+    </p>
+  </td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-tripleConstraint" name="prod-tripleConstraint"></a>[<span class="prodNo">39</span>]   </td>
+<td><code class="production prod">tripleConstraint</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-senseFlags">senseFlags</a></span>? <span class="prod"><a class="grammarRef" href="#prod-predicate">predicate</a></span> <span class="prod"><a class="grammarRef" href="#prod-inlineShapeExpression">inlineShapeExpression</a></span> <span class="prod"><a class="grammarRef" href="#prod-cardinality">cardinality</a></span>? <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span>* <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span></code></td>
+</tr>
+<tr class="obj"><td></td><td><a href="#dfn-TripleConstraint" class="obj">TripleConstraint</a></td><td>{</td><td><span class="param">inverse</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">negated</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">predicate</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">valueExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
+
+  <tr><td colspan="1"></td><td colspan="3"><ul>
+  <li><span class="param">inverse</span> is true if the <span class="prod"><a class="grammarRef" href="#prod-senseFlags">senseFlags</a></span> matched "<code>^</code>".</li>
+  <li><span class="param">negated</span> is true if the <span class="prod"><a class="grammarRef" href="#prod-senseFlags">senseFlags</a></span> matched "<code>!</code>".</li>
+  <li><span class="param">predicate</span> comes from the <a class="grammarRef" href="#prod-predicate">predicate</a> production.</li>
+  <li><span class="param">valueExpr</span> comes from the <a class="grammarRef" href="#prod-inlineShapeExpression">inlineShapeExpression</a> production. It it is an empty shape <code>{"type": "Shape"}</code>, <span class="param">valueExpr</span> is not assigned.</li>
+  <li><span class="param">min</span> comes from the <a class="grammarRef" href="#prod-cardinality">cardinality</a> production.</li>
+  <li><span class="param">max</span> comes from the <a class="grammarRef" href="#prod-cardinality">cardinality</a> production.</li>
+  <li><span class="param">annotations</span> is the set of <a class="objref" href="#dfn-Annotation">Annotation</a>s matching the <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span> production.</li>
+  <li><span class="param">semActs</span> is the set of semantic actions matching the <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span> production.</li>
+
+</ul>
+  </td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-senseFlags" name="prod-senseFlags"></a>[<span class="prodNo">40</span>]   </td>
+<td><code class="production prod">senseFlags</code></td>
+<td>   ::=   </td>
+<td><code class="content">"!" "^"? | "^" "!"?</code></td>
+</tr>
+</tbody>
+
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Value sets identify ranges of RDF nodes by explicit inclusion or by range (indicated by "<code>~</code>").
+      Ranges may include exclusions, which may also be ranges but must not in turn contain exclusions.
+    </p>
+  </td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-valueSet" name="prod-valueSet"></a>[<span class="prodNo">41</span>]   </td>
+<td><code class="production prod">valueSet</code></td>
+<td>   ::=   </td>
+<td><code class="content">"[" <span class="prod"><a class="grammarRef" href="#prod-valueSetValue">valueSetValue</a></span>* "]"</code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-valueSetValue" name="prod-valueSetValue"></a>[<span class="prodNo">42</span>]   </td>
+<td><code class="production prod">valueSetValue</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iriRange">iriRange</a></span> | <span class="prod"><a class="grammarRef" href="#prod-literal">literal</a></span></code></td>
+</tr>
+  <tr class="nob"><td></td><td><a href="#dfn-valueSetValue" class="nob">valueSetValue</a></td><td>=</td><td><a class="nobref" href="#dfn-objectValue">objectValue</a> | <a class="objref" href="#dfn-Stem">Stem</a> | <a class="objref" href="#dfn-StemRange">StemRange</a> ;</td></tr>
+<tr valign="baseline">
+<td><a id="prod-iriRange" name="prod-iriRange"></a>[<span class="prodNo">43</span>]   </td>
+<td><code class="production prod">iriRange</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> ("~" <span class="prod"><a class="grammarRef" href="#prod-exclusion">exclusion</a></span>*)?<br/>
+| "." <span class="prod"><a class="grammarRef" href="#prod-exclusion">exclusion</a></span>+</code></td>
+</tr>
+  <tr class="obj"><td></td><td><a href="#dfn-Stem" class="obj">Stem</a></td><td>{</td><td><span class="param">stem</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
+  <tr class="obj"><td></td><td><a href="#dfn-StemRange" class="obj">StemRange</a></td><td>{</td><td><span class="param">stem</span>:(<a class="trmref" href="#dfn-IRI">IRI</a> | <a class="objref" href="#dfn-Wildcard">Wildcard</a>) <span class="param">exclusions</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
+  <tr class="obj"><td></td><td><a href="#dfn-Wildcard" class="obj">Wildcard</a></td><td>{</td><td><span class="comment">/* contains no properties */</span> }</td></tr>
+<tr valign="baseline">
+<td><a id="prod-exclusion" name="prod-exclusion"></a>[<span class="prodNo">44</span>]   </td>
+<td><code class="production prod">exclusion</code></td>
+<td>   ::=   </td>
+<td><code class="content">"-" <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> "~"?</code></td>
+</tr>
+</tbody>
+
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      
+    </p>
+  </td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-include" name="prod-include"></a>[<span class="prodNo">48</span>]   </td>
 <td><code class="production prod">include</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"&amp;" <span class="prod"><a class="grammarRef" href="#prod-shapeLabel">shapeLabel</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-semanticActions" name="prod-semanticActions"></a>[<span class="prodNo">49</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">semanticActions</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">(<span class="prod"><a class="grammarRef" href="#prod-codeDecl">codeDecl</a></span>)*</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-annotation" name="prod-annotation"></a>[<span class="prodNo">50</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-annotation" name="prod-annotation"></a>[<span class="prodNo">50</span>]   </td>
 <td><code class="production prod">annotation</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"//" <span class="prod"><a class="grammarRef" href="#prod-predicate">predicate</a></span> ( <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#prod-literal">literal</a></span> )</code></td>
+<td>   ::=   </td>
+<td><code class="content">"//" <span class="prod"><a class="grammarRef" href="#prod-predicate">predicate</a></span> (<span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#prod-literal">literal</a></span>)</code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-predicate" name="prod-predicate"></a>[<span class="prodNo">51</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-cardinality" name="prod-cardinality"></a>[<span class="prodNo">53</span>]   </td>
+<td><code class="production prod">cardinality</code></td>
+<td>   ::=   </td>
+<td><code class="content">"*" | "+" | "?" | <span class="prod"><a class="grammarRef" href="#term-REPEAT_RANGE">REPEAT_RANGE</a></span></code></td>
+</tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-semanticActions" name="prod-semanticActions"></a>[<span class="prodNo">49</span>]   </td>
+<td><code class="production prod">semanticActions</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-codeDecl">codeDecl</a></span>*</code></td>
+</tr>
+<tr valign="baseline">
+<td><a id="prod-codeDecl" name="prod-codeDecl"></a>[<span class="prodNo">62</span>]   </td>
+<td><code class="production prod">codeDecl</code></td>
+<td>   ::=   </td>
+<td><code class="content">"%" <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> (<span class="prod"><a class="grammarRef" href="#term-CODE">CODE</a></span> | "%")</code></td>
+</tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-productionLabel" name="prod-productionLabel"></a>[<span class="prodNo">63</span>]   </td>
+<td><code class="production prod">productionLabel</code></td>
+<td>   ::=   </td>
+<td><code class="content">"$" (<span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#prod-blankNode">blankNode</a></span>)</code></td>
+</tr>
+</tbody>
+
+<!-- 
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-includeSet" name="prod-includeSet"></a>[<span class="prodNo">64</span>]   </td>
+<td><code class="production prod">includeSet</code></td>
+<td>   ::=   </td>
+<td><code class="content">"&amp;" <span class="prod"><a class="grammarRef" href="#prod-shapeLabel">shapeLabel</a></span>+</code></td>
+</tr>
+</tbody>
+-->
+
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      The remaining productions come from the specifications for SPARQL and Turtle.
+    </p>
+  </td></tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-literal" name="prod-literal"></a>[<span class="prodNo">45</span>]   </td>
+<td><code class="production prod">literal</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-rdfLiteral">rdfLiteral</a></span> | <span class="prod"><a class="grammarRef" href="#prod-numericLiteral">numericLiteral</a></span> | <span class="prod"><a class="grammarRef" href="#prod-booleanLiteral">booleanLiteral</a></span></code></td>
+</tr>
+</tbody>
+
+<tbody class="prod">
+<tr valign="baseline">
+<td><a id="prod-predicate" name="prod-predicate"></a>[<span class="prodNo">51</span>]   </td>
 <td><code class="production prod">predicate</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#term-RDF_TYPE">RDF_TYPE</a></span></code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#term-RDF_TYPE">RDF_TYPE</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-datatype" name="prod-datatype"></a>[<span class="prodNo">52</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-datatype" name="prod-datatype"></a>[<span class="prodNo">52</span>]   </td>
 <td><code class="production prod">datatype</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-cardinality" name="prod-cardinality"></a>[<span class="prodNo">53</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">cardinality</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"*"<br/>
-| "+"<br/>
-| "?"<br/>
-| <span class="prod"><a class="grammarRef" href="#term-REPEAT_RANGE">REPEAT_RANGE</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-shapeLabel" name="prod-shapeLabel"></a>[<span class="prodNo">54</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-shapeLabel" name="prod-shapeLabel"></a>[<span class="prodNo">54</span>]   </td>
 <td><code class="production prod">shapeLabel</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-blankNode">blankNode</a></span></code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#prod-blankNode">blankNode</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-numericLiteral" name="prod-numericLiteral"></a>[<span class="prodNo">55</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-numericLiteral" name="prod-numericLiteral"></a>[<span class="prodNo">55</span>]   </td>
 <td><code class="production prod">numericLiteral</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#term-DECIMAL">DECIMAL</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#term-DOUBLE">DOUBLE</a></span></code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span> | <span class="prod"><a class="grammarRef" href="#term-DECIMAL">DECIMAL</a></span> | <span class="prod"><a class="grammarRef" href="#term-DOUBLE">DOUBLE</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-rdfLiteral" name="prod-rdfLiteral"></a>[<span class="prodNo">56</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-rdfLiteral" name="prod-rdfLiteral"></a>[<span class="prodNo">56</span>]   </td>
 <td><code class="production prod">rdfLiteral</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-string">string</a></span> (<span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span> | "^^" <span class="prod"><a class="grammarRef" href="#prod-datatype">datatype</a></span>)?</code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-booleanLiteral" name="prod-booleanLiteral"></a>[<span class="prodNo">57</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-booleanLiteral" name="prod-booleanLiteral"></a>[<span class="prodNo">57</span>]   </td>
 <td><code class="production prod">booleanLiteral</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"true"<br/>
-| "false"</code></td>
+<td>   ::=   </td>
+<td><code class="content">"true" | "false"</code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-string" name="prod-string"></a>[<span class="prodNo">58</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-string" name="prod-string"></a>[<span class="prodNo">58</span>]   </td>
 <td><code class="production prod">string</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-STRING_LITERAL1">STRING_LITERAL1</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#term-STRING_LITERAL2">STRING_LITERAL2</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#term-STRING_LITERAL_LONG1">STRING_LITERAL_LONG1</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#term-STRING_LITERAL_LONG2">STRING_LITERAL_LONG2</a></span></code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-STRING_LITERAL1">STRING_LITERAL1</a></span> | <span class="prod"><a class="grammarRef" href="#term-STRING_LITERAL_LONG1">STRING_LITERAL_LONG1</a></span><br/>
+| <span class="prod"><a class="grammarRef" href="#term-STRING_LITERAL2">STRING_LITERAL2</a></span> | <span class="prod"><a class="grammarRef" href="#term-STRING_LITERAL_LONG2">STRING_LITERAL_LONG2</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-iri" name="prod-iri"></a>[<span class="prodNo">59</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-iri" name="prod-iri"></a>[<span class="prodNo">59</span>]   </td>
 <td><code class="production prod">iri</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-IRIREF">IRIREF</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-prefixedName">prefixedName</a></span></code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-IRIREF">IRIREF</a></span> | <span class="prod"><a class="grammarRef" href="#prod-prefixedName">prefixedName</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-prefixedName" name="prod-prefixedName"></a>[<span class="prodNo">60</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-prefixedName" name="prod-prefixedName"></a>[<span class="prodNo">60</span>]   </td>
 <td><code class="production prod">prefixedName</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PNAME_LN">PNAME_LN</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#term-PNAME_NS">PNAME_NS</a></span></code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PNAME_LN">PNAME_LN</a></span> | <span class="prod"><a class="grammarRef" href="#term-PNAME_NS">PNAME_NS</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="prod">
 <tr valign="baseline">
-<td><a id="prod-blankNode" name="prod-blankNode"></a>[<span class="prodNo">61</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="prod-blankNode" name="prod-blankNode"></a>[<span class="prodNo">61</span>]   </td>
 <td><code class="production prod">blankNode</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-BLANK_NODE_LABEL">BLANK_NODE_LABEL</a></span></code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-codeDecl" name="prod-codeDecl"></a>[<span class="prodNo">62</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">codeDecl</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"%" <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> ( <span class="prod"><a class="grammarRef" href="#term-CODE">CODE</a></span> | "%" )</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-productionLabel" name="prod-productionLabel"></a>[<span class="prodNo">63</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">productionLabel</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"$" ( <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#prod-blankNode">blankNode</a></span> )</code></td>
-</tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-includeSet" name="prod-includeSet"></a>[<span class="prodNo">64</span>]&nbsp;&nbsp;&nbsp;</td>
-<td><code class="production prod">includeSet</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"&amp;" (<span class="prod"><a class="grammarRef" href="#prod-shapeLabel">shapeLabel</a></span>)+</code></td>
 </tr>
 </tbody>
 
 <tbody><tr><td colspan="4" class="grammarSection"><h3><a id="terminals" name="terminals">Terminals</a>:</h3></td></tr></tbody>
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-CODE" name="term-CODE"></a>[<span class="prodNo">65</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-CODE" name="term-CODE"></a>[<span class="prodNo">65</span>]   </td>
 <td>&lt;<code class="production term">CODE</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"{" (( [^%\\] | "\\" [%\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> ))* "%" "}"</code></td>
+<td>   ::=   </td>
+<td><code class="content">"{" ([^%\\] | "\\" [%\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>)* "%" "}"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-REPEAT_RANGE" name="term-REPEAT_RANGE"></a>[<span class="prodNo">66</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-REPEAT_RANGE" name="term-REPEAT_RANGE"></a>[<span class="prodNo">66</span>]   </td>
 <td>&lt;<code class="production term">REPEAT_RANGE</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"{" <span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span> (( "," (( <span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span> | "*" ))? ))? "}"</code></td>
+<td>   ::=   </td>
+<td><code class="content">"{" <span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span> ( "," (<span class="prod"><a class="grammarRef" href="#term-INTEGER">INTEGER</a></span> | "*")? )? "}"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-RDF_TYPE" name="term-RDF_TYPE"></a>[<span class="prodNo">67</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-RDF_TYPE" name="term-RDF_TYPE"></a>[<span class="prodNo">67</span>]   </td>
 <td>&lt;<code class="production term">RDF_TYPE</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"a"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-IRIREF" name="term-IRIREF"></a>[<span class="prodNo">68</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-IRIREF" name="term-IRIREF"></a>[<span class="prodNo">68</span>]   </td>
 <td>&lt;<code class="production term">IRIREF</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"&lt;" (( [^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> ))* "&gt;"</code></td>
+<td>   ::=   </td>
+<td><code class="content">"&lt;" ([^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>)* "&gt;"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PNAME_NS" name="term-PNAME_NS"></a>[<span class="prodNo">69</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PNAME_NS" name="term-PNAME_NS"></a>[<span class="prodNo">69</span>]   </td>
 <td>&lt;<code class="production term">PNAME_NS</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">(<span class="prod"><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></span>)? ":"</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></span>? ":"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PNAME_LN" name="term-PNAME_LN"></a>[<span class="prodNo">70</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PNAME_LN" name="term-PNAME_LN"></a>[<span class="prodNo">70</span>]   </td>
 <td>&lt;<code class="production term">PNAME_LN</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PNAME_NS">PNAME_NS</a></span> <span class="prod"><a class="grammarRef" href="#term-PN_LOCAL">PN_LOCAL</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-ATPNAME_NS" name="term-ATPNAME_NS"></a>[<span class="prodNo">71</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-ATPNAME_NS" name="term-ATPNAME_NS"></a>[<span class="prodNo">71</span>]   </td>
 <td>&lt;<code class="production term">ATPNAME_NS</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"@" (<span class="prod"><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></span>)? ":"</code></td>
+<td>   ::=   </td>
+<td><code class="content">"@" <span class="prod"><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></span>? ":"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-ATPNAME_LN" name="term-ATPNAME_LN"></a>[<span class="prodNo">72</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-ATPNAME_LN" name="term-ATPNAME_LN"></a>[<span class="prodNo">72</span>]   </td>
 <td>&lt;<code class="production term">ATPNAME_LN</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"@" <span class="prod"><a class="grammarRef" href="#term-PNAME_NS">PNAME_NS</a></span> <span class="prod"><a class="grammarRef" href="#term-PN_LOCAL">PN_LOCAL</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-BLANK_NODE_LABEL" name="term-BLANK_NODE_LABEL"></a>[<span class="prodNo">73</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-BLANK_NODE_LABEL" name="term-BLANK_NODE_LABEL"></a>[<span class="prodNo">73</span>]   </td>
 <td>&lt;<code class="production term">BLANK_NODE_LABEL</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"_:" ( <span class="prod"><a class="grammarRef" href="#term-PN_CHARS_U">PN_CHARS_U</a></span> | [0-9] ) (( (( <span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> | "." ))* <span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> ))?</code></td>
+<td>   ::=   </td>
+<td><code class="content">"_:" (<span class="prod"><a class="grammarRef" href="#term-PN_CHARS_U">PN_CHARS_U</a></span> | [0-9]) ((<span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> | ".")* <span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span>)?</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-LANGTAG" name="term-LANGTAG"></a>[<span class="prodNo">74</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-LANGTAG" name="term-LANGTAG"></a>[<span class="prodNo">74</span>]   </td>
 <td>&lt;<code class="production term">LANGTAG</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"@" ([a-zA-Z])+ (( "-" ([a-zA-Z0-9])+ ))*</code></td>
+<td>   ::=   </td>
+<td><code class="content">"@" ([a-zA-Z])+ ("-" ([a-zA-Z0-9])+)*</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-INTEGER" name="term-INTEGER"></a>[<span class="prodNo">75</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-INTEGER" name="term-INTEGER"></a>[<span class="prodNo">75</span>]   </td>
 <td>&lt;<code class="production term">INTEGER</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">([+-])? ([0-9])+</code></td>
+<td>   ::=   </td>
+<td><code class="content">[+-]? [0-9]+</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-DECIMAL" name="term-DECIMAL"></a>[<span class="prodNo">76</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-DECIMAL" name="term-DECIMAL"></a>[<span class="prodNo">76</span>]   </td>
 <td>&lt;<code class="production term">DECIMAL</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">([+-])? ([0-9])* "." ([0-9])+</code></td>
+<td>   ::=   </td>
+<td><code class="content">[+-]? [0-9]* "." [0-9]+</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-DOUBLE" name="term-DOUBLE"></a>[<span class="prodNo">77</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-DOUBLE" name="term-DOUBLE"></a>[<span class="prodNo">77</span>]   </td>
 <td>&lt;<code class="production term">DOUBLE</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">([+-])? ( ([0-9])+ "." ([0-9])* <span class="prod"><a class="grammarRef" href="#term-EXPONENT">EXPONENT</a></span> | (".")? ([0-9])+ <span class="prod"><a class="grammarRef" href="#term-EXPONENT">EXPONENT</a></span> )</code></td>
+<td>   ::=   </td>
+<td><code class="content">[+-]? ([0-9]+ "." [0-9]* <span class="prod"><a class="grammarRef" href="#term-EXPONENT">EXPONENT</a></span> | "."? [0-9]+ <span class="prod"><a class="grammarRef" href="#term-EXPONENT">EXPONENT</a></span>)</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-EXPONENT" name="term-EXPONENT"></a>[<span class="prodNo">78</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-EXPONENT" name="term-EXPONENT"></a>[<span class="prodNo">78</span>]   </td>
 <td>&lt;<code class="production term">EXPONENT</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">[eE] ([+-])? ([0-9])+</code></td>
+<td>   ::=   </td>
+<td><code class="content">[eE] [+-]? [0-9]+</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-STRING_LITERAL1" name="term-STRING_LITERAL1"></a>[<span class="prodNo">79</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-STRING_LITERAL1" name="term-STRING_LITERAL1"></a>[<span class="prodNo">79</span>]   </td>
 <td>&lt;<code class="production term">STRING_LITERAL1</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"'" (( [^'\\\n\r] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> ))* "'"</code></td>
+<td>   ::=   </td>
+<td><code class="content">"'" ([^'\\\n\r] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>)* "'"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-STRING_LITERAL2" name="term-STRING_LITERAL2"></a>[<span class="prodNo">80</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-STRING_LITERAL2" name="term-STRING_LITERAL2"></a>[<span class="prodNo">80</span>]   </td>
 <td>&lt;<code class="production term">STRING_LITERAL2</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">'"' (( [^\"\\\n\r] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> ))* '"'</code></td>
+<td>   ::=   </td>
+<td><code class="content">'"' ([^\"\\\n\r] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>)* '"'</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-STRING_LITERAL_LONG1" name="term-STRING_LITERAL_LONG1"></a>[<span class="prodNo">81</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-STRING_LITERAL_LONG1" name="term-STRING_LITERAL_LONG1"></a>[<span class="prodNo">81</span>]   </td>
 <td>&lt;<code class="production term">STRING_LITERAL_LONG1</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"'''" (( (( "'" | "''" ))? ( [^\\'\\] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> ) ))* "'''"</code></td>
+<td>   ::=   </td>
+<td><code class="content">"'''" ( ("'" | "''")? ([^\\'\\] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>) )* "'''"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-STRING_LITERAL_LONG1X" name="term-STRING_LITERAL_LONG1X"></a>[<span class="prodNo">82</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-STRING_LITERAL_LONG1X" name="term-STRING_LITERAL_LONG1X"></a>[<span class="prodNo">82</span>]   </td>
 <td>&lt;<code class="production term">STRING_LITERAL_LONG1X</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"'''"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-STRING_LITERAL_LONG2" name="term-STRING_LITERAL_LONG2"></a>[<span class="prodNo">83</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-STRING_LITERAL_LONG2" name="term-STRING_LITERAL_LONG2"></a>[<span class="prodNo">83</span>]   </td>
 <td>&lt;<code class="production term">STRING_LITERAL_LONG2</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">'"""' (( (( '"' | '""' ))? ( [^\"\\] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> ) ))* '"""'</code></td>
+<td>   ::=   </td>
+<td><code class="content">'"""' ( ('"' | '""')? ([^\"\\] | <span class="prod"><a class="grammarRef" href="#term-ECHAR">ECHAR</a></span> | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span>) )* '"""'</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-STRING_LITERAL_LONG2X" name="term-STRING_LITERAL_LONG2X"></a>[<span class="prodNo">84</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-STRING_LITERAL_LONG2X" name="term-STRING_LITERAL_LONG2X"></a>[<span class="prodNo">84</span>]   </td>
 <td>&lt;<code class="production term">STRING_LITERAL_LONG2X</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">'"""'</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-UCHAR" name="term-UCHAR"></a>[<span class="prodNo">85</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-UCHAR" name="term-UCHAR"></a>[<span class="prodNo">85</span>]   </td>
 <td>&lt;<code class="production term">UCHAR</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"\\u" <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span><br/>
 | "\\U" <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span></code></td>
 </tr>
@@ -2403,18 +2462,18 @@ If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches on
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-ECHAR" name="term-ECHAR"></a>[<span class="prodNo">86</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-ECHAR" name="term-ECHAR"></a>[<span class="prodNo">86</span>]   </td>
 <td>&lt;<code class="production term">ECHAR</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"\\" [tbnrf\\\"\\']</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-WS" name="term-WS"></a>[<span class="prodNo">87</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-WS" name="term-WS"></a>[<span class="prodNo">87</span>]   </td>
 <td>&lt;<code class="production term">WS</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">" "<br/>
 | "\t"<br/>
 | "\r"<br/>
@@ -2424,18 +2483,18 @@ If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches on
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-ANON" name="term-ANON"></a>[<span class="prodNo">88</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-ANON" name="term-ANON"></a>[<span class="prodNo">88</span>]   </td>
 <td>&lt;<code class="production term">ANON</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">"[" (<span class="prod"><a class="grammarRef" href="#term-WS">WS</a></span>)* "]"</code></td>
+<td>   ::=   </td>
+<td><code class="content">"[" <span class="prod"><a class="grammarRef" href="#term-WS">WS</a></span>* "]"</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PN_CHARS_BASE" name="term-PN_CHARS_BASE"></a>[<span class="prodNo">89</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PN_CHARS_BASE" name="term-PN_CHARS_BASE"></a>[<span class="prodNo">89</span>]   </td>
 <td>&lt;<code class="production term">PN_CHARS_BASE</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">[A-Z]<br/>
 | [a-z]<br/>
 | [#00C0-#00D6]<br/>
@@ -2455,9 +2514,9 @@ If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches on
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PN_CHARS_U" name="term-PN_CHARS_U"></a>[<span class="prodNo">90</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PN_CHARS_U" name="term-PN_CHARS_U"></a>[<span class="prodNo">90</span>]   </td>
 <td>&lt;<code class="production term">PN_CHARS_U</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PN_CHARS_BASE">PN_CHARS_BASE</a></span><br/>
 | "_"</code></td>
 </tr>
@@ -2465,9 +2524,9 @@ If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches on
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PN_CHARS" name="term-PN_CHARS"></a>[<span class="prodNo">91</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PN_CHARS" name="term-PN_CHARS"></a>[<span class="prodNo">91</span>]   </td>
 <td>&lt;<code class="production term">PN_CHARS</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PN_CHARS_U">PN_CHARS_U</a></span><br/>
 | "-"<br/>
 | [0-9]<br/>
@@ -2479,27 +2538,27 @@ If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches on
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PN_PREFIX" name="term-PN_PREFIX"></a>[<span class="prodNo">92</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PN_PREFIX" name="term-PN_PREFIX"></a>[<span class="prodNo">92</span>]   </td>
 <td>&lt;<code class="production term">PN_PREFIX</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PN_CHARS_BASE">PN_CHARS_BASE</a></span> (( (( <span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> | "." ))* <span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> ))?</code></td>
+<td>   ::=   </td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PN_CHARS_BASE">PN_CHARS_BASE</a></span> ( (<span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> | ".")* <span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> )?</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PN_LOCAL" name="term-PN_LOCAL"></a>[<span class="prodNo">93</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PN_LOCAL" name="term-PN_LOCAL"></a>[<span class="prodNo">93</span>]   </td>
 <td>&lt;<code class="production term">PN_LOCAL</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">( <span class="prod"><a class="grammarRef" href="#term-PN_CHARS_U">PN_CHARS_U</a></span> | ":" | [0-9] | <span class="prod"><a class="grammarRef" href="#term-PLX">PLX</a></span> ) (( (( <span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> | "." | ":" | <span class="prod"><a class="grammarRef" href="#term-PLX">PLX</a></span> ))* ( <span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> | ":" | <span class="prod"><a class="grammarRef" href="#term-PLX">PLX</a></span> ) ))?</code></td>
+<td>   ::=   </td>
+<td><code class="content">(<span class="prod"><a class="grammarRef" href="#term-PN_CHARS_U">PN_CHARS_U</a></span> | ":" | [0-9] | <span class="prod"><a class="grammarRef" href="#term-PLX">PLX</a></span>) ( (<span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> | "." | ":" | <span class="prod"><a class="grammarRef" href="#term-PLX">PLX</a></span>)* (<span class="prod"><a class="grammarRef" href="#term-PN_CHARS">PN_CHARS</a></span> | ":" | <span class="prod"><a class="grammarRef" href="#term-PLX">PLX</a></span>) )?</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PLX" name="term-PLX"></a>[<span class="prodNo">94</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PLX" name="term-PLX"></a>[<span class="prodNo">94</span>]   </td>
 <td>&lt;<code class="production term">PLX</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#term-PERCENT">PERCENT</a></span><br/>
 | <span class="prod"><a class="grammarRef" href="#term-PN_LOCAL_ESC">PN_LOCAL_ESC</a></span></code></td>
 </tr>
@@ -2507,18 +2566,18 @@ If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches on
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PERCENT" name="term-PERCENT"></a>[<span class="prodNo">95</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PERCENT" name="term-PERCENT"></a>[<span class="prodNo">95</span>]   </td>
 <td>&lt;<code class="production term">PERCENT</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"%" <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span> <span class="prod"><a class="grammarRef" href="#term-HEX">HEX</a></span></code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-HEX" name="term-HEX"></a>[<span class="prodNo">96</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-HEX" name="term-HEX"></a>[<span class="prodNo">96</span>]   </td>
 <td>&lt;<code class="production term">HEX</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">[0-9]<br/>
 | [A-F]<br/>
 | [a-f]</code></td>
@@ -2527,20 +2586,20 @@ If the 2nd <a class="grammarRef" href="#prod-shapeAtom">shapeAtom</a> matches on
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PN_LOCAL_ESC" name="term-PN_LOCAL_ESC"></a>[<span class="prodNo">97</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PN_LOCAL_ESC" name="term-PN_LOCAL_ESC"></a>[<span class="prodNo">97</span>]   </td>
 <td>&lt;<code class="production term">PN_LOCAL_ESC</code>&gt;</td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
+<td>   ::=   </td>
 <td><code class="content">"\\" ( "_" | "~" | "." | "-" | "!" | "$" | "&amp;" | "'" | "(" | ")" | "*" | "+" | "," | ";" | "=" | "/" | "?" | "#" | "@" | "%" )</code></td>
 </tr>
 </tbody>
 
 <tbody class="term">
 <tr valign="baseline">
-<td><a id="term-PASSED_TOKENS" name="term-PASSED_TOKENS"></a>[<span class="prodNo">98</span>]&nbsp;&nbsp;&nbsp;</td>
+<td><a id="term-PASSED_TOKENS" name="term-PASSED_TOKENS"></a>[<span class="prodNo">98</span>]   </td>
 <td><code class="production directive">PASSED TOKENS</code></td>
-<td>&nbsp;&nbsp;&nbsp;::=&nbsp;&nbsp;&nbsp;</td>
-<td><code class="content">([ \t\r\n])+<br/>
-| "#" ([^\r\n])*</code></td>
+<td>   ::=   </td>
+<td><code class="content">[ \t\r\n]+<br/>
+| "#" [^\r\n]*</code></td>
 </tr>
 </tbody>
 
