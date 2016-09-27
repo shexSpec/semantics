@@ -2008,6 +2008,12 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"(" <span class="prod"><a class="grammarRef" href="#prod-innerShape">innerShape</a></span> ")" <span class="prod"><a class="grammarRef" href="#prod-cardinality">cardinality</a></span>? <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span>* <span class="prod"><a class="grammarRef" href="#prod-semanticActions">semanticActions</a></span></code></td>
 </tr>
+<tr valign="baseline">
+<td><a id="prod-productionLabel" name="prod-productionLabel"></a>[<span class="prodNo">63</span>]   </td>
+<td><code class="production prod">productionLabel</code></td>
+<td>   ::=   </td>
+<td><code class="content">"$" (<span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#prod-blankNode">blankNode</a></span>)</code></td>
+</tr>
 </tbody>
 
 <tbody class="grammarParagraph">
@@ -2039,6 +2045,12 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 
 </ul>
   </td></tr>
+<tr valign="baseline">
+<td><a id="prod-cardinality" name="prod-cardinality"></a>[<span class="prodNo">53</span>]   </td>
+<td><code class="production prod">cardinality</code></td>
+<td>   ::=   </td>
+<td><code class="content">"*" | "+" | "?" | <span class="prod"><a class="grammarRef" href="#term-REPEAT_RANGE">REPEAT_RANGE</a></span></code></td>
+</tr>
 </tbody>
 
 <tbody class="prod">
@@ -2094,7 +2106,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <tbody class="grammarParagraph">
   <tr><td rowspan="2" colspan="4">
     <p>
-      
+      Triple expressions can include the <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span> in a <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shapeExprDecl</a></span>.
     </p>
   </td></tr>
 </tbody>
@@ -2106,6 +2118,15 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"&amp;" <span class="prod"><a class="grammarRef" href="#prod-shapeLabel">shapeLabel</a></span></code></td>
 </tr>
+  <tr class="obj"><td></td><td><a href="#dfn-Inclusion" class="obj">Inclusion</a></td><td>{</td><td><span class="param">include</span>:<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a> }</td></tr>
+</tbody>
+
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Triple expressions can include annotations in the form of a tuple of a <span class="prod"><a class="grammarRef" href="#prod-predicate">predicate</a></span> and an <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> or <span class="prod"><a class="grammarRef" href="#prod-literal">literal</a></span>.
+    </p>
+  </td></tr>
 </tbody>
 
 <tbody class="prod">
@@ -2115,15 +2136,15 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"//" <span class="prod"><a class="grammarRef" href="#prod-predicate">predicate</a></span> (<span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#prod-literal">literal</a></span>)</code></td>
 </tr>
+  <tr class="obj"><td></td><td><a href="#dfn-Annotation" class="obj">Annotation</a></td><td>{</td><td><span class="param">predicate</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">object</span>:<a class="nobref" href="#dfn-objectValue">objectValue</a> }</td></tr>
 </tbody>
 
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-cardinality" name="prod-cardinality"></a>[<span class="prodNo">53</span>]   </td>
-<td><code class="production prod">cardinality</code></td>
-<td>   ::=   </td>
-<td><code class="content">"*" | "+" | "?" | <span class="prod"><a class="grammarRef" href="#term-REPEAT_RANGE">REPEAT_RANGE</a></span></code></td>
-</tr>
+<tbody class="grammarParagraph">
+  <tr><td rowspan="2" colspan="4">
+    <p>
+      Triple expressions can include semantic actions consisting of an <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> and an optional code string.
+    </p>
+  </td></tr>
 </tbody>
 
 <tbody class="prod">
@@ -2139,15 +2160,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"%" <span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> (<span class="prod"><a class="grammarRef" href="#term-CODE">CODE</a></span> | "%")</code></td>
 </tr>
-</tbody>
-
-<tbody class="prod">
-<tr valign="baseline">
-<td><a id="prod-productionLabel" name="prod-productionLabel"></a>[<span class="prodNo">63</span>]   </td>
-<td><code class="production prod">productionLabel</code></td>
-<td>   ::=   </td>
-<td><code class="content">"$" (<span class="prod"><a class="grammarRef" href="#prod-iri">iri</a></span> | <span class="prod"><a class="grammarRef" href="#prod-blankNode">blankNode</a></span>)</code></td>
-</tr>
+  <tr class="obj"><td></td><td><a href="#dfn-SemAct" class="obj">SemAct</a></td><td>{</td><td><span class="param">name</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">code</span>:<a class="trmref" href="#dfn-STRING">STRING</a>? }</td></tr>
 </tbody>
 
 <!-- 
@@ -2666,7 +2679,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
       </div>
     </section>
 
-    <section id="shexc">
+    <section id="shexc" style="display:none">
       <h2>Appendix: ShEx Compact Syntax</h2>
       <div class="grammarTable">
 <table border="0">
