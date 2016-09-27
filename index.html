@@ -2234,6 +2234,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-string">string</a></span> (<span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span> | "^^" <span class="prod"><a class="grammarRef" href="#prod-datatype">datatype</a></span>)?</code></td>
 </tr>
+    <tr id="handle-RDFLiteral"><td></td><td><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-literal">            literal     </a></td><td></td><td>The literal has a lexical form of the first rule argument, <code>String</code>. If the <code>'^^' iri</code> rule matched, the datatype is <code>iri</code> and the literal has no language tag. If the <code>LANGTAG</code> rule matched, the datatype is <code>rdf:langString</code> and the language tag is <code>LANGTAG</code>. If neither matched, the datatype is <code>xsd:string</code> and the literal has no language tag.</td></tr>
 </tbody>
 
 <tbody class="prod">
@@ -2243,6 +2244,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"true" | "false"</code></td>
 </tr>
+    <tr id="handle-BooleanLiteral"><td></td><td><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-literal">            literal     </a></td><td></td><td>The literal has a lexical form of the <code>true</code> or <code>false</code>, depending on which matched the input, and a datatype of <code>xsd:boolean</code>.</td></tr>
 </tbody>
 
 <tbody class="prod">
@@ -2375,6 +2377,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">"@" ([a-zA-Z])+ ("-" ([a-zA-Z0-9])+)*</code></td>
 </tr>
+    <tr id="handle-LANGTAG"><td></td><td><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-language-tag">language tag</a></td><td></td><td>The characters following the <code>@</code> form the unicode string of the language tag.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2384,6 +2387,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">[+-]? [0-9]+</code></td>
 </tr>
+    <tr id="handle-INTEGER"><td></td><td><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-literal">            literal     </a></td><td></td><td>The literal has a lexical form of the input string, and a datatype of <code>xsd:integer</code>.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2393,6 +2397,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">[+-]? [0-9]* "." [0-9]+</code></td>
 </tr>
+    <tr id="handle-DOUBLE"><td></td><td><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-literal">            literal     </a></td><td></td><td>The literal has a lexical form of the input string, and a datatype of <code>xsd:double</code>.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2402,6 +2407,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 <td>   ::=   </td>
 <td><code class="content">[+-]? ([0-9]+ "." [0-9]* <span class="prod"><a class="grammarRef" href="#term-EXPONENT">EXPONENT</a></span> | "."? [0-9]+ <span class="prod"><a class="grammarRef" href="#term-EXPONENT">EXPONENT</a></span>)</code></td>
 </tr>
+    <tr id="handle-DOUBLE"><td></td><td><a href="http://www.w3.org/TR/rdf11-concepts/#dfn-literal">            literal     </a></td><td></td><td>The literal has a lexical form of the input string, and a datatype of <code>xsd:double</code>.</td></tr>
 </tbody>
 
 <tbody class="term">
@@ -2481,15 +2487,6 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 | "\t"<br/>
 | "\r"<br/>
 | "\n"</code></td>
-</tr>
-</tbody>
-
-<tbody class="term">
-<tr valign="baseline">
-<td><a id="term-ANON" name="term-ANON"></a>[<span class="prodNo">88</span>]   </td>
-<td>&lt;<code class="production term">ANON</code>&gt;</td>
-<td>   ::=   </td>
-<td><code class="content">"[" <span class="prod"><a class="grammarRef" href="#term-WS">WS</a></span>* "]"</code></td>
 </tr>
 </tbody>
 
