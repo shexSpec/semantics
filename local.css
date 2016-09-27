@@ -135,7 +135,12 @@
       background-color: #F8F8F0;
       line-height: 1.5;
       }
-     
+
+      .grammarTable tr .obj {
+      background-color: #F8F8F0;
+      border: thin solid #C8C8C0;
+      }
+
       .abstrsynt{
       margin-left: 0;
       margin-right: 2ex;
@@ -218,3 +223,7 @@ div.shexjTable th { text-align: right; }
 .grammarTable tr.obj td:nth-child(3) { text-align: right; }
 
 .comment { color: #d30; }
+
+.grammarTable .grammarParagraph /* needs .grammarTable specificity for at least FF and chromium */
+    { border-left:thin solid white; border-right:thin solid white; }
+
