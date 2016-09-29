@@ -85,13 +85,13 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
         Each type is either a reference to another statement, an RDF type, or a <a href="http://www.w3.org/TR/sparql11-query/#operandDataTypes">SPARQL literal term</a> (e.g. <code>numeric</code>)[[!sparql11-query]], or the template type <code>Set</code>, which signifies a <a href="https://en.wikipedia.org/wiki/Set_(mathematics)">logical set</a> of a type.
         Sets are unordered and duplicate members have no significance; the set <code>(1, 1, 2, 3, 5)</code> is the same as the set <code>(5, 1, 3, 2)</code>.
       </p>
-      <p>In this notation:</p>
+      <p>In this notation,</p>
 
       <div class="abstrsynt">
         <span class="math">Shape ::= <code class="param">label</code>:IRI|BNode, <code class="param">targets</code>:Set[<a href="#dfn-Target">Target</a>], <code class="param">filters</code>:Set[<a href="#dfn-Shape">Shape</a>], <code class="param">constraints</code>:Set[<a href="#dfn-Constraint">Constraint</a>]</span>
       </div>
       <p>
-        This signifies that a <code>Shape</code> has four components called <code class="param">label</code>, <code class="param">targets</code>, <code class="param">filters</code>, <code class="param">constraints</code>.
+        signifies that a <code>Shape</code> has four components called <code class="param">label</code>, <code class="param">targets</code>, <code class="param">filters</code>, <code class="param">constraints</code>.
         The <code class="param">label</code> is either a <code>IRI</code> or <code>BNode</code>,
         the <code class="param">targets</code> are a set of <a href="#dfn-Target"><code>Target</code>s</a>,
         the <code class="param">filters</code> are a set of <a href="#dfn-Shape"><code>Shape</code>s</a>,
