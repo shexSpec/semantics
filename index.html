@@ -1599,8 +1599,7 @@ CLOSED {
 <td><a id="prod-directive" name="prod-directive"></a>[<span class="prodNo">2</span>]   </td>
 <td><code class="production prod">directive</code></td>
 <td>   ::=   </td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-baseDecl">baseDecl</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-prefixDecl">prefixDecl</a></span></code></td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-baseDecl">baseDecl</a></span> | <span class="prod"><a class="grammarRef" href="#prod-prefixDecl">prefixDecl</a></span></code></td>
 </tr>
 <tr valign="baseline">
 <td><a id="prod-baseDecl" name="prod-baseDecl"></a>[<span class="prodNo">3</span>]   </td>
@@ -1618,8 +1617,7 @@ CLOSED {
 <td><a id="prod-notStartAction" name="prod-notStartAction"></a>[<span class="prodNo">5</span>]   </td>
 <td><code class="production prod">notStartAction</code></td>
 <td>   ::=   </td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-start">start</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shapeExprDecl</a></span></code></td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-start">start</a></span> | <span class="prod"><a class="grammarRef" href="#prod-shapeExprDecl">shapeExprDecl</a></span></code></td>
 </tr>
 <tr valign="baseline">
 <td><a id="prod-start" name="prod-start"></a>[<span class="prodNo">6</span>]   </td>
@@ -1637,8 +1635,7 @@ CLOSED {
 <td><a id="prod-statement" name="prod-statement"></a>[<span class="prodNo">8</span>]   </td>
 <td><code class="production prod">statement</code></td>
 <td>   ::=   </td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-directive">directive</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-notStartAction">notStartAction</a></span></code></td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-directive">directive</a></span> | <span class="prod"><a class="grammarRef" href="#prod-notStartAction">notStartAction</a></span></code></td>
 </tr>
 <tr valign="baseline">
 <td><a id="prod-shapeExprDecl" name="prod-shapeExprDecl"></a>[<span class="prodNo">9</span>]   </td>
@@ -1766,7 +1763,7 @@ otherwise the result is the <a class="grammarRef" href="#prod-shapeAtom">shapeAt
 </tr>
 <tr><td colspan="1"></td><td colspan="3">
 <ul>
-  <li>If the matching production inludes both a <span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span> and a <span class="prod"><a class="grammarRef" href="#prod-shapeOrRef">shapeOrRef</a></span>, the result is a <a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a>.</li>
+  <li>If the matching production inludes both a  <span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span> and a <span class="prod"><a class="grammarRef" href="#prod-shapeOrRef">shapeOrRef</a></span>, the result is a <a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a> object with <span class="param">shapeExprs</span> containing the list of <span class="prod"><a class="grammarRef" href="#prod-nodeConstraint">nodeConstraint</a></span> and a <span class="prod"><a class="grammarRef" href="#prod-shapeOrRef">shapeOrRef</a></span>.</li>
   <li>If the "(" <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span> ")" production matches, the result is the result of <span class="prod"><a class="grammarRef" href="#prod-shapeExpression">shapeExpression</a></span>.</li>
   <li>If the <code>"."</code> production matches, the result is an empty shape: <code>{"type": "Shape"}</code>.</li>
 </ul>
@@ -1815,9 +1812,7 @@ otherwise the result is the <a class="grammarRef" href="#prod-shapeAtom">shapeAt
 <td><a id="prod-nonLiteralKind" name="prod-nonLiteralKind"></a>[<span class="prodNo">32</span>]   </td>
 <td><code class="production prod">nonLiteralKind</code></td>
 <td>   ::=   </td>
-<td><code class="content">"IRI"<br/>
-| "BNODE"<br/>
-| "NONLITERAL"</code></td>
+<td><code class="content">"IRI" | "BNODE" | "NONLITERAL"</code></td>
 </tr>
 <tr valign="baseline">
 <td><a id="prod-xsFacet" name="prod-xsFacet"></a>[<span class="prodNo">33</span>]   </td>
@@ -1838,9 +1833,7 @@ otherwise the result is the <a class="grammarRef" href="#prod-shapeAtom">shapeAt
 <td><a id="prod-stringLength" name="prod-stringLength"></a>[<span class="prodNo">35</span>]   </td>
 <td><code class="production prod">stringLength</code></td>
 <td>   ::=   </td>
-<td><code class="content">"LENGTH"<br/>
-| "MINLENGTH"<br/>
-| "MAXLENGTH"</code></td>
+<td><code class="content">"LENGTH" | "MINLENGTH" | "MAXLENGTH"</code></td>
 </tr>
 <tr valign="baseline">
 <td><a id="prod-numericFacet" name="prod-numericFacet"></a>[<span class="prodNo">36</span>]   </td>
@@ -1853,17 +1846,13 @@ otherwise the result is the <a class="grammarRef" href="#prod-shapeAtom">shapeAt
 <td><a id="prod-numericRange" name="prod-numericRange"></a>[<span class="prodNo">37</span>]   </td>
 <td><code class="production prod">numericRange</code></td>
 <td>   ::=   </td>
-<td><code class="content">"MININCLUSIVE"<br/>
-| "MINEXCLUSIVE"<br/>
-| "MAXINCLUSIVE"<br/>
-| "MAXEXCLUSIVE"</code></td>
+<td><code class="content">"MININCLUSIVE" | "MINEXCLUSIVE" | "MAXINCLUSIVE" | "MAXEXCLUSIVE"</code></td>
 </tr>
 <tr valign="baseline">
 <td><a id="prod-numericLength" name="prod-numericLength"></a>[<span class="prodNo">38</span>]   </td>
 <td><code class="production prod">numericLength</code></td>
 <td>   ::=   </td>
-<td><code class="content">"TOTALDIGITS"<br/>
-| "FRACTIONDIGITS"</code></td>
+<td><code class="content">"TOTALDIGITS" | "FRACTIONDIGITS"</code></td>
 </tr>
 </tbody>
 
@@ -1898,7 +1887,7 @@ otherwise the result is the <a class="grammarRef" href="#prod-shapeAtom">shapeAt
 <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]?
 <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
   <tr><td colspan="1"></td><td colspan="3"><ul>
-  <li><span class="param">closed</span> is true if the "CLOSED" choice was matched one or more times.</li>
+  <li><span class="param">closed</span> is true if the "<code>CLOSED</code>" choice was matched one or more times.</li>
   <li><span class="param">extra</span> is the set of IRIs matching the <a class="grammarRef" href="#prod-extraPropertySet">extraPropertySet</a> production.</li>
   <li><span class="param">expression</span> comes from the <a class="grammarRef" href="#prod-someOfShape">someOfShape</a> production.</li>
   <li><span class="param">annotations</span> is the set of <a class="objref" href="#dfn-Annotation">Annotation</a>s matching the <span class="prod"><a class="grammarRef" href="#prod-annotation">annotation</a></span> production.</li>
@@ -1926,8 +1915,7 @@ otherwise the result is the <a class="grammarRef" href="#prod-shapeAtom">shapeAt
 <td><a id="prod-someOfShape" name="prod-someOfShape"></a>[<span class="prodNo">21</span>]   </td>
 <td><code class="production prod">someOfShape</code></td>
 <td>   ::=   </td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-groupShape">groupShape</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-multiElementSomeOf">multiElementSomeOf</a></span></code></td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-groupShape">groupShape</a></span> | <span class="prod"><a class="grammarRef" href="#prod-multiElementSomeOf">multiElementSomeOf</a></span></code></td>
 </tr>
 </tbody>
 
@@ -1952,8 +1940,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-groupShape">g
 <td><a id="prod-innerShape" name="prod-innerShape"></a>[<span class="prodNo">23</span>]   </td>
 <td><code class="production prod">innerShape</code></td>
 <td>   ::=   </td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-multiElementGroup">multiElementGroup</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-multiElementSomeOf">multiElementSomeOf</a></span></code></td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-multiElementGroup">multiElementGroup</a></span> | <span class="prod"><a class="grammarRef" href="#prod-multiElementSomeOf">multiElementSomeOf</a></span></code></td>
 </tr>
 </tbody>
 
@@ -1962,8 +1949,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-groupShape">g
 <td><a id="prod-groupShape" name="prod-groupShape"></a>[<span class="prodNo">24</span>]   </td>
 <td><code class="production prod">groupShape</code></td>
 <td>   ::=   </td>
-<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-singleElementGroup">singleElementGroup</a></span><br/>
-| <span class="prod"><a class="grammarRef" href="#prod-multiElementGroup">multiElementGroup</a></span></code></td>
+<td><code class="content"><span class="prod"><a class="grammarRef" href="#prod-singleElementGroup">singleElementGroup</a></span> | <span class="prod"><a class="grammarRef" href="#prod-multiElementGroup">multiElementGroup</a></span></code></td>
 </tr>
 </tbody>
 
