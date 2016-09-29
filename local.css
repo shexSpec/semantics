@@ -135,10 +135,15 @@
       background-color: #F8F8F0;
       line-height: 1.5;
       }
+      .shexj th { vertical-align: top; }
 
-      .grammarTable tr .obj {
+      .grammarTable tr.obj {
       background-color: #F8F8F0;
-      border: thin solid #C8C8C0;
+      }
+
+      .grammarTable tr:not(.obj) .param, .grammarTable tr .obj {
+      background-color: #F8F8F0;
+      border: thin solid #E8E8E0;
       }
 
       .abstrsynt{
@@ -226,4 +231,19 @@ div.shexjTable th { text-align: right; }
 
 .grammarTable .grammarParagraph /* needs .grammarTable specificity for at least FF and chromium */
     { border-left:thin solid white; border-right:thin solid white; }
+
+.grammarTable tr.obj td:nth-child(1) {
+    border: thin solid white;
+    background-color: white;
+    border-right: thin solid #AAA;
+}
+
+.grammarTable tr.params td:nth-child(1) {
+    border: thin solid white;
+    border-right: thin solid #AAA;
+}
+
+.grammarTable tr.params td:nth-child(2) {
+    padding-left: .25em;
+}
 
