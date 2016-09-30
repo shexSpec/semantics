@@ -148,16 +148,15 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
 	    <m>Props(G)</m> is the set of properties of <m>G</m> and is defined as the set of IRI that occupy a predicate position in some triple of <m>G</m>
 	  </li>
 	  <li>
-	    <m>InvProps(G)</m> is the set of inverse properties of <m>G</m> and is defined as the properties of <m>G</m>. Inverse properties are indicated by a CIRCUMFLEX ACCENT  <m>^</m>. If <m>prop</m> is a property, then <m>^prop</m> is an inverse property.
+	    <m>InvProps(G)</m> is the set of inverse properties of <m>G</m> and is defined as the properties of <m>G</m>. In this specification, inverse properties are indicated by <m>^</m>. If <m>prop</m> is a property, then <m>^prop</m> is an inverse property.
 	  </li>
 	  <li>
-	    for a triple <m>(node', prop, node)</m> in <m>G</m>, its inverse triple is the triple <m>(node, ^prop, node')</m>. 
-	    Note that inverse triples are not elements of the graph.
-	    [FOOTNOTE: inverse triples are going to be used for defining the semantics for inverse triple constraints]
+	    <m>inverse triple</m> is a triple with a predicate in <m>InvProps</m>. For a triple <m>(n1, prop, n2)</m> in <m>G</m>, its inverse triple is the triple <m>(n2, ^prop, n1)</m>. 
+	    (Note that inverse triples are not elements of the graph; they are used for defining the semantics for inverse triple constraints.)
 	  </li>
 	  <li>
 	    <m>neigh(G,n)</m> is the neighbourhood of the node <m>n</m> in the graph <m>G</m>, and is defined as the set of all triples whose subject is the node <m>n</m> and all inverses of the triples whose object is <m>n</m>.
-	    More formally, <m>neigh(G,n) = {(node, prop, node') | (node, prop, node') &in; G} &cup; {(node, ^prop, node') | (node', prop, node) &in; G}</m>.
+	    More formally, <m>neigh(G,n) = {(node, prop, node') | (node, prop, node') ∈ G} ∪ {(node, ^prop, node') | (node', prop, node) ∈ G}</m>.
 	  </li>
 	</ul>
       </p>
@@ -265,7 +264,7 @@ inst:User2
       </p>
       <p>
 	Formally, let <m>Sch = (SLabels, def)</m> be a shapes schema and <m>G</m> be a graph.
-	A typing of <m>G</m> by <m>Sch</m> is a subset of <m>Nodes(G) &times; SLabels</m>.
+	A typing of <m>G</m> by <m>Sch</m> is a subset of <m>Nodes(G) × SLabels</m>.
       </p>
 
 
@@ -354,7 +353,7 @@ inst:User2
 
       <p>
 	Let <m>Sch = (SLabels, def)</m> be a shapes schema and <m>G</m> be a graph.
-	For a <m>node</m> in <m>Nodes(G)</m>, a <m>typing</m> of <m>G</m> by <m>Sch</m>, and a shape expression <m>S</m>, we say that <m>node</m> satisfies <m>S</m> with <m>typing</m>, written <m>typing, node &vdash; S</m>, as defined recursively on the structure of <m>S</m> on the figure above, where:
+	For a <m>node</m> in <m>Nodes(G)</m>, a <m>typing</m> of <m>G</m> by <m>Sch</m>, and a shape expression <m>S</m>, we say that <m>node</m> satisfies <m>S</m> with <m>typing</m>, written <m>typing, node ⊢ S</m>, as defined recursively on the structure of <m>S</m> on the figure above, where:
 	<ul>
 	  <li>
 	    <m>V</m> is a <as><a href="#dfn-NodeConstraint">NodeConstraint</a></as> (in the se-node-constr and se-node-constr-blank rules);
@@ -369,7 +368,7 @@ inst:User2
 	    <m>S</m>, <m>S<sub>1</sub></m>, <m>S<sub>2</sub></m> are <as><a href="#dfn-ShapeExpression">ShapeExpression</a></as>s;
 	  </li>
 	  <li>
-	    the <m>typing, node &#x22ac; S</m> in the premise of the se-shape-not rule means that it is impossible to construct a proof for <m>typing, node &vdash; S</m>.
+	    the <m>typing, node &#x22ac; S</m> in the premise of the se-shape-not rule means that it is impossible to construct a proof for <m>typing, node ⊢ S</m>.
 	  </li>
 	</ul>
       </p>
@@ -386,7 +385,7 @@ inst:User2
 	  Whatever the value of <m>typing</m>, it holds
 	  <ul>
 	    <li>
-	      <m>typing, 3 &vdash; int AND (NOT V)</m>
+	      <m>typing, 3 ⊢ int AND (NOT V)</m>
 	    </li>
 	  </ul>
 	</p>
@@ -397,7 +396,7 @@ inst:User2
 	      <m>typing, ex:assigned &#x22ac; U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>))</m><br/>
 	    </li>
 	    <li>
-	      <m>typing, ex:unknown &vdash; U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>T))</m><br/>
+	      <m>typing, ex:unknown ⊢ U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>T))</m><br/>
 	    </li>
 	    <li>
 	      <m>typing, ex:somenode &#x22ac; U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>))</m><br/>
@@ -427,7 +426,7 @@ inst:User2
 	<br/>
 	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= 'EMPTY'</as><br/>
 	<as><a id="dfn-TripleConstraint">TripleConstraint</a> ::= <a href="#dfn-PropertySet">PropertySet</a> <a href="#dfn-ShapeRef">ShapeRef</a></as><br/>
-	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
+	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop ∪ InvProp</as><br/>
 	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape label from <as>SLabels</as><br/>
 	<br/>
 	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '|' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
@@ -500,7 +499,7 @@ inst:User2
 </div>
 </pre>
 	  <p>
-	    Where <span class="pre">C{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox} = (Prop &cup; InvProp) \ {rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox}</span>, that is, the complement of the set <span class="pre">{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox}</span> within the set of all properties and inverse properties.
+	    Where <span class="pre">C{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox} = (Prop ∪ InvProp) \ {rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox}</span>, that is, the complement of the set <span class="pre">{rdf:type, foaf:name, foaf:givenName, foaf:familyName, foaf:mbox}</span> within the set of all properties and inverse properties.
 	  </p>
 	</div>
 	<script type="text/javascript">
@@ -526,7 +525,7 @@ inst:User2
 	For a set of triples or inverse triples <m>N</m> from a graph <m>G</m>, a triple expression <m>E</m>, and a <m>typing</m> of <m>G</m> by <m>Sch</m>, we say that <m>N</m> matches <m>E</m> for <m>typing</m>, written <m>typing, Neigh &#x22A7; E</m>, as defined on the figure above recursively on the structure of <m>E</m>, where
 	<ul>
 	  <li>
-	    in rule te-triple-constr, <m>P L</m> is a triple constraint, with <m>P</m> a subset of <m>Prop &cup; InvProp</m>, and  <m>L</m> a shape label in <m>SLabels</m>;
+	    in rule te-triple-constr, <m>P L</m> is a triple constraint, with <m>P</m> a subset of <m>Prop ∪ InvProp</m>, and  <m>L</m> a shape label in <m>SLabels</m>;
     </li>
 	  <li>
 	    <m>min</m> and <m>max</m> are the minimum, respectively maximum cardinality in a <m>RepetedTripleExpr</m> (in rule te-repet);
@@ -654,7 +653,7 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
 <div style="clear:both;"> </div>
 
 	  <p>
-	    Then <span class="pre">typing, neigh(G, ex:lp) &vdash; TExpr</span>.
+	    Then <span class="pre">typing, neigh(G, ex:lp) ⊢ TExpr</span>.
 	    Move the mouse over the triples in <span class="pre">neigh(G, ex:lp)</span> to see which triples contribute to satisfy which of the sub-expressions of <span class="pre">TExpr</span>.
 	  </p>
 	</div>
@@ -674,7 +673,7 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
       <section id="correct-typing">
       <h3>Correct typing</h3>
       <p>
-	A <m>typing</m> of <m>G</m> by <m>Sch</m> is called correct if for all node-label association <m>(node, T)</m> in <m>typing</m>, it is the case that <m>typing, neigh(node) &vdash; def(T)</m>.
+	A <m>typing</m> of <m>G</m> by <m>Sch</m> is called correct if for all node-label association <m>(node, T)</m> in <m>typing</m>, it is the case that <m>typing, neigh(node) ⊢ def(T)</m>.
       </p>
       </section>
 
@@ -713,7 +712,7 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
 <pre class="shex" style="float:left">
 # a shapes schema
 
-&lt;SL_all&gt;:= IRI &cup; RDFLiteral &cup; {blank}
+&lt;SL_all&gt;:= IRI ∪ RDFLiteral ∪ {blank}
 &lt;SL_1&gt; := NOT ({:c} &lt;SL_5&gt;)
 &lt;SL_2&gt; := {:a} &lt;SL_4&gt; ; {:c} &lt;SL_5&gt; 
 &lt;SL_3&gt; := NOT ({:c} &lt;SL_all&gt;) AND {:a} &lt;SL_2&gt;
@@ -800,7 +799,7 @@ strat(&lt;SL_all&gt;) = 1
 	More formally, 
 	<ul>
 	  <li>
-	    <m>SLabels<sub>i</sub> = strat<sup>-1</sup>(1) &cup; ... &cup; strat<sup>-1</sup>(i)</m>,
+	    <m>SLabels<sub>i</sub> = strat<sup>-1</sup>(1) ∪ ... ∪ strat<sup>-1</sup>(i)</m>,
 	  </li>
 	  <li>
 	    <m>def<sub>i</sub></m> is <m>def</m> restricted on <m>SLabels<sub>i</sub></m>.
@@ -843,373 +842,19 @@ strat(&lt;SL_all&gt;) = 1
     
       <hr/>
 
-    <section id="compilation-shex-shapes">
-      <h2>Compilation of a ShEx Schema into a Shapes Schema</h2>
-      <section id="compilation-shex-shapes-examples">
-	<h3>Examples</h3>
-	
-	<section id="compilation-example-closed-shape">
-	  <h4>Closed shape expression</h4>
-	  
-	  <div class="Example">
-	    <div class="with-highlight">
-	      <p>
-		Every <span class="hl-issueshape hl-usershape lowlight2">shape label</span> from the ShEx schema is used as <span class="hl-issueshape lowlight2">shape label</span> in the shapes schema, which definition is the compilation of the definition from the ShEx schema.
-	      </p>
-	      <p>
-		Every <span class="hl-ve1 hl-ve3 lowlight1">shape expression</span> that appears in a triple constraint of the ShEx schema yields a <span class="hl-ve1  hl-ve2 hl-ve3 hl-ve4 hl-ve4bis">fresh shape label having the same definition</span> in the shapes schema.
-		This does not apply to shape expressions that are references.
-	      </p>
-	      <p>
-		The translation of a CLOSED <span class="hl-te lowlight3">triple expression</span> in the ShEx schema translates almost directly to a <span class="hl-te lowlight3">triple expression</span> in the shapes schema, exept that predicates are replaced with singleton sets, and <span class="hl-ve1 hl-ve3 lowlight1">value expressions</span> are replaced with the corresponding freshly introduced <span class="hl-ve1 hl-ve3 lowlight1">shape labels</span> 
-	      </p>
-
-<pre class="shex" style="float:left">
-# ShEx schema
-
-<span class="hl-issueshape lowlight2">&lt;IssueShape&gt;</span>
-<div class="hl-te lowlight3">
-CLOSED {                 
-    ex:state      <span class="hl-ve1 lowlight1">[ex:unassigned ex:assigned]</span> ; 
-    ex:reportedBy @&lt;UserShape&gt; ;   
-    ex:reportedOn <span class="hl-ve3 lowlight1">xsd:dateTime OR xsd:date</span> ;
-    ex:related    @&lt;IssueShape&gt;* ;
-    ^ex:related   @&lt;IssueShape&gt;*
-}</div>
-<span class="hl-usershape lowlight2">&lt;UserShape&gt;</span> {
-    PATTERN "http://example.org/User#.*"
-}
-</pre>
-<pre class="shex" style="float:left">
-# shapes schema
-
-<span class="hl-issueshape lowlight2">&lt;IssueShape&gt; </span>:= 
-<div class="hl-te lowlight3">{
-    {ex:state}      <span class="hl-ve1 lowlight1">&lt;SL_1&gt;</span> ;
-    {ex:reportedBy} &lt;UserShape&gt;
-    {ex:reportedOn} <span class="hl-ve3 lowlight1">&lt;SL_3&gt;</span> ;
-    {ex:related}    &lt;IssueShape&gt;*  ;
-    {^ex:related}   &lt;IssueShape&gt;*
-}
-</div>
-
-<span class="hl-usershape lowlight2">&lt;UserShape&gt;</span> {
-    Set(PATTERN "http://example.org/User#.*")
-}
-
-
-<span class="hl-ve1 lowlight1">&lt;SL_1&gt;  := {ex:unassigned, ex:assigned}</span>
-<span class="hl-ve3 lowlight1">&lt;SL_3&gt;  := xsd:dateTime OR xsd:date</span>
-</pre>
-
-	    </div>
-	    <script type="text/javascript">
-	      <!--
-		  prepareHighlight(["hl-ve1", "hl-ve3" ], "highlight1", "lowlight1");
-		  prepareHighlight(["hl-issueshape", "hl-usershape"], "highlight2", "lowlight2");
-		  prepareHighlight(["hl-te"], "highlight3", "lowlight3");
-		-->
-	    </script>
-	    <div style="clear:both;"> </div>
-	  </div>	  
-	</section>
-
-      <section id="translate-example-closed-with-extra">
-	<h4>Closed shape expression with EXTRA modifier</h4>
-
-	<div class="Example">
-	  <div class="with-highlight">
-	    <p>
-	      As in the previous example, the value expressions of the ShEx schema yield shape labels with the same definition. Here, the resulting fresh shape labels are <span class="pre">&lt;SL_5&gt;, &lt;SL_6&gt;, &lt;SL_7&gt;, &lt;SL_8&gt;</span>.
-	    </p>
-	    <p>
-	      The <span class="hl-shapexpr lowlight3">triple expression</span> from the ShEx schema is translated into a <span class="hl-shapexpr lowlight3">triple expression</span> in the shapes schema.
-	      <span class="hl-samete lowlight1">One part of that triple expression</span> is a direct translation of <span class="hl-samete lowlight1">the triple expression from the ShEx schema</span>.
-	    </p>
-	    <p>
-	      The <span class="hl-extra lowlight1">EXTRA modifier</span> results in <span class="hl-extra lowlight1">additional triple constraints</span> in the shapes schema. 
-	      There is one such triple constraint with * cardinality for every extra property. 
-	      For every extra property, the <span class="hl-extra-ve1 hl-extra-ve2 lowlight2">value expression is the negation of the value expressions that occur with the same property</span>.
-	    </p>
-
-<pre class="shex" style="float:left">
-# ShEx schema
-	      
-	      
-	      
-
-
-
-
-
-
-&lt;UserShape&gt;
-<div class="hl-shapexpr lowlight3">CLOSED 
-<span class="hl-extra">EXTRA rdf:type foaf:mbox</span> {
-<div class="hl-samete lowlight4">
-    rdf:type <span class="hl-extra-ve1 lowlight2">[foaf:Person]</span> ;
-    rdf:type <span class="hl-extra-ve1 lowlight2">[ex:User]</span> ;
-    (                                   
-       foaf:name xsd:string 
-     |                                  
-       foaf:givenName xsd:string+ ;      
-       foaf:familyName xsd:string
-    );
-    foaf:mbox <span class="hl-extra-ve2 lowlight2">IRI</span>
-</div>
-}
-</div>
-</pre>
-
-
-<pre class="shex" style="float:left">
-# shapes schema
-
-&lt;SL_5&gt; := {foaf:Person}
-&lt;SL_6&gt; := {ex:User}
-&lt;SL_7&gt; := xsd:string
-&lt;SL_8&gt; := IRI
-
-&lt;SL_UserShape_Extra_rdftype&gt; := <span class="hl-extra-ve1 lowlight2">NOT{foaf:Person} AND NOT{ex:User}</span>
-&lt;SL_UserShape_Extra_foafmxbox&gt; := <span class="hl-extra-ve2 lowlight2">NOT IRI</span>
-
-
-&lt;UserShape&gt; := 
-<div class="hl-shapexpr lowlight3">{
-<div class="hl-samete lowlight4">    {rdf:type}  &lt;SL_5&gt; ;
-    {rdf:type}  &lt;SL_6&gt; ;
-    (
-        {foaf:name}       &lt;SL_7&gt;
-    |
-        {foaf:givenName}  &lt;SL_7&gt;+ ;
-        {foaf:familyName} &lt;SL_7&gt;
-    );
-    {foaf:mbox} &lt;SL_8&gt; ;
-</div>
-<div class="hl-extra lowlight1">    {rdf:type}  <span class="hl-extra-ve1 lowlight2">&lt;SL_UserShape_Extra_rdftype&gt;</span> * ;
-    {foaf:mbox} <span class="hl-extra-ve2 lowlight2">&lt;SL_UserShape_Extra_foafmbox&gt;</span> * ;
-</div>
-}
-</div>
-</pre>
-<div style="clear:both;"> </div>
-
-	  </div>  
-	</div>
-	<script type="text/javascript">
-	  <!--
-	      prepareHighlight(["hl-extra"], "highlight1", "lowlight1");
-	      prepareHighlight(["hl-extra-ve1", "hl-extra-ve2"], "highlight2", "lowlight2");
-	      prepareHighlight(["hl-shapexpr"], "highlight3", "lowlight3");
-	      prepareHighlight(["hl-samete"], "highlight4", "lowlight4");
-	    -->
-	</script>
-      </section>
-
-      <section id="compilation-example-non-closed-shape">
-	<h4>Non closed shape expression</h4>
-	<div class="Example">
-	  <div class="with-highlight">
-	    <p>
-	      As for the case with EXTRA properties, the <span class="hl-shapexpr lowlight3">shape expression</span> from the ShEx schema is tranlated into a <span class="hl-shapexpr lowlight3">triple expression</span> with an <span class="hl-open-tc lowlight4">additional triple constraint with * cardinality</span>.
-	      The <span class="hl-propset lowlight2">set of properties</span> of the latter is the set of <span class="hl-propset lowlight2">all properties that do not appear in the shape expression</span>. 
-	      The <span class="hl-ve lowlight1">value expression</span> accepts all values.
-	    </p>
-	    
-	    
-<pre class="shex" style="float:left">
-# ShEx schema
-
-
-
-
-
-&lt;SomeShape&gt; 
-<div class="hl-shapexpr lowlight3">{
-    ex:p xsd:int* ;
-    ( ex:q xsd:int | ex:r IRI )? 
-}
-</div>
-</pre>
-<pre class="shex" style="float:left">
-# shapes schema
-
-&lt;SL_9&gt;  := xsd:int
-&lt;SL_10&gt; := IRI
-
-<span class="hl-ve lowlight1">&lt;SL_all_values&gt;  := IRI &cup; RDFLiteral &cup; {blank}</span>
-
-&lt;SomeShape&gt; := 
-<div class="hl-shapexpr lowlight3">{
-    {ex:p}  &lt;SL_9&gt;* ;
-    ( {ex:q}  &lt;SL_9&gt; | {ex:r} &lt;SL_10&gt; )? ;
-
-<span class="hl-open-tc lowlight4">    <span class="hl-propset lowlight2">PropSet</span>  <span class="hl-ve lowlight1">&lt;SL_all_values&gt;</span>*    </span>
-}
-</div>
-
-# with <span class="hl-propset lowlight2">PropSet = (Prop &cup; InvProp) \ {ex:p, ex:q, ex:r}</span>
-</pre>
-<div style="clear:both;"> </div>
-
-	  </div>
-	  <script type="text/javascript">
-	    <!--
-		prepareHighlight(["hl-ve"], "highlight1", "lowlight1");
-		prepareHighlight(["hl-propset"], "highlight2", "lowlight2");
-		prepareHighlight(["hl-shapexpr"], "highlight3", "lowlight3");
-		prepareHighlight(["hl-open-tc"], "highlight4", "lowlight4");
-	      -->
-	  </script>
-	</div>
-      </section>
-
-      <section id="compilation-example-conjunctive-shape">
-	<h4>Complex shape definition</h4>
-
-	<div class="Example">
-	  <div class="with-highlight">
-	    <p>
-	      The shape label <span class="pre">&lt;EmployeeShape&gt;</span> is defined as a conjunction of <span class="hl-nc lowlight2">node constrints</span> and <span class="hl-te1 hl-te2 lowlight3">triple expressions</span>.
-	      In the shapes schema, this yields a <span class="hl-conj lowlight4"><a href="#dfn-ShapeAnd">ShapeAnd</a> shape expression</span> with one conjunct per conjunct in the ShEx schema.
-	    </p>
-	    
-<pre class="shex" style="float:left">
-# ShEx schema
-
-&lt;EmployeeShape&gt;
-<span class="hl-nc lowlight2">PATTERN "^http:/example.org/.*"</span>
-
-<div class="hl-te1 lowlight3">CLOSED {        
-    foaf:phone IRI*;          
-    foaf:mbox IRI             
-}
-</div>
-AND 
-
-<div class="hl-te2 lowlight3">CLOSED {
-    ( foaf:phone PATTERN "^tel:\\+33" ; 
-      foaf:mbox  PATTERN "\\.fr$" )?   ;
-    ( foaf:phone PATTERN "^tel:\\+44" ; 
-      foaf:mbox  PATTERN "\\.uk$")?
-}
-</div>
-</pre>
-
-<pre class="shex" style="float:left">
-# shapes schema
-
-&lt;SL_11&gt; := Set(PATTERN "^tel:\\+33")
-&lt;SL_12&gt; := Set(PATTERN "\\.fr$")
-&lt;SL_13&gt; := Set(PATTERN "^tel:\\+44")
-&lt;SL_14&gt; := Set(PATTERN "\\.uk$")
-&lt;SL_15&gt; := IRI
-
-&lt;EmployeeShape&gt; := {<div class="hl-conj lowlight4">
-    <span class="hl-nc lowlight2">Set(PATTERN "^http:/example.org/.*")</span>
-
-    AND 
-<div class="hl-te1 lowlight3">
-    {foaf:phone} &lt;SL_15&gt;* ;
-    {foaf:mbox}  &lt;SL_15&gt;
-</div>
-    AND 
-<div class="hl-te2 lowlight3">
-    ( {foaf:phone} &lt;SL_11&gt; ;
-      {foaf:mbox}  &lt;SL_12&gt; )? ;
-    ( {foaf:phone} &lt;SL_13&gt; ;
-      {foaf:mbox}  &lt;SL_14&gt; )?
-</div>
-}
-</div>
-</pre>
-<div style="clear:both;"> </div>
-
-	  </div>
-	  <script type="text/javascript">
-	    <!--
-		prepareHighlight([], "highlight1", "lowlight1");
-		prepareHighlight(["hl-nc"], "highlight2", "lowlight2");
-		prepareHighlight(["hl-te1", "hl-te2"], "highlight3", "lowlight3");
-		prepareHighlight(["hl-conj"], "highlight4", "lowlight4");
-	      -->
-	  </script>
-	</div>
-      </section>
-
-      <section id="compilation-example-negated-triple-constraint">
-	<h4>Negated triple expression</h4>
-	<div class="Example">
-	  <div class="with-highlight">
-
-	    <p>
-	      The <span class="hl-negte lowlight4">negated triple constraint</span> is treated as if <span class="hl-prop lowlight2">its property</span> was an <span class="hl-prop lowlight2">extra property</span>.
-	      The corresponding <span class="hl-negte lowlight4">triple constraint in the translation</span> has a <span class="hl-zerocard lowlight3">{0;0} cardinality</span>.
-	    </p>
-
-<pre class="shex" style="float:left">
-# ShEx schema
-
-&lt;SomeShape&gt; 
-CLOSED {
-    ex:p xsd:int* ;
-    (<span class="hl-negte lowlight4"> ! <span class="hl-prop lowlight2">ex:q</span> xsd:int </span> 
-      | ex:r IRI )? 
-}
-</pre>
-<pre class="shex" style="float:left">
-# shapes schema
-
-&lt;SL_9&gt;  := xsd:int
-&lt;SL_10&gt; := IRI
-&lt;SL_Extra&gt; := NOT xsd:int
-
-&lt;SomeShape&gt; := { 
-    {ex:p}  &lt;SL_9&gt;* ;
-    (<span class="hl-negte lowlight4"> {ex:q}  &lt;SL_9&gt;<span class="hl-zerocard lowlight3">{0;0}</span> </span>
-      | {ex:r} &lt;SL_10&gt; )? ;
-
-    <span class="hl-prop lowlight2">{ex:q}</span>  &lt;SL_Extra&gt;*
-}
-
-</pre>
-<div style="clear:both;"></div>
-
-	  </div>
-	  <script type="text/javascript">
-	    <!--
-		prepareHighlight([], "highlight1", "lowlight1");
-		prepareHighlight(["hl-prop"], "highlight2", "lowlight2");
-		prepareHighlight(["hl-zerocard"], "highlight3", "lowlight3");
-		prepareHighlight(["hl-negte"], "highlight4", "lowlight4");
-	      -->
-	  </script>
-	</div>
-      </section>
-      </section>
-
-      <section id="compilation-definition">
-	<h3>Definition of the Compilation</h3>
-	TODO
-      </section>
-
-    </section>
-
-
-
     <section id="validation-for-shex">
       <h2>Validation of a Graph against a ShEx Schema</h2>
-      
+
       <p>
 	Let <m>Shex</m> be a ShEx schema with set <m>ShapeNames</m> of shape names.
 	For a graph <m>G</m>, a validation problem is defined as a set <m>val</m> of node-label name associations.
-	That is, <m>val</m> is a subset of <m>Nodes(G) &times; ShapeNames</m>.
+	That is, <m>val</m> is a subset of <m>Nodes(G) × ShapeNames</m>.
 	Then the validation problem consists in checking whether for every node-label name association <m>(node, sname)</m> in <m>val</m>, it is the case that <m>node</m> satisfies the constraint defined by <m>sname</m>.
       </p>
 
       <p>
 	Formally, let <m>Sch</m> be the shapes schema that corresponds to <m>Shex</m>, and for every shape name <m>sname</m> in <m>Shex</m>, let <m>valConstr(sname)</m> be the corresponding value constraint name in <m>Sch</m>.
-	Then the answer to the validation problem <m>val</m> is yes if and only if for all <m>(node, sname)</m> in <m>val</m>, it is the case that <m>typing, node &vdash; valConstr(sname)</m>, where <m>typing</m> is the maximal typing of <m>G</m> by <m>Sch</m>.
+	Then the answer to the validation problem <m>val</m> is yes if and only if for all <m>(node, sname)</m> in <m>val</m>, it is the case that <m>typing, node ⊢ valConstr(sname)</m>, where <m>typing</m> is the maximal typing of <m>G</m> by <m>Sch</m>.
       </p>
 
       <p>
@@ -1222,101 +867,122 @@ CLOSED {
 
 
 
-    <section id="shex-abstrsynt">
-      <h2>Appendix: Abstract Syntax of ShEx Schemas</h2>
-
+    <section id="shexj">
+      <h2>ShEx JSON Syntax (ShExJ)</h2>
       <p>
-	The abstract syntax of ShEx schemas is given by the following rules.
+        The JSON Syntax serves as a serializable proxy for the ShEx abstract syntax.
+        Optional parameters are suffixed with a "<code>?</code>".
+        For instance, "<span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}?" indicates that prefixes is optional and if present is a mapping from the terminal <a class="trmref" href="#dfn-PREFIX">PREFIX</a> to the terminal <a class="trmref" href="#dfn-IRI">IRI</a>.
+        "<span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>?" indicates that <span class="param">base</span> is optional and, if present, is an <a class="trmref" href="#dfn-IRI">IRI</a>.
       </p>
+      <p>
+        For brevity, it is preferred that empty maps and lists are elided in serializations of ShExJ.
+      </p>
+      <div class="shexjTable">
+<table class="shexj">
+  <tr class="obj"><th id="dfn-Schema" class="obj">Schema</th><td>{</td><td><span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}? <span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <span class="param">startActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">start</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">shapes</span>:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }</td></tr>
+  <tr class="nob"><th id="dfn-shapeExpr" class="nob">shapeExpr</th><td>=</td><td><a class="objref" href="#dfn-ShapeOr">ShapeOr</a> | <a class="objref" href="#dfn-ShapeAnd">ShapeAnd</a> | <a class="objref" href="#dfn-ShapeNot">ShapeNot</a> | <a class="objref" href="#dfn-NodeConstraint">NodeConstraint</a> | <a class="objref" href="#dfn-Shape">Shape</a> | <a class="objref" href="#dfn-ShapeRef">ShapeRef</a> | <a class="objref" href="#dfn-ShapeExternal">ShapeExternal</a> ;</td></tr>
+  <tr class="obj"><th id="dfn-ShapeOr" class="obj">ShapeOr</th><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
+  <tr class="obj"><th id="dfn-ShapeAnd" class="obj">ShapeAnd</th><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
+  <tr class="obj"><th id="dfn-ShapeNot" class="obj">ShapeNot</th><td>{</td><td><span class="param">shapeExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a> }</td></tr>
+  <tr class="obj"><th id="dfn-Shape" class="obj">Shape</th><td>{</td><td><span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]? <span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>? <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>]? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
+  <tr class="obj"><th id="dfn-ShapeExternal" class="obj">ShapeExternal</th><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
+  <tr class="obj"><th id="dfn-ShapeRef" class="obj">ShapeRef</th><td>{</td><td><span class="param">reference</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
+  <tr class="obj"><th id="dfn-SemAct" class="obj">SemAct</th><td>{</td><td><span class="param">name</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">code</span>:<a class="trmref" href="#dfn-STRING">STRING</a>? }</td></tr>
+  <tr class="nob"><th id="dfn-tripleExpr" class="nob">tripleExpr</th><td>=</td><td><a class="objref" href="#dfn-EachOf">EachOf</a> | <a class="objref" href="#dfn-SomeOf">SomeOf</a> | <a class="objref" href="#dfn-TripleConstraint">TripleConstraint</a> | <a class="objref" href="#dfn-Inclusion">Inclusion</a> ;</td></tr>
+  <tr class="obj"><th id="dfn-EachOf" class="obj">EachOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
+  <tr class="obj"><th id="dfn-SomeOf" class="obj">SomeOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
+  <tr class="obj"><th id="dfn-Inclusion" class="obj">Inclusion</th><td>{</td><td><span class="param">include</span>:<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a> }</td></tr>
+  <tr class="obj"><th id="dfn-TripleConstraint" class="obj">TripleConstraint</th><td>{</td><td><span class="param">inverse</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">negated</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">predicate</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">valueExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
+  <tr class="obj"><th id="dfn-NodeConstraint" class="obj">NodeConstraint</th><td>{</td><td><span class="param">nodeKind</span>:(<span class="literal">"iri"</span> | <span class="literal">"bnode"</span> | <span class="literal">"nonliteral"</span> | <span class="literal">"literal"</span>)? <span class="param">datatype</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <a class="nobref" href="#dfn-xsFacet">xsFacet</a>* <span class="param">values</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
+  <tr class="obj"><th id="dfn-Annotation" class="obj">Annotation</th><td>{</td><td><span class="param">predicate</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">object</span>:<a class="nobref" href="#dfn-objectValue">objectValue</a> }</td></tr>
+  <tr class="nob"><th id="dfn-xsFacet" class="nob">xsFacet</th><td>=</td><td><a class="nobref" href="#dfn-stringFacet">stringFacet</a> | <a class="nobref" href="#dfn-numericFacet">numericFacet</a> ;</td></tr>
+  <tr class="nob"><th id="dfn-stringFacet" class="nob">stringFacet</th><td>=</td><td>(<span class="param">"length"</span>|<span class="param">"minlength"</span>|<span class="param">"maxlength"</span>):<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="param">pattern</span>:<a class="trmref" href="#dfn-STRING">STRING</a> ;</td></tr>
+  <tr class="nob"><th id="dfn-numericFacet" class="nob">numericFacet</th><td>=</td><td>(<span class="param">"mininclusive"</span>|<span class="param">"minexclusive"</span>|<span class="param">"maxinclusive"</span>|<span class="param">"maxexclusive"</span>):<a class="nobref" href="#dfn-numericLiteral">numericLiteral</a> </td></tr>
+    <tr><th></th><td>|</td><td>(<span class="param">"totaldigits"</span>|<span class="param">"fractiondigits"</span>):<a class="trmref" href="#dfn-INTEGER">INTEGER</a> ;</td></tr>
+  <tr class="nob"><th id="dfn-shapeLabel" class="nob">shapeLabel</th><td>=</td><td><a class="trmref" href="#dfn-IRI">IRI</a> | <a class="trmref" href="#dfn-BNODE">BNODE</a> ;</td></tr>
+  <tr class="nob"><th id="dfn-numericLiteral" class="nob">numericLiteral</th><td>=</td><td><a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <a class="trmref" href="#dfn-DECIMAL">DECIMAL</a> | <a class="trmref" href="#dfn-DOUBLE">DOUBLE</a> ;</td></tr>
+  <tr class="nob"><th id="dfn-objectValue" class="nob">objectValue</th><td>=</td><td><a class="trmref" href="#dfn-IRI">IRI</a> | <a class="trmref" href="#dfn-STRING">STRING</a> | <a class="trmref" href="#dfn-DATATYPE_STRING">DATATYPE_STRING</a> | <a class="trmref" href="#dfn-LANG_STRING">LANG_STRING</a> ;</td></tr>
+  <tr class="nob"><th id="dfn-valueSetValue" class="nob">valueSetValue</th><td>=</td><td><a class="nobref" href="#dfn-objectValue">objectValue</a> | <a class="objref" href="#dfn-Stem">Stem</a> | <a class="objref" href="#dfn-StemRange">StemRange</a> ;</td></tr>
+  <tr class="obj"><th id="dfn-Stem" class="obj">Stem</th><td>{</td><td><span class="param">stem</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
+  <tr class="obj"><th id="dfn-StemRange" class="obj">StemRange</th><td>{</td><td><span class="param">stem</span>:(<a class="trmref" href="#dfn-IRI">IRI</a> | <a class="objref" href="#dfn-Wildcard">Wildcard</a>) <span class="param">exclusions</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
+  <tr class="obj"><th id="dfn-Wildcard" class="obj">Wildcard</th><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
+  <tr style="background-color:white; border-left: thin solid white; border-right: thin solid white; "><th colspan="1" style="text-align: left;">Terminals</th><td></td><td>constrained by the <a href="#terminals">terminal rules in the compact syntax</a></td></tr>
+<tr class="trm"><th id="dfn-PREFIX" class="trm">PREFIX</th><td>:</td><td><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></td></tr>
+  <tr class="trm"><th id="dfn-IRI" class="trm">IRI</th><td>:</td><td>( [^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> )* <span class="comment"># (<a class="grammarRef" href="#term-IRIREF">IRIREF</a> without the enclosing "&lt;&gt;"s)</span></td></tr>
+  <tr class="trm"><th id="dfn-BNODE" class="trm">BNODE</th><td>:</td><td><a class="grammarRef" href="#term-BLANK_NODE_LABEL">BLANK_NODE_LABEL</a></td></tr>
+  <tr class="trm"><th id="dfn-BOOL" class="trm">BOOL</th><td>:</td><td>"true" | "false" <span class="comment"># a JSON boolean value</span></td></tr>
+  <tr class="trm"><th id="dfn-INTEGER" class="trm">INTEGER</th><td>:</td><td><a class="grammarRef" href="#term-INTEGER">INTEGER</a> <span class="comment"># a JSON string matching the lexical form of an integer</span></td></tr>
+  <tr class="trm"><th id="dfn-DECIMAL" class="trm">DECIMAL</th><td>:</td><td><a class="grammarRef" href="#term-DECIMAL">DECIMAL</a> <span class="comment"># a JSON string matching the lexical form of an decimal</span></td></tr>
+  <tr class="trm"><th id="dfn-DOUBLE" class="trm">DOUBLE</th><td>:</td><td><a class="grammarRef" href="#term-DOUBLE">DOUBLE</a> <span class="comment"># a JSON string matching the lexical form of an double</span></td></tr>
+  <tr class="trm"><th id="dfn-STRING" class="trm">STRING</th><td>:</td><td>'"' .* '"' <span class="comment"># a JSON string starting and ending with the U+0022 (") character</span></td></tr>
+  <tr class="trm"><th id="dfn-DATATYPE_STRING" class="trm">DATATYPE_STRING</th><td>:</td><td>'"' .* '"' ( [^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> )* <span class="comment"># a JSON string starting with U+0022 ("), followed by the lexical form of the string, then U+0022 U+005E U+005E ("^^) and the <a href="#dfn-IRI">IRI</a> of the datatype</span></td></tr>
+  <tr class="trm"><th id="dfn-LANG_STRING" class="trm">LANG_STRING</th><td>:</td><td>'"' .* '"@' <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span> <span class="comment"># a JSON string starting with U+0022 ("), followed by the lexical form of the string, then U+0022 U+0040 ("@) and the <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span></span></td></tr>
+</table>
+</div>
 
-      <div class="abstrsynt"><h3>extracted from above</h3>
-	<as><a id="dfn-ShapesSchema">ShapesSchema</a> ::= Map[<a href="#dfn-ShapeLabel">ShapeLabel</a>-><a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
-	<as><a id="dfn-ShapeLabel">ShapeLabel</a> ::= IRI|BNode</as><br/>
-	<as><a id="dfn-ShapeExpression">ShapeExpression</a> ::= <a href="#dfn-AtomicShape">AtomicShape</a></as>
-	<as>| <a href="#dfn-ShapeAnd">ShapeAnd</a></as>
-	<as>| <a href="#dfn-ShapeOr">ShapeOr</a></as>
-	<as>| <a href="#dfn-ShapeNot">ShapeNot</a></as><br/>
-	<as><a id="dfn-AtomicShape">AtomicShape</a> ::= <a href="#dfn-NodeConstraint">NodeConstraint</a> | <a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></as><br/>
-	<as><a id="dfn-NodeConstraint">NodeConstraint</a> ::=</as> a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as><br/>
-	<as><a id="dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
-	<as><a id="dfn-ShapeAnd">ShapeAnd</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'AND' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
-	<as><a id="dfn-ShapeOr">ShapeOr</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'OR' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
-	<as><a id="dfn-ShapeNot">ShapeNot</a> ::= 'NOT' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
-	<as><a id="dfn-TripleExpression">TripleExpression</a> ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a></as>
+<div style="display:none; ">
+	<as><a id="dfn-Schema">Schema</a> ::= <parm>startActs</parm>:List[<a href="#dfn-SemAct">SemAct</a>]?, <parm>start</parm>:<a href="#dfn-shapeLabel">shapeLabel</a>?, <parm>shapes</parm>:Map[<a href="#dfn-shapeLabel">shapeLabel</a>-><a href="#dfn-shapeExpr">shapeExpr</a>]</as><br/>
+	<as><a id="dfn-shapeLabel">shapeLabel</a> ::= IRI|BNode</as><br/>
+	<as><a id="dfn-shapeExpr">shapeExpr</a> ::=
+	<a href="#dfn-ShapeAnd">ShapeAnd</a>
+	| <a href="#dfn-ShapeOr">ShapeOr</a>
+	| <a href="#dfn-ShapeNot">ShapeNot</a>
+  | <a href="#dfn-NodeConstraint">NodeConstraint</a>
+  | <a href="#dfn-Shape">Shape</a></as><br/>
+	<as><a id="dfn-ShapeAnd">ShapeAnd</a> ::= <parm>shapeExprs</parm>:List[<a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
+	<as><a id="dfn-ShapeOr">ShapeOr</a> ::= <parm>shapeExprs</parm>:List[<a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
+	<as><a id="dfn-ShapeNot">ShapeNot</a> ::= <parm>shapeExpr</parm>:<a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
+  <br/>
+  <span class="comment" style="color: #e30"># a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as></span><br/>
+	<as><a id="dfn-NodeConstraint">NodeConstraint</a> ::=</as> <parm>constraints</parm>:List[<a href="#dfn-constraint">constraint</a>]<br/>
+	<as><a id="dfn-constraint">constraint</a> ::= <a href="#dfn-nodeKind">nodeKind</a>
+  | <a href="#dfn-datatype">datatype</a>
+  | <a href="#dfn-xsFacet">xsFacet</a>
+  | <a href="#dfn-values">values</a></as><br/>
+	<as><a id="dfn-nodeKind">nodeKind</a> ::= <a href="#dfn-IRI_KIND">IRI_KIND</a> | <a href="#dfn-BNode_KIND">BNode_KIND</a> | <a href="#dfn-nonLiteral_KIND">nonLiteral_KIND</a> | <a href="#dfn-literal_KIND">literal_KIND</a></as><br/>
+	<as><a id="dfn-datatype">datatype</a> ::= IRI</as><br/>
+	<as><a id="dfn-xsFacet">xsFacet</a> ::= <a href="#dfn-stringFacet">stringFacet</a>
+  | <a href="#dfn-numericFacet">numericFacet</a><br/>
+	<as><a id="dfn-stringFacet">stringFacet</a> ::= <parm>length</parm>:numeric</as><br/>
+  | <parm>minLength</parm>:numeric
+  | <parm>maxLength</parm>:numeric
+  | <parm>pattern</parm>:string</as><br/>
+	<as><a id="dfn-numericFacet">numericFacet</a> ::= <parm>minExclusive</parm>:numeric
+  | <parm>minInclusive</parm>:numeric
+  | <parm>maxInclusive</parm>:numeric
+  | <parm>maxExclusive</parm>:numeric</as><br/>
+	<as><a id="dfn-values">values</a> ::= <parm>values</parm>:Set[<a href="#dfn-valueSetValue">valueSetValue</a>]</as><br/>
+  <as><a id="dfn-valueSetValue">valueSetValue</a> ::= IRI|RDFLiteral|<a href="#dfn-StemRange">StemRange</a></as><br/>
+  <as><a id="dfn-StemRange">StemRange</a> ::= <parm>stem</parm>:IRI|<a href="#dfn-Wildcard">Wildcard</a>, <parm>exclusions</parm>:Set[<a href="#dfn-valueSetValue">valueSetValue</a>]</as><br/>
+  <br/>
+	<as><a id="dfn-Shape">Shape</a> ::= <parm>closed</parm>:boolean, <parm>extra</parm>:Set[IRI], <parm>expression</parm>:<a href="#dfn-tripleExpr">tripleExpr</a></as><br/>
+	<as><a id="dfn-tripleExpr">tripleExpr</a> ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a></as>
 	<as>| <a href="#dfn-TripleConstraint">TripleConstraint</a></as>
-	<as>| <a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a></as>
-	<as>| <a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a></as>
+	<as>| <a href="#dfn-SomeOfTripleExpr">SomeOf</a></as>
+	<as>| <a href="#dfn-EachOfTripleExpr">EachOf</a></as>
 	<as>| <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a></as><br/>
 	<br/>
-	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= 'EMPTY'</as><br/>
+	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= </as><br/>
 	<as><a id="dfn-TripleConstraint">TripleConstraint</a> ::= <a href="#dfn-PropertySet">PropertySet</a> <a href="#dfn-ShapeRef">ShapeRef</a></as><br/>
-	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
-	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape label from <as>SLabels</as><br/>
+	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop ∪ InvProp</as><br/>
+	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape expression label from <as>SLabels</as><br/>
 	<br/>
-	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '|' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
-	<as><a id="dfn-EachOfTripleExpr">EachOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> ';' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
+	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <parm>expressions</parm>:List[<a href="#dfn-tripleExpr">tripleExpr</a>]</as><br/>
+	<as><a id="dfn-EachOfTripleExpr">EachOfTripleExpr</a> ::= <parm>expressions</parm>:List[<a href="#dfn-tripleExpr">tripleExpr</a>]</as><br/>
 	<br/>
-	<as><a id="dfn-RepeatedTripleExpr">RepeatedTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '{' <a href="#dfn-MinCard">MinCard</a> ';' <a href="#dfn-MaxCard">MaxCard</a> '}'</as><br/>
+	<as><a id="dfn-RepeatedTripleExpr">RepeatedTripleExpr</a> ::= <a href="#dfn-tripleExpr">tripleExpr</a> '{' <a href="#dfn-MinCard">MinCard</a> ';' <a href="#dfn-MaxCard">MaxCard</a> '}'</as><br/>
 	<as><a id="dfn-MinCard">MinCard</a> ::= </as> a natural number<br/>
 	<as><a id="dfn-MaxCard">MaxCard</a> ::= </as> a natural number or <as>'*'</as><br/>
-      </div>
+</div>
+    </section>
 
-      <p>
-	All non-terminals of the abstract syntax are terminated by an underscore (_), this in order to avoid confusion with the non-terminals of the abstract syntax of the shapes language.
-      </p>
-
-      <div class="abstrsynt"><h3>obselete with syntactic differentiation</h3>
-	<as>ShapeExpressionsSchema_ ::= (<a href="#dfn-ShapeLabel">ShapeLabel</a>_ ShapeDefinition_)+</as><br/>
-	<as><a href="#dfn-ShapeLabel">ShapeLabel</a>_ ::= </as> an identifier <br/>
-	<as>ShapeDefinition_ ::= <a href="#dfn-NodeConstraint">NodeConstraint</a>_* ShapeExpressions_?</as><br/>
-	<as>ShapeExpressions_ ::= <a href="#dfn-ShapeExpression">ShapeExpression</a>_ ('AND' <a href="#dfn-ShapeExpression">ShapeExpression</a>_)*</as><br/>
-	<as><a href="#dfn-NodeConstraint">NodeConstraint</a>_ ::= </as> a subset of <as>IRI &cup; RDFLiteral &cup; {blank}</as><br/>
-	<br/>
-	<as><a href="#dfn-ShapeExpression">ShapeExpression</a>_ ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet_)? <a href="#dfn-TripleExpression">TripleExpression</a>_</as><br/>
-	<as>ExtraPropSet_ ::= </as> a set of properties and inverse properties<br/>
-	<as><a href="#dfn-TripleExpression">TripleExpression</a>_ ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a>_</as><br/>
-	<as> | <a href="#dfn-TripleConstraint">TripleConstraint</a>_</as><br/>
-	<as> | <a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a>_</as><br/>
-	<as> | <a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a>_</as><br/>
-	<as> | <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a>_</as><br/>
-	<br/>
-	<as><a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a>_ ::= 'EMPTY'</as><br/>
-	<as><a href="#dfn-TripleConstraint">TripleConstraint</a>_ ::= (Property_ | InvProperty_) ValueExpression_</as><br/>
-	<as>Property_ ::=</as> an IRI<br/>
-	<as>InvProperty_ ::= '^'Property_</as><br/>
-	<br/>
-	<as><a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a>_ ::= TripleExpr_ '|' TripleExpr_</as><br/>
-	<as><a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a>_ ::= TripleExpr_ ';' TripleExpr_</as><br/>
-	<br/>
-	<as>RepeatedTipleExpr_ ::= TripleExpr_ '{' <a href="#dfn-MinCard">MinCard</a>_ ';' <a href="#dfn-MaxCard">MaxCard</a>_ '}'</as><br/>
-	<as><a href="#dfn-MinCard">MinCard</a>_ ::= </as>a natural number<br/>
-	<as><a href="#dfn-MaxCard">MaxCard</a>_ ::= </as>a natural number or '*'<br/>
-	<br/>
-	<as>ValueExpression_ ::= ValueConstraint_</as><br/>
-	<as> | ConjunctiveValueExpr_</as><br/>
-	<as> | DisjunctiveValueExpr_</as><br/>
-	<as>ValueConstraint_ ::= <a href="#dfn-NodeConstraint">NodeConstraint</a>_*</as><br/>
-	<as> | <a href="#dfn-ShapeRef">ShapeRef</a>_</as><br/>
-	<as><a href="#dfn-ShapeRef">ShapeRef</a>_ ::= '@' <a href="#dfn-ShapeLabel">ShapeLabel</a>_</as><br/>
-	<as>ConjunctiveValueExpr_ ::= ValueExpression_ 'AND' ValueExpression_</as><br/>
-	<as>DisjunctiveValueExpr_ ::= ValueExpression_ 'OR' ValueExpression_</as><br/>
-      </div>
-
-      <p>
-	A shape expressions schema defines a set of shape labels, together with their definition.
-      </p>
-      
-      <p>
-	TODO: explanation of the constructs of a ShEx schema
-      </p>
+    <section id="shexc">
+      <h2>Parsing ShEx Compact syntax (ShExC)</h2>
 
       <div class="Example">
 	<p>
-	  In this example we illustrate how concrete syntax of ShEx in Turtle format corresponds to the abstract syntax presented above.
-	</p> 
-	<p>
-	  Here is a ShEx schema written in Turtle format.
-	  The leading numbers are line numbers used for reference.
+	  Following is a ShEx schema written in ShExC with line numbers added at the left for reference.
 	</p>
 
 
@@ -1447,120 +1113,7 @@ CLOSED {
 	  The shape expression that defines <span class="pre">&lt;EmployeeShape&gt;</span> is composed of zero node constrainst, and two shape definitions, separated by an <span class="pre">AND</span>.
 	</p>
       </div>
-    </section>
 
-    <section id="shexj">
-      <h2>ShEx JSON Syntax (ShExJ)</h2>
-      <p>
-        The JSON Syntax serves as a serializable proxy for the ShEx abstract syntax.
-        Optional parameters are suffixed with a "<code>?</code>".
-        For instance, "<span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}?" indicates that prefixes is optional and if present is a mapping from the terminal <a class="trmref" href="#dfn-PREFIX">PREFIX</a> to the terminal <a class="trmref" href="#dfn-IRI">IRI</a>.
-        "<span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>?" indicates that <span class="param">base</span> is optional and, if present, is an <a class="trmref" href="#dfn-IRI">IRI</a>.
-      </p>
-      <p>
-        For brevity, it is preferred that empty maps and lists are elided in serializations of ShExJ.
-      </p>
-      <div class="shexjTable">
-<table class="shexj">
-  <tr class="obj"><th id="dfn-Schema" class="obj">Schema</th><td>{</td><td><span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}? <span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <span class="param">startActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">start</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">shapes</span>:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }</td></tr>
-  <tr class="nob"><th id="dfn-shapeExpr" class="nob">shapeExpr</th><td>=</td><td><a class="objref" href="#dfn-ShapeOr">ShapeOr</a> | <a class="objref" href="#dfn-ShapeAnd">ShapeAnd</a> | <a class="objref" href="#dfn-ShapeNot">ShapeNot</a> | <a class="objref" href="#dfn-NodeConstraint">NodeConstraint</a> | <a class="objref" href="#dfn-Shape">Shape</a> | <a class="objref" href="#dfn-ShapeRef">ShapeRef</a> | <a class="objref" href="#dfn-ShapeExternal">ShapeExternal</a> ;</td></tr>
-  <tr class="obj"><th id="dfn-ShapeOr" class="obj">ShapeOr</th><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
-  <tr class="obj"><th id="dfn-ShapeAnd" class="obj">ShapeAnd</th><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
-  <tr class="obj"><th id="dfn-ShapeNot" class="obj">ShapeNot</th><td>{</td><td><span class="param">shapeExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a> }</td></tr>
-  <tr class="obj"><th id="dfn-Shape" class="obj">Shape</th><td>{</td><td><span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]? <span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>? <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>]? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-ShapeExternal" class="obj">ShapeExternal</th><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
-  <tr class="obj"><th id="dfn-ShapeRef" class="obj">ShapeRef</th><td>{</td><td><span class="param">reference</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
-  <tr class="obj"><th id="dfn-SemAct" class="obj">SemAct</th><td>{</td><td><span class="param">name</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">code</span>:<a class="trmref" href="#dfn-STRING">STRING</a>? }</td></tr>
-  <tr class="nob"><th id="dfn-tripleExpr" class="nob">tripleExpr</th><td>=</td><td><a class="objref" href="#dfn-EachOf">EachOf</a> | <a class="objref" href="#dfn-SomeOf">SomeOf</a> | <a class="objref" href="#dfn-TripleConstraint">TripleConstraint</a> | <a class="objref" href="#dfn-Inclusion">Inclusion</a> ;</td></tr>
-  <tr class="obj"><th id="dfn-EachOf" class="obj">EachOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-SomeOf" class="obj">SomeOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-Inclusion" class="obj">Inclusion</th><td>{</td><td><span class="param">include</span>:<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a> }</td></tr>
-  <tr class="obj"><th id="dfn-TripleConstraint" class="obj">TripleConstraint</th><td>{</td><td><span class="param">inverse</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">negated</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">predicate</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">valueExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-NodeConstraint" class="obj">NodeConstraint</th><td>{</td><td><span class="param">nodeKind</span>:(<span class="literal">"iri"</span> | <span class="literal">"bnode"</span> | <span class="literal">"nonliteral"</span> | <span class="literal">"literal"</span>)? <span class="param">datatype</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <a class="nobref" href="#dfn-xsFacet">xsFacet</a>* <span class="param">values</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-Annotation" class="obj">Annotation</th><td>{</td><td><span class="param">predicate</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">object</span>:<a class="nobref" href="#dfn-objectValue">objectValue</a> }</td></tr>
-  <tr class="nob"><th id="dfn-xsFacet" class="nob">xsFacet</th><td>=</td><td><a class="nobref" href="#dfn-stringFacet">stringFacet</a> | <a class="nobref" href="#dfn-numericFacet">numericFacet</a> ;</td></tr>
-  <tr class="nob"><th id="dfn-stringFacet" class="nob">stringFacet</th><td>=</td><td>(<span class="param">"length"</span>|<span class="param">"minlength"</span>|<span class="param">"maxlength"</span>):<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="param">pattern</span>:<a class="trmref" href="#dfn-STRING">STRING</a> ;</td></tr>
-  <tr class="nob"><th id="dfn-numericFacet" class="nob">numericFacet</th><td>=</td><td>(<span class="param">"mininclusive"</span>|<span class="param">"minexclusive"</span>|<span class="param">"maxinclusive"</span>|<span class="param">"maxexclusive"</span>):<a class="nobref" href="#dfn-numericLiteral">numericLiteral</a> </td></tr>
-    <tr><th></th><td>|</td><td>(<span class="param">"totaldigits"</span>|<span class="param">"fractiondigits"</span>):<a class="trmref" href="#dfn-INTEGER">INTEGER</a> ;</td></tr>
-  <tr class="nob"><th id="dfn-shapeLabel" class="nob">shapeLabel</th><td>=</td><td><a class="trmref" href="#dfn-IRI">IRI</a> | <a class="trmref" href="#dfn-BNODE">BNODE</a> ;</td></tr>
-  <tr class="nob"><th id="dfn-numericLiteral" class="nob">numericLiteral</th><td>=</td><td><a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <a class="trmref" href="#dfn-DECIMAL">DECIMAL</a> | <a class="trmref" href="#dfn-DOUBLE">DOUBLE</a> ;</td></tr>
-  <tr class="nob"><th id="dfn-objectValue" class="nob">objectValue</th><td>=</td><td><a class="trmref" href="#dfn-IRI">IRI</a> | <a class="trmref" href="#dfn-STRING">STRING</a> | <a class="trmref" href="#dfn-DATATYPE_STRING">DATATYPE_STRING</a> | <a class="trmref" href="#dfn-LANG_STRING">LANG_STRING</a> ;</td></tr>
-  <tr class="nob"><th id="dfn-valueSetValue" class="nob">valueSetValue</th><td>=</td><td><a class="nobref" href="#dfn-objectValue">objectValue</a> | <a class="objref" href="#dfn-Stem">Stem</a> | <a class="objref" href="#dfn-StemRange">StemRange</a> ;</td></tr>
-  <tr class="obj"><th id="dfn-Stem" class="obj">Stem</th><td>{</td><td><span class="param">stem</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
-  <tr class="obj"><th id="dfn-StemRange" class="obj">StemRange</th><td>{</td><td><span class="param">stem</span>:(<a class="trmref" href="#dfn-IRI">IRI</a> | <a class="objref" href="#dfn-Wildcard">Wildcard</a>) <span class="param">exclusions</span>:[<a class="nobref" href="#dfn-valueSetValue">valueSetValue</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-Wildcard" class="obj">Wildcard</th><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
-  <tr style="background-color:white; border-left: thin solid white; border-right: thin solid white; "><th colspan="1" style="text-align: left;">Terminals</th><td></td><td>constrained by the <a href="#terminals">terminal rules in the compact syntax</a></td></tr>
-<tr class="trm"><th id="dfn-PREFIX" class="trm">PREFIX</th><td>:</td><td><a class="grammarRef" href="#term-PN_PREFIX">PN_PREFIX</a></td></tr>
-  <tr class="trm"><th id="dfn-IRI" class="trm">IRI</th><td>:</td><td>( [^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> )* <span class="comment"># (<a class="grammarRef" href="#term-IRIREF">IRIREF</a> without the enclosing "&lt;&gt;"s)</span></td></tr>
-  <tr class="trm"><th id="dfn-BNODE" class="trm">BNODE</th><td>:</td><td><a class="grammarRef" href="#term-BLANK_NODE_LABEL">BLANK_NODE_LABEL</a></td></tr>
-  <tr class="trm"><th id="dfn-BOOL" class="trm">BOOL</th><td>:</td><td>"true" | "false" <span class="comment"># a JSON boolean value</span></td></tr>
-  <tr class="trm"><th id="dfn-INTEGER" class="trm">INTEGER</th><td>:</td><td><a class="grammarRef" href="#term-INTEGER">INTEGER</a> <span class="comment"># a JSON string matching the lexical form of an integer</span></td></tr>
-  <tr class="trm"><th id="dfn-DECIMAL" class="trm">DECIMAL</th><td>:</td><td><a class="grammarRef" href="#term-DECIMAL">DECIMAL</a> <span class="comment"># a JSON string matching the lexical form of an decimal</span></td></tr>
-  <tr class="trm"><th id="dfn-DOUBLE" class="trm">DOUBLE</th><td>:</td><td><a class="grammarRef" href="#term-DOUBLE">DOUBLE</a> <span class="comment"># a JSON string matching the lexical form of an double</span></td></tr>
-  <tr class="trm"><th id="dfn-STRING" class="trm">STRING</th><td>:</td><td>'"' .* '"' <span class="comment"># a JSON string starting and ending with the U+0022 (") character</span></td></tr>
-  <tr class="trm"><th id="dfn-DATATYPE_STRING" class="trm">DATATYPE_STRING</th><td>:</td><td>'"' .* '"' ( [^#0000- &lt;&gt;\"{}|^`\\] | <span class="prod"><a class="grammarRef" href="#term-UCHAR">UCHAR</a></span> )* <span class="comment"># a JSON string starting with U+0022 ("), followed by the lexical form of the string, then U+0022 U+005E U+005E ("^^) and the <a href="#dfn-IRI">IRI</a> of the datatype</span></td></tr>
-  <tr class="trm"><th id="dfn-LANG_STRING" class="trm">LANG_STRING</th><td>:</td><td>'"' .* '"@' <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span> <span class="comment"># a JSON string starting with U+0022 ("), followed by the lexical form of the string, then U+0022 U+0040 ("@) and the <span class="prod"><a class="grammarRef" href="#term-LANGTAG">LANGTAG</a></span></span></td></tr>
-</table>
-</div>
-
-<div style="display:none; ">
-	<as><a id="dfn-Schema">Schema</a> ::= <parm>startActs</parm>:List[<a href="#dfn-SemAct">SemAct</a>]?, <parm>start</parm>:<a href="#dfn-shapeLabel">shapeLabel</a>?, <parm>shapes</parm>:Map[<a href="#dfn-shapeLabel">shapeLabel</a>-><a href="#dfn-shapeExpr">shapeExpr</a>]</as><br/>
-	<as><a id="dfn-shapeLabel">shapeLabel</a> ::= IRI|BNode</as><br/>
-	<as><a id="dfn-shapeExpr">shapeExpr</a> ::=
-	<a href="#dfn-ShapeAnd">ShapeAnd</a>
-	| <a href="#dfn-ShapeOr">ShapeOr</a>
-	| <a href="#dfn-ShapeNot">ShapeNot</a>
-  | <a href="#dfn-NodeConstraint">NodeConstraint</a>
-  | <a href="#dfn-Shape">Shape</a></as><br/>
-	<as><a id="dfn-ShapeAnd">ShapeAnd</a> ::= <parm>shapeExprs</parm>:List[<a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
-	<as><a id="dfn-ShapeOr">ShapeOr</a> ::= <parm>shapeExprs</parm>:List[<a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
-	<as><a id="dfn-ShapeNot">ShapeNot</a> ::= <parm>shapeExpr</parm>:<a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
-  <br/>
-  <span class="comment" style="color: #e30"># a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as></span><br/>
-	<as><a id="dfn-NodeConstraint">NodeConstraint</a> ::=</as> <parm>constraints</parm>:List[<a href="#dfn-constraint">constraint</a>]<br/>
-	<as><a id="dfn-constraint">constraint</a> ::= <a href="#dfn-nodeKind">nodeKind</a>
-  | <a href="#dfn-datatype">datatype</a>
-  | <a href="#dfn-xsFacet">xsFacet</a>
-  | <a href="#dfn-values">values</a></as><br/>
-	<as><a id="dfn-nodeKind">nodeKind</a> ::= <a href="#dfn-IRI_KIND">IRI_KIND</a> | <a href="#dfn-BNode_KIND">BNode_KIND</a> | <a href="#dfn-nonLiteral_KIND">nonLiteral_KIND</a> | <a href="#dfn-literal_KIND">literal_KIND</a></as><br/>
-	<as><a id="dfn-datatype">datatype</a> ::= IRI</as><br/>
-	<as><a id="dfn-xsFacet">xsFacet</a> ::= <a href="#dfn-stringFacet">stringFacet</a>
-  | <a href="#dfn-numericFacet">numericFacet</a><br/>
-	<as><a id="dfn-stringFacet">stringFacet</a> ::= <parm>length</parm>:numeric</as><br/>
-  | <parm>minLength</parm>:numeric
-  | <parm>maxLength</parm>:numeric
-  | <parm>pattern</parm>:string</as><br/>
-	<as><a id="dfn-numericFacet">numericFacet</a> ::= <parm>minExclusive</parm>:numeric
-  | <parm>minInclusive</parm>:numeric
-  | <parm>maxInclusive</parm>:numeric
-  | <parm>maxExclusive</parm>:numeric</as><br/>
-	<as><a id="dfn-values">values</a> ::= <parm>values</parm>:Set[<a href="#dfn-valueSetValue">valueSetValue</a>]</as><br/>
-  <as><a id="dfn-valueSetValue">valueSetValue</a> ::= IRI|RDFLiteral|<a href="#dfn-StemRange">StemRange</a></as><br/>
-  <as><a id="dfn-StemRange">StemRange</a> ::= <parm>stem</parm>:IRI|<a href="#dfn-Wildcard">Wildcard</a>, <parm>exclusions</parm>:Set[<a href="#dfn-valueSetValue">valueSetValue</a>]</as><br/>
-  <br/>
-	<as><a id="dfn-Shape">Shape</a> ::= <parm>closed</parm>:boolean, <parm>extra</parm>:Set[IRI], <parm>expression</parm>:<a href="#dfn-tripleExpr">tripleExpr</a></as><br/>
-	<as><a id="dfn-tripleExpr">tripleExpr</a> ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a></as>
-	<as>| <a href="#dfn-TripleConstraint">TripleConstraint</a></as>
-	<as>| <a href="#dfn-SomeOfTripleExpr">SomeOf</a></as>
-	<as>| <a href="#dfn-EachOfTripleExpr">EachOf</a></as>
-	<as>| <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a></as><br/>
-	<br/>
-	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= </as><br/>
-	<as><a id="dfn-TripleConstraint">TripleConstraint</a> ::= <a href="#dfn-PropertySet">PropertySet</a> <a href="#dfn-ShapeRef">ShapeRef</a></as><br/>
-	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
-	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape expression label from <as>SLabels</as><br/>
-	<br/>
-	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <parm>expressions</parm>:List[<a href="#dfn-tripleExpr">tripleExpr</a>]</as><br/>
-	<as><a id="dfn-EachOfTripleExpr">EachOfTripleExpr</a> ::= <parm>expressions</parm>:List[<a href="#dfn-tripleExpr">tripleExpr</a>]</as><br/>
-	<br/>
-	<as><a id="dfn-RepeatedTripleExpr">RepeatedTripleExpr</a> ::= <a href="#dfn-tripleExpr">tripleExpr</a> '{' <a href="#dfn-MinCard">MinCard</a> ';' <a href="#dfn-MaxCard">MaxCard</a> '}'</as><br/>
-	<as><a id="dfn-MinCard">MinCard</a> ::= </as> a natural number<br/>
-	<as><a id="dfn-MaxCard">MaxCard</a> ::= </as> a natural number or <as>'*'</as><br/>
-</div>
-    </section>
-
-    <section id="shexc">
-      <h2>Parsing ShEx Compact Syntax</h2>
       <div class="grammarTable">
 <table border="0">
 
@@ -2584,6 +2137,434 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 
 </table>
       </div>
+    <section id="compilation-shex-shapes">
+      <h3>Examples of Compilation of a ShEx Schema into a Shapes Schema</h3>
+      <section id="compilation-shex-shapes-examples">
+	
+	<section id="compilation-example-closed-shape">
+	  <h4>Closed shape expression</h4>
+	  
+	  <div class="Example">
+	    <div class="with-highlight">
+	      <p>
+		Every <span class="hl-issueshape hl-usershape lowlight2">shape label</span> from the ShEx schema is used as <span class="hl-issueshape lowlight2">shape label</span> in the shapes schema, which definition is the compilation of the definition from the ShEx schema.
+	      </p>
+	      <p>
+		Every <span class="hl-ve1 hl-ve3 lowlight1">shape expression</span> that appears in a triple constraint of the ShEx schema yields a <span class="hl-ve1  hl-ve2 hl-ve3 hl-ve4 hl-ve4bis">fresh shape label having the same definition</span> in the shapes schema.
+		This does not apply to shape expressions that are references.
+	      </p>
+	      <p>
+		The translation of a CLOSED <span class="hl-te lowlight3">triple expression</span> in the ShEx schema translates almost directly to a <span class="hl-te lowlight3">triple expression</span> in the shapes schema, exept that predicates are replaced with singleton sets, and <span class="hl-ve1 hl-ve3 lowlight1">value expressions</span> are replaced with the corresponding freshly introduced <span class="hl-ve1 hl-ve3 lowlight1">shape labels</span> 
+	      </p>
+
+<pre class="shex" style="float:left">
+# ShEx schema
+
+<span class="hl-issueshape lowlight2">&lt;IssueShape&gt;</span>
+<div class="hl-te lowlight3">
+CLOSED {                 
+    ex:state      <span class="hl-ve1 lowlight1">[ex:unassigned ex:assigned]</span> ; 
+    ex:reportedBy @&lt;UserShape&gt; ;   
+    ex:reportedOn <span class="hl-ve3 lowlight1">xsd:dateTime OR xsd:date</span> ;
+    ex:related    @&lt;IssueShape&gt;* ;
+    ^ex:related   @&lt;IssueShape&gt;*
+}</div>
+<span class="hl-usershape lowlight2">&lt;UserShape&gt;</span> {
+    PATTERN "http://example.org/User#.*"
+}
+</pre>
+<pre class="shex" style="float:left">
+# shapes schema
+
+<span class="hl-issueshape lowlight2">&lt;IssueShape&gt; </span>:= 
+<div class="hl-te lowlight3">{
+    {ex:state}      <span class="hl-ve1 lowlight1">&lt;SL_1&gt;</span> ;
+    {ex:reportedBy} &lt;UserShape&gt;
+    {ex:reportedOn} <span class="hl-ve3 lowlight1">&lt;SL_3&gt;</span> ;
+    {ex:related}    &lt;IssueShape&gt;*  ;
+    {^ex:related}   &lt;IssueShape&gt;*
+}
+</div>
+
+<span class="hl-usershape lowlight2">&lt;UserShape&gt;</span> {
+    Set(PATTERN "http://example.org/User#.*")
+}
+
+
+<span class="hl-ve1 lowlight1">&lt;SL_1&gt;  := {ex:unassigned, ex:assigned}</span>
+<span class="hl-ve3 lowlight1">&lt;SL_3&gt;  := xsd:dateTime OR xsd:date</span>
+</pre>
+
+	    </div>
+	    <script type="text/javascript">
+	      <!--
+		  prepareHighlight(["hl-ve1", "hl-ve3" ], "highlight1", "lowlight1");
+		  prepareHighlight(["hl-issueshape", "hl-usershape"], "highlight2", "lowlight2");
+		  prepareHighlight(["hl-te"], "highlight3", "lowlight3");
+		-->
+	    </script>
+	    <div style="clear:both;"> </div>
+	  </div>	  
+	</section>
+
+      <section id="translate-example-closed-with-extra">
+	<h4>Closed shape expression with EXTRA modifier</h4>
+
+	<div class="Example">
+	  <div class="with-highlight">
+	    <p>
+	      As in the previous example, the value expressions of the ShEx schema yield shape labels with the same definition. Here, the resulting fresh shape labels are <span class="pre">&lt;SL_5&gt;, &lt;SL_6&gt;, &lt;SL_7&gt;, &lt;SL_8&gt;</span>.
+	    </p>
+	    <p>
+	      The <span class="hl-shapexpr lowlight3">triple expression</span> from the ShEx schema is translated into a <span class="hl-shapexpr lowlight3">triple expression</span> in the shapes schema.
+	      <span class="hl-samete lowlight1">One part of that triple expression</span> is a direct translation of <span class="hl-samete lowlight1">the triple expression from the ShEx schema</span>.
+	    </p>
+	    <p>
+	      The <span class="hl-extra lowlight1">EXTRA modifier</span> results in <span class="hl-extra lowlight1">additional triple constraints</span> in the shapes schema. 
+	      There is one such triple constraint with * cardinality for every extra property. 
+	      For every extra property, the <span class="hl-extra-ve1 hl-extra-ve2 lowlight2">value expression is the negation of the value expressions that occur with the same property</span>.
+	    </p>
+
+<pre class="shex" style="float:left">
+# ShEx schema
+	      
+	      
+	      
+
+
+
+
+
+
+&lt;UserShape&gt;
+<div class="hl-shapexpr lowlight3">CLOSED 
+<span class="hl-extra">EXTRA rdf:type foaf:mbox</span> {
+<div class="hl-samete lowlight4">
+    rdf:type <span class="hl-extra-ve1 lowlight2">[foaf:Person]</span> ;
+    rdf:type <span class="hl-extra-ve1 lowlight2">[ex:User]</span> ;
+    (                                   
+       foaf:name xsd:string 
+     |                                  
+       foaf:givenName xsd:string+ ;      
+       foaf:familyName xsd:string
+    );
+    foaf:mbox <span class="hl-extra-ve2 lowlight2">IRI</span>
+</div>
+}
+</div>
+</pre>
+
+
+<pre class="shex" style="float:left">
+# shapes schema
+
+&lt;SL_5&gt; := {foaf:Person}
+&lt;SL_6&gt; := {ex:User}
+&lt;SL_7&gt; := xsd:string
+&lt;SL_8&gt; := IRI
+
+&lt;SL_UserShape_Extra_rdftype&gt; := <span class="hl-extra-ve1 lowlight2">NOT{foaf:Person} AND NOT{ex:User}</span>
+&lt;SL_UserShape_Extra_foafmxbox&gt; := <span class="hl-extra-ve2 lowlight2">NOT IRI</span>
+
+
+&lt;UserShape&gt; := 
+<div class="hl-shapexpr lowlight3">{
+<div class="hl-samete lowlight4">    {rdf:type}  &lt;SL_5&gt; ;
+    {rdf:type}  &lt;SL_6&gt; ;
+    (
+        {foaf:name}       &lt;SL_7&gt;
+    |
+        {foaf:givenName}  &lt;SL_7&gt;+ ;
+        {foaf:familyName} &lt;SL_7&gt;
+    );
+    {foaf:mbox} &lt;SL_8&gt; ;
+</div>
+<div class="hl-extra lowlight1">    {rdf:type}  <span class="hl-extra-ve1 lowlight2">&lt;SL_UserShape_Extra_rdftype&gt;</span> * ;
+    {foaf:mbox} <span class="hl-extra-ve2 lowlight2">&lt;SL_UserShape_Extra_foafmbox&gt;</span> * ;
+</div>
+}
+</div>
+</pre>
+<div style="clear:both;"> </div>
+
+	  </div>  
+	</div>
+	<script type="text/javascript">
+	  <!--
+	      prepareHighlight(["hl-extra"], "highlight1", "lowlight1");
+	      prepareHighlight(["hl-extra-ve1", "hl-extra-ve2"], "highlight2", "lowlight2");
+	      prepareHighlight(["hl-shapexpr"], "highlight3", "lowlight3");
+	      prepareHighlight(["hl-samete"], "highlight4", "lowlight4");
+	    -->
+	</script>
+      </section>
+
+      <section id="compilation-example-non-closed-shape">
+	<h4>Non closed shape expression</h4>
+	<div class="Example">
+	  <div class="with-highlight">
+	    <p>
+	      As for the case with EXTRA properties, the <span class="hl-shapexpr lowlight3">shape expression</span> from the ShEx schema is tranlated into a <span class="hl-shapexpr lowlight3">triple expression</span> with an <span class="hl-open-tc lowlight4">additional triple constraint with * cardinality</span>.
+	      The <span class="hl-propset lowlight2">set of properties</span> of the latter is the set of <span class="hl-propset lowlight2">all properties that do not appear in the shape expression</span>. 
+	      The <span class="hl-ve lowlight1">value expression</span> accepts all values.
+	    </p>
+	    
+	    
+<pre class="shex" style="float:left">
+# ShEx schema
+
+
+
+
+
+&lt;SomeShape&gt; 
+<div class="hl-shapexpr lowlight3">{
+    ex:p xsd:int* ;
+    ( ex:q xsd:int | ex:r IRI )? 
+}
+</div>
+</pre>
+<pre class="shex" style="float:left">
+# shapes schema
+
+&lt;SL_9&gt;  := xsd:int
+&lt;SL_10&gt; := IRI
+
+<span class="hl-ve lowlight1">&lt;SL_all_values&gt;  := IRI ∪ RDFLiteral ∪ {blank}</span>
+
+&lt;SomeShape&gt; := 
+<div class="hl-shapexpr lowlight3">{
+    {ex:p}  &lt;SL_9&gt;* ;
+    ( {ex:q}  &lt;SL_9&gt; | {ex:r} &lt;SL_10&gt; )? ;
+
+<span class="hl-open-tc lowlight4">    <span class="hl-propset lowlight2">PropSet</span>  <span class="hl-ve lowlight1">&lt;SL_all_values&gt;</span>*    </span>
+}
+</div>
+
+# with <span class="hl-propset lowlight2">PropSet = (Prop ∪ InvProp) \ {ex:p, ex:q, ex:r}</span>
+</pre>
+<div style="clear:both;"> </div>
+
+	  </div>
+	  <script type="text/javascript">
+	    <!--
+		prepareHighlight(["hl-ve"], "highlight1", "lowlight1");
+		prepareHighlight(["hl-propset"], "highlight2", "lowlight2");
+		prepareHighlight(["hl-shapexpr"], "highlight3", "lowlight3");
+		prepareHighlight(["hl-open-tc"], "highlight4", "lowlight4");
+	      -->
+	  </script>
+	</div>
+      </section>
+
+      <section id="compilation-example-conjunctive-shape">
+	<h4>Complex shape definition</h4>
+
+	<div class="Example">
+	  <div class="with-highlight">
+	    <p>
+	      The shape label <span class="pre">&lt;EmployeeShape&gt;</span> is defined as a conjunction of <span class="hl-nc lowlight2">node constrints</span> and <span class="hl-te1 hl-te2 lowlight3">triple expressions</span>.
+	      In the shapes schema, this yields a <span class="hl-conj lowlight4"><a href="#dfn-ShapeAnd">ShapeAnd</a> shape expression</span> with one conjunct per conjunct in the ShEx schema.
+	    </p>
+	    
+<pre class="shex" style="float:left">
+# ShEx schema
+
+&lt;EmployeeShape&gt;
+<span class="hl-nc lowlight2">PATTERN "^http:/example.org/.*"</span>
+
+<div class="hl-te1 lowlight3">CLOSED {        
+    foaf:phone IRI*;          
+    foaf:mbox IRI             
+}
+</div>
+AND 
+
+<div class="hl-te2 lowlight3">CLOSED {
+    ( foaf:phone PATTERN "^tel:\\+33" ; 
+      foaf:mbox  PATTERN "\\.fr$" )?   ;
+    ( foaf:phone PATTERN "^tel:\\+44" ; 
+      foaf:mbox  PATTERN "\\.uk$")?
+}
+</div>
+</pre>
+
+<pre class="shex" style="float:left">
+# shapes schema
+
+&lt;SL_11&gt; := Set(PATTERN "^tel:\\+33")
+&lt;SL_12&gt; := Set(PATTERN "\\.fr$")
+&lt;SL_13&gt; := Set(PATTERN "^tel:\\+44")
+&lt;SL_14&gt; := Set(PATTERN "\\.uk$")
+&lt;SL_15&gt; := IRI
+
+&lt;EmployeeShape&gt; := {<div class="hl-conj lowlight4">
+    <span class="hl-nc lowlight2">Set(PATTERN "^http:/example.org/.*")</span>
+
+    AND 
+<div class="hl-te1 lowlight3">
+    {foaf:phone} &lt;SL_15&gt;* ;
+    {foaf:mbox}  &lt;SL_15&gt;
+</div>
+    AND 
+<div class="hl-te2 lowlight3">
+    ( {foaf:phone} &lt;SL_11&gt; ;
+      {foaf:mbox}  &lt;SL_12&gt; )? ;
+    ( {foaf:phone} &lt;SL_13&gt; ;
+      {foaf:mbox}  &lt;SL_14&gt; )?
+</div>
+}
+</div>
+</pre>
+<div style="clear:both;"> </div>
+
+	  </div>
+	  <script type="text/javascript">
+	    <!--
+		prepareHighlight([], "highlight1", "lowlight1");
+		prepareHighlight(["hl-nc"], "highlight2", "lowlight2");
+		prepareHighlight(["hl-te1", "hl-te2"], "highlight3", "lowlight3");
+		prepareHighlight(["hl-conj"], "highlight4", "lowlight4");
+	      -->
+	  </script>
+	</div>
+      </section>
+
+      <section id="compilation-example-negated-triple-constraint">
+	<h4>Negated triple expression</h4>
+	<div class="Example">
+	  <div class="with-highlight">
+
+	    <p>
+	      The <span class="hl-negte lowlight4">negated triple constraint</span> is treated as if <span class="hl-prop lowlight2">its property</span> was an <span class="hl-prop lowlight2">extra property</span>.
+	      The corresponding <span class="hl-negte lowlight4">triple constraint in the translation</span> has a <span class="hl-zerocard lowlight3">{0;0} cardinality</span>.
+	    </p>
+
+<pre class="shex" style="float:left">
+# ShEx schema
+
+&lt;SomeShape&gt; 
+CLOSED {
+    ex:p xsd:int* ;
+    (<span class="hl-negte lowlight4"> ! <span class="hl-prop lowlight2">ex:q</span> xsd:int </span> 
+      | ex:r IRI )? 
+}
+</pre>
+<pre class="shex" style="float:left">
+# shapes schema
+
+&lt;SL_9&gt;  := xsd:int
+&lt;SL_10&gt; := IRI
+&lt;SL_Extra&gt; := NOT xsd:int
+
+&lt;SomeShape&gt; := { 
+    {ex:p}  &lt;SL_9&gt;* ;
+    (<span class="hl-negte lowlight4"> {ex:q}  &lt;SL_9&gt;<span class="hl-zerocard lowlight3">{0;0}</span> </span>
+      | {ex:r} &lt;SL_10&gt; )? ;
+
+    <span class="hl-prop lowlight2">{ex:q}</span>  &lt;SL_Extra&gt;*
+}
+
+</pre>
+<div style="clear:both;"></div>
+
+	  </div>
+	  <script type="text/javascript">
+	    <!--
+		prepareHighlight([], "highlight1", "lowlight1");
+		prepareHighlight(["hl-prop"], "highlight2", "lowlight2");
+		prepareHighlight(["hl-zerocard"], "highlight3", "lowlight3");
+		prepareHighlight(["hl-negte"], "highlight4", "lowlight4");
+	      -->
+	  </script>
+	</div>
+      </section>
+      </section>
+    </section>
+    </section>
+
+
+
+    <section id="shex-abstrsynt">
+      <h2>Appendix: Abstract Syntax of ShEx Schemas</h2>
+
+      <p>
+	The abstract syntax of ShEx schemas is given by the following rules.
+      </p>
+
+      <div class="abstrsynt"><h3>extracted from above</h3>
+	<as><a id="dfn-ShapesSchema">ShapesSchema</a> ::= Map[<a href="#dfn-ShapeLabel">ShapeLabel</a>-><a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
+	<as><a id="dfn-ShapeLabel">ShapeLabel</a> ::= IRI|BNode</as><br/>
+	<as><a id="dfn-ShapeExpression">ShapeExpression</a> ::= <a href="#dfn-AtomicShape">AtomicShape</a></as>
+	<as>| <a href="#dfn-ShapeAnd">ShapeAnd</a></as>
+	<as>| <a href="#dfn-ShapeOr">ShapeOr</a></as>
+	<as>| <a href="#dfn-ShapeNot">ShapeNot</a></as><br/>
+	<as><a id="dfn-AtomicShape">AtomicShape</a> ::= <a href="#dfn-NodeConstraint">NodeConstraint</a> | <a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></as><br/>
+	<as><a id="dfn-NodeConstraint">NodeConstraint</a> ::=</as> a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as><br/>
+	<as><a id="dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
+	<as><a id="dfn-ShapeAnd">ShapeAnd</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'AND' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
+	<as><a id="dfn-ShapeOr">ShapeOr</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'OR' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
+	<as><a id="dfn-ShapeNot">ShapeNot</a> ::= 'NOT' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
+	<as><a id="dfn-TripleExpression">TripleExpression</a> ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a></as>
+	<as>| <a href="#dfn-TripleConstraint">TripleConstraint</a></as>
+	<as>| <a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a></as>
+	<as>| <a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a></as>
+	<as>| <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a></as><br/>
+	<br/>
+	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= 'EMPTY'</as><br/>
+	<as><a id="dfn-TripleConstraint">TripleConstraint</a> ::= <a href="#dfn-PropertySet">PropertySet</a> <a href="#dfn-ShapeRef">ShapeRef</a></as><br/>
+	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop ∪ InvProp</as><br/>
+	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape label from <as>SLabels</as><br/>
+	<br/>
+	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '|' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
+	<as><a id="dfn-EachOfTripleExpr">EachOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> ';' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
+	<br/>
+	<as><a id="dfn-RepeatedTripleExpr">RepeatedTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '{' <a href="#dfn-MinCard">MinCard</a> ';' <a href="#dfn-MaxCard">MaxCard</a> '}'</as><br/>
+	<as><a id="dfn-MinCard">MinCard</a> ::= </as> a natural number<br/>
+	<as><a id="dfn-MaxCard">MaxCard</a> ::= </as> a natural number or <as>'*'</as><br/>
+      </div>
+
+      <p>
+	All non-terminals of the abstract syntax are terminated by an underscore (_), this in order to avoid confusion with the non-terminals of the abstract syntax of the shapes language.
+      </p>
+
+      <div class="abstrsynt"><h3>obselete with syntactic differentiation</h3>
+	<as>ShapeExpressionsSchema_ ::= (<a href="#dfn-ShapeLabel">ShapeLabel</a>_ ShapeDefinition_)+</as><br/>
+	<as><a href="#dfn-ShapeLabel">ShapeLabel</a>_ ::= </as> an identifier <br/>
+	<as>ShapeDefinition_ ::= <a href="#dfn-NodeConstraint">NodeConstraint</a>_* ShapeExpressions_?</as><br/>
+	<as>ShapeExpressions_ ::= <a href="#dfn-ShapeExpression">ShapeExpression</a>_ ('AND' <a href="#dfn-ShapeExpression">ShapeExpression</a>_)*</as><br/>
+	<as><a href="#dfn-NodeConstraint">NodeConstraint</a>_ ::= </as> a subset of <as>IRI ∪ RDFLiteral ∪ {blank}</as><br/>
+	<br/>
+	<as><a href="#dfn-ShapeExpression">ShapeExpression</a>_ ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet_)? <a href="#dfn-TripleExpression">TripleExpression</a>_</as><br/>
+	<as>ExtraPropSet_ ::= </as> a set of properties and inverse properties<br/>
+	<as><a href="#dfn-TripleExpression">TripleExpression</a>_ ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a>_</as><br/>
+	<as> | <a href="#dfn-TripleConstraint">TripleConstraint</a>_</as><br/>
+	<as> | <a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a>_</as><br/>
+	<as> | <a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a>_</as><br/>
+	<as> | <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a>_</as><br/>
+	<br/>
+	<as><a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a>_ ::= 'EMPTY'</as><br/>
+	<as><a href="#dfn-TripleConstraint">TripleConstraint</a>_ ::= (Property_ | InvProperty_) ValueExpression_</as><br/>
+	<as>Property_ ::=</as> an IRI<br/>
+	<as>InvProperty_ ::= '^'Property_</as><br/>
+	<br/>
+	<as><a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a>_ ::= TripleExpr_ '|' TripleExpr_</as><br/>
+	<as><a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a>_ ::= TripleExpr_ ';' TripleExpr_</as><br/>
+	<br/>
+	<as>RepeatedTipleExpr_ ::= TripleExpr_ '{' <a href="#dfn-MinCard">MinCard</a>_ ';' <a href="#dfn-MaxCard">MaxCard</a>_ '}'</as><br/>
+	<as><a href="#dfn-MinCard">MinCard</a>_ ::= </as>a natural number<br/>
+	<as><a href="#dfn-MaxCard">MaxCard</a>_ ::= </as>a natural number or '*'<br/>
+	<br/>
+	<as>ValueExpression_ ::= ValueConstraint_</as><br/>
+	<as> | ConjunctiveValueExpr_</as><br/>
+	<as> | DisjunctiveValueExpr_</as><br/>
+	<as>ValueConstraint_ ::= <a href="#dfn-NodeConstraint">NodeConstraint</a>_*</as><br/>
+	<as> | <a href="#dfn-ShapeRef">ShapeRef</a>_</as><br/>
+	<as><a href="#dfn-ShapeRef">ShapeRef</a>_ ::= '@' <a href="#dfn-ShapeLabel">ShapeLabel</a>_</as><br/>
+	<as>ConjunctiveValueExpr_ ::= ValueExpression_ 'AND' ValueExpression_</as><br/>
+	<as>DisjunctiveValueExpr_ ::= ValueExpression_ 'OR' ValueExpression_</as><br/>
+      </div>
+
     </section>
 
     <section id="deno">
@@ -2633,7 +2614,7 @@ otherwise the result is the left <a class="grammarRef" href="#prod-unaryShape">u
 	<br/>
 	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= </as><br/>
 	<as><a id="dfn-TripleConstraint">TripleConstraint</a> ::= <a href="#dfn-PropertySet">PropertySet</a> <a href="#dfn-ShapeRef">ShapeRef</a></as><br/>
-	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
+	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop ∪ InvProp</as><br/>
 	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape expression label from <as>SLabels</as><br/>
 	<br/>
 	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <parm>expressions</parm>:List[<a href="#dfn-tripleExpr">tripleExpr</a>]</as><br/>
