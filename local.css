@@ -137,11 +137,35 @@
       }
       .shexj th { vertical-align: top; }
 
+      p .json, li .json {
+      border: thin solid #E0F7E0;
+      page-break-inside: avoid;
+      background-color: #F0FFF0;
+      line-height: 1.5;
+      color: black;
+      }
+
+      div.json {
+        margin-left: 0;
+        margin-right: 2ex;
+        margin-top: 0.1ex;
+        margin-bottom: 0.1ex;
+        border: medium solid #E0F7E0;
+        padding: .5ex 2ex .5ex 2ex;
+        page-break-inside: avoid;
+        background-color: #F0FFF0;
+        line-height: 1.5;
+	display: inline-block;
+      }
+      div.json pre {
+	  margin: 0
+      }
+
       .grammarTable tr.obj {
       background-color: #F8F8F0;
       }
 
-      .grammarTable tr:not(.obj) .param, .grammarTable tr .obj {
+      .grammarTable tr:not(.obj) .param, .grammarTable tr .obj, .jobjref {
       background-color: #F8F8F0;
       border: thin solid #E8E8E0;
       }
