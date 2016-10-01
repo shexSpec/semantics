@@ -121,13 +121,13 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
         For brevity RDF nodes are represented as JSON strings composed as:
       </p>
       <ul>
-        <li>IRI: the lexical form of the IRI, e.g. <code>"http://example.org/resource"</code></li>
-        <li>BNode: the contatonation of "<code>_:</code>" and a blank node label, e.g. <code>"_:blank3"</code></li>
+        <li>IRI: the lexical form of the IRI, e.g. <code class="json">"http://example.org/resource"</code></li>
+        <li>BNode: the contatonation of "<code>_:</code>" and a blank node label, e.g. <code class="json">"_:blank3"</code></li>
         <li>literal: the concatonation of a U+0022 ('<code>"</code>'), the lexical form of the literal, U+0022, and the first matching of:
         <ul>
-          <li>literal with type <code>http://www.w3.org/2001/XMLSchema#</code>: empty string, e.g. <code>"abc"</code>.</li>
-          <li>language tagged literal: U+0040 ('<code>@</code>') and the language tag, e.g. <code>"\"hello world\"@en-US"</code></li>
-          <li>datatyped literal: U+005E U+005E ('<code>^^</code>') and the lexical form of the datatype URI, e.g. <code>"\"123\"^^http://www.w3.org/2001/XMLSchema#integer"</code></li>
+          <li>literal with type <code>http://www.w3.org/2001/XMLSchema#</code>: empty string, e.g. <code class="json">"abc"</code>.</li>
+          <li>language tagged literal: U+0040 ('<code>@</code>') and the language tag, e.g. <code class="json">"\"hello world\"@en-US"</code></li>
+          <li>datatyped literal: U+005E U+005E ('<code>^^</code>') and the lexical form of the datatype URI, e.g. <code class="json">"\"123\"^^http://www.w3.org/2001/XMLSchema#integer"</code></li>
         </ul></li>
       </ul>
       <div class="issue">
@@ -135,13 +135,13 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
           When stable, consider switching to the rdfjs task force's <a href="https://github.com/rdfjs/representation-task-force/blob/master/interface-spec.md#term">JSON representation</a> i.e.
         </p>
         <ul>
-          <li>IRI: <code>{ "termType": "NamedNode", "value": "http://example.org/resource" }</code></li>
-          <li>BNode: <code>{ "termType": "BlankNode", "value": "blank3" }</code></li>
+          <li>IRI: <code class="json">{ "termType": "NamedNode", "value": "http://example.org/resource" }</code></li>
+          <li>BNode: <code class="json">{ "termType": "BlankNode", "value": "blank3" }</code></li>
           <li>literal:
           <ul>
-            <li>literal with type <code>http://www.w3.org/2001/XMLSchema#</code>: <code>{ "termType": "Literal", "value": "abc" }</code></li>
-            <li>language tagged literal: <code>{ "termType": "Literal", "value": "hello world", "language": "en-us", "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString" }</code></li>
-            <li>datatyped literal: <code>{ "termType": "Literal", "value": "123", "language": "", "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#integer" }</code></li>
+            <li>literal with type <code>http://www.w3.org/2001/XMLSchema#</code>: <code class="json">{ "termType": "Literal", "value": "abc" }</code></li>
+            <li>language tagged literal: <code class="json">{ "termType": "Literal", "value": "hello world", "language": "en-us", "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString" }</code></li>
+            <li>datatyped literal: <code class="json">{ "termType": "Literal", "value": "123", "language": "", "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#integer" }</code></li>
           </ul></li>
         </ul>
       </div>
@@ -218,35 +218,35 @@ PREFIX xsd: http://www.w3.org/2001/XMLSchema#
 
 inst:Issue1 
     ex:state      ex:unassigned ;
-    ex:reportedBy inst:User2 .
+    ex:reportedBy _:User2 .
 
-inst:User2
+_:User2
     foaf:name     "Bob Smith" ;
     foaf:mbox     &lt;mailto:bob@example.org&gt; .
         </pre>
         <p>
-          <code>http://inst.example/#User2</code> is an IRI in this graph and is expressed here as <code>inst:User2</code>.
+          <code>User2</code> is a BNode in this graph and is expressed here as <code>_:User2</code>.
         </p>
 	<p>
-	  There is one arc into <span class="pre">inst:User2</span>; <m>arcsIn(G, <span class="pre">inst:User2</span>)</m>:
+	  There is one arc into <span class="pre">_:User2</span>; <m>arcsIn(G, <span class="pre">_:User2</span>)</m>:
   </p>
   <pre>
-    inst:Issue1 ex:reportedBy  inst:User2 .
+    inst:Issue1 ex:reportedBy  _:User2 .
   </pre>
 	<p>
-	  There are two arcs out of <span class="pre">inst:User2</span>; <m>arcsOut(G, <span class="pre">inst:User2</span>)</m>:
+	  There are two arcs out of <span class="pre">_:User2</span>; <m>arcsOut(G, <span class="pre">_:User2</span>)</m>:
   </p>
   <pre>
-    inst:User2  foaf:name  "Bob Smith" .
-    inst:User2  foaf:mbox  &lt;mailto:bob@example.org&gt; .
+    _:User2  foaf:name  "Bob Smith" .
+    _:User2  foaf:mbox  &lt;mailto:bob@example.org&gt; .
   </pre>
 	<p>
-	  There are three arcs in the neighbourhood of <span class="pre">inst:User2</span> set, <m>neigh(G, <span class="pre">inst:User2</span>)</m>:
+	  There are three arcs in the neighbourhood of <span class="pre">_:User2</span> set, <m>neigh(G, <span class="pre">_:User2</span>)</m>:
   </p>
   <pre>
-    inst:User2  foaf:name  "Bob Smith" .
-    inst:User2  foaf:mbox  &lt;mailto:bob@example.org&gt; .
-    inst:Issue1 ex:reportedBy  inst:User2 .
+    _:User2  foaf:name  "Bob Smith" .
+    _:User2  foaf:mbox  &lt;mailto:bob@example.org&gt; .
+    inst:Issue1 ex:reportedBy  _:User2 .
   </pre>
       </div>
     </section>
@@ -261,7 +261,7 @@ inst:User2
       <section id="shapes-schema">
       <h3>Shapes Schema</h3>
       <p>
-	      A shapes schema <m>Sch</m> is given by a couple <m>Sch = (SLabels, def)</m> where
+	      A shapes schema is captured in a <span class="jobjref"><a href="#dfn-Shema">Schema</a></span> object:
       </p>
       <div class="shexjTable">
         <table class="shexj">
@@ -269,63 +269,64 @@ inst:User2
   <tr class="nob"><th id="dfn-shapeLabel" class="nob">shapeLabel</th><td>=</td><td><a class="trmref" href="#dfn-IRI">IRI</a> | <a class="trmref" href="#dfn-BNODE">BNODE</a> ;</td></tr>
         </table>
       </div>
-	<ul>
-	  <li>
-	    <m>SLabels</m> is a set of shape labels,
-	  </li>
-	  <li>
-	    <m>def</m> is a definition function that with every shape label associates a shape expression.
-	  </li>
-	</ul>
-
       <p>
-	The structure of a shapes schema is captured by the following abstract syntax.
+        where <span class="param">shapes</span> is a mapping from shape label to shape expression.
       </p>
-      <div class="abstrsynt">
-	<as><a id="dfn-ShapesSchema">ShapesSchema</a> ::= Map[<a href="#dfn-ShapeLabel">ShapeLabel</a>-><a href="#dfn-ShapeExpression">ShapeExpression</a>]</as><br/>
-	<as><a id="dfn-ShapeLabel">ShapeLabel</a> ::= IRI|BNode</as><br/>
-<!-- 	<as>ValueConstraintDefinition ::= ValueConstraintLabel ValueExpression</as><br/> -->
-<!-- 	<as>ShapeDefinition ::= <a href="#dfn-ShapeLabel">ShapeLabel</a> TripleExpression -->
-<!-- </m><br/> -->
+      <div class="json">
+        <pre>{ "type":"Schema", "shapes":{
+    "http://schema.example/IssueShape": { <span class="comment">...</span> },
+    "_:UserShape": { <span class="comment">...</span> },
+    "http://schema.example/EmployeeShape": { <span class="comment">...</span> }
+  }
+}</pre>
       </div>
       </section>
 
-      <section id="typing-graph-schema">
-      <h3>Typing of a Graph by a Shapes Schema</h3>
+      <section id="shape-map">
+      <h3>Mapping From Nodes to Shapes</h3>
 
       <p>
-	A typing is a set of node-label associations of the form <m>(node,T)</m> where <m>node</m> is a node in a graph, and <m>T</m> is a shape label from a schema.
-	A node-label association intuitively indicates that the node <m>node</m> satisfies the constraint given by the definition of the shape label <m>T</m>.
+	A <code>ShapeMap</code> is a set of node-label associations of the form <m>(node,S)</m> where <m>node</m> is an RDF node, and <m>S</m> is a shape label from a schema.
+	A node-label association in a ShapeMap indicates that the node <m>node</m> satisfies the constraint given by the definition of the shape label <m>S</m>.
       </p>
-      <p>
-	Formally, let <m>Sch = (SLabels, def)</m> be a shapes schema and <m>G</m> be a graph.
-	A typing of <m>G</m> by <m>Sch</m> is a subset of <m>Nodes(G) × SLabels</m>.
-      </p>
-
 
       <div class="Example">
 	<p>
-	  Consider a shapes schema <m>Sch =  (SLabels, def)</m> with 
-	  <m>SLabels = {<span class="pre">&lt;IssueShape&gt;, &lt;UserShape&gt;, &lt;EmployeeShape&gt;</span>}</m>.
+	  Consider a shapes schema with shape labels <span class="json">"http://schema.example/IssueShape"</span>, <span class="json">"_:UserShape"</span>:
 	</p>
+      <div class="json">
+        <pre>{ "type":"Schema", "shapes":{
+    "http://schema.example/IssueShape": { <span class="comment">...</span> },
+    "_:UserShape": { <span class="comment">...</span> },
+    "http://schema.example/EmployeeShape": { <span class="comment">...</span> } } }</pre></div>
 	<p>
 	  An example of a typing of the graph <m>G</m> by <m>Sch</m> is:
-	  <ul>
-	    <li>
-	      <m>typing = { (<span class="pre">inst:Issue1, &lt;IssueShape&gt;</span>), (<span class="pre">inst:User2, &lt;UserShape&gt;</span>), (<span class="pre">inst:User2, &lt;EmployeeShape&gt;</span>) }</m>
-	    </li>
-	  </ul>
-	</p>
+  </p>
+  <div class="json">
+    <pre>{ "http://inst.example/#Issue1": "http://schema.example/IssueShape,
+  "_:User2", "_:UserShape",
+  "_:User2", "http://schema.example/EmployeeShape" }</pre>
+  </div>
       </div>
       </section>
 
       <section id="shape-expressions">
-      <h3>Shape Expressions</h3>
-      <p>
-	The <m>def</m> function associates a shape expression with every shape label in a shapes schema.
-      </p>
-      <section id="shape-expressions-abstract-syntax">
-      <h4>Abstract Syntax</h4>
+        <h3>Shape Expressions</h3>
+        <p>
+	        A shape expression is a Boolean combination of two kinds of atomic components:
+        </p>
+	      <ul>
+	        <li>
+	          a node constraint (<span class="jobjref"><a href="#dfn-NodeConstraint">NodeConsraint</a></span>) that defines the set of allowed values of a node.
+	          In shapes schemas, a node constraint can be an arbitrary set that contains IRIs or RDFLiteral using different ways of restraining the type of a node: XML string and numeric facets, RDF node kind, and value sets.
+	        </li>
+	        <li>
+	          a neighbourhood constraint (<m><a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></m>) that defines a constraint on the allowed neighbourhood of a node, that is, the allowed triples that contain this node as subject or object.
+	          A neighbourhood constraint is itself defined as a (<m><a href="#dfn-TripleExpression">TripleExpression</a></m>).
+	        </li>
+	      </ul>
+        <section id="shape-expressions-abstract-syntax">
+          <h4>Abstract Syntax</h4>
 
       <div class="shexjTable">
         <table class="shexj">
@@ -350,20 +351,6 @@ inst:User2
 	<as><a id="dfn-ShapeOr">ShapeOr</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'OR' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
 	<as><a id="dfn-ShapeNot">ShapeNot</a> ::= 'NOT' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
       </div>
-      <p>
-	A shape expression is a Boolean combination of two kinds of atomic components:
-	<ul>
-	  <li>
-	    a node constraint (<m><a href="#dfn-NodeConstraint">NodeConstraint</a></m>) that defines the set of allowed values of a node.
-	    In shapes schemas, a node constraint can be an arbitrary set that contains IRIs or RDFLiteral, or the special value <m>blank</m> that stands for any BNode.
-	    In practice (in the concrete syntax), a node constraint can be defined using different ways of restraining the type of a node: string facet, numeric facet, node kind, a stem [TODO: reference to the concrete syntax].
-	  </li>
-	  <li>
-	   a neighbourhood constraint (<m><a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></m>) that defines a constraint on the allowed neighbourhood of a node, that is, the allowed triples that contain this node as subject or object.
-	   A neighbourhood constraint is itself defined as a (<m><a href="#dfn-TripleExpression">TripleExpression</a></m>).
-	  </li>
-	</ul>
-      </p>
       
       <div class="Example">
 	<p>Let <m>U, V, <span class="pre">int</span></m> be node constraints, that is, sets which elements are <m>IRI</m> or <m>RDFLiteral</m> or the special value <m>blank</m>, with
