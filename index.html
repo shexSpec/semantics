@@ -80,35 +80,78 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
 	  <section id="notation">
 	    <h2>Notation</h2>
       <p>
-        The abstract syntax consists of statements defining data structures and named members of those data structures.
+        The JSON Syntax serves as a serializable proxy for the ShEx abstract syntax.
+        It consists of statements defining data structures and named members of those data structures.
         Each member has either a single type or two or more types that are a union (choice) of types.
         Each type is either a reference to another statement, an RDF type, or a <a href="http://www.w3.org/TR/sparql11-query/#operandDataTypes">SPARQL literal term</a> (e.g. <code>numeric</code>)[[!sparql11-query]], or the template type <code>Set</code>, which signifies a <a href="https://en.wikipedia.org/wiki/Set_(mathematics)">logical set</a> of a type.
         Sets are unordered and duplicate members have no significance; the set <code>(1, 1, 2, 3, 5)</code> is the same as the set <code>(5, 1, 3, 2)</code>.
       </p>
+      <p>
+        Optional parameters are suffixed with a "<code>?</code>".
+        For brevity, it is preferred that empty maps and lists are elided in serializations of ShExJ.
+      </p>
       <p>In this notation,</p>
 
-      <div class="abstrsynt">
-        <span class="math">Shape ::= <code class="param">label</code>:IRI|BNode, <code class="param">targets</code>:Set[<a href="#dfn-Target">Target</a>], <code class="param">filters</code>:Set[<a href="#dfn-Shape">Shape</a>], <code class="param">constraints</code>:Set[<a href="#dfn-Constraint">Constraint</a>]</span>
+      <div class="shexj">
+        <pre><a href="#dfn-Schema" class="obj">Schema</a> { <span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}? <span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>? <span class="param">startActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">start</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">shapes</span>:{<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>-&gt;<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>}? }</pre>
       </div>
       <p>
-        signifies that a <code>Shape</code> has four components called <code class="param">label</code>, <code class="param">targets</code>, <code class="param">filters</code>, <code class="param">constraints</code>.
-        The <code class="param">label</code> is either a <code>IRI</code> or <code>BNode</code>,
-        the <code class="param">targets</code> are a set of <a href="#dfn-Target"><code>Target</code>s</a>,
-        the <code class="param">filters</code> are a set of <a href="#dfn-Shape"><code>Shape</code>s</a>,
-        and the <code class="param">constraints</code> is a set of <a href="#dfn-Constraint"><code>Constraint</code>s</a>.
+        signifies that a <code>Schema</code> has five components called <code class="param">prefixes</code>, <code class="param">base</code>, <code class="param">startActs</code>, <code class="param">start</code>, <code class="param">shapes</code>:
+      </p>
+      <ul>
+        <li><code class="param">prefixes</code> is an optional map from <a class="trmref" href="#dfn-PREFIX">PREFIX</a> to <a class="trmref" href="#dfn-IRI">IRI</a>.</li>
+        <li><code class="param">base</code> is an optional <code>IRI</code>.</li>
+        <li><code class="param">startActs</code> is an optional list of <a class="objref" href="#dfn-SemAct">SemAct</a>.</li>
+        <li><code class="param">start</code> is an optional <a class="objref" href="#dfn-shapeExpr">shapeExpr</a>.</li>
+        <li><code class="param">shapes</code> is an optional map from <a class="nobref" href="#dfn-shapeLabel">shapeLabel</a> to <a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>.</li>
+      </ul>
+
+      <div class="shexj">
+        <pre><a href="#dfn-shapeExpr" class="nob">shapeExpr</a> = <a class="objref" href="#dfn-ShapeOr">ShapeOr</a> | <a class="objref" href="#dfn-ShapeAnd">ShapeAnd</a> | <a class="objref" href="#dfn-ShapeNot">ShapeNot</a> | <a class="objref" href="#dfn-NodeConstraint">NodeConstraint</a> | <a class="objref" href="#dfn-Shape">Shape</a> | <a class="objref" href="#dfn-ShapeRef">ShapeRef</a> | <a class="objref" href="#dfn-ShapeExternal">ShapeExternal</a> ;</pre>
+      </div>
+      <p>
+        signifies that a <code>shapeExpr</code> is is one of seven object types: <a class="objref .shexj" href="#dfn-ShapeOr">ShapeOr</a> | <a class="objref" href="#dfn-ShapeAnd">ShapeAnd</a>, ...:
+      </p>
+      <p>
         <code>IRI</code> and <code>BNode</code> are <a href="http://www.w3.org/TR/2014/REC-rdf11-mt-20140225/#notation">defined in RDF 1.1 Semantics</a>[[!rdf11-mt]].
         <a href="#dfn-Target"><code>Target</code></a>, <a href="#dfn-Shape"><code>Shape</code></a> and <a href="#dfn-Constraint"><code>Constraint</code></a> are defined terms within this document.
       </p>
+      <p>
+        Terminals are JSON strings and are indicated by all-caps, e.g. <a class="trmref" href="#dfn-PREFIX">PREFIX</a> and <a class="trmref" href="#dfn-IRI">IRI</a>.
+        For brevity RDF nodes are represented as JSON strings composed as:
+      </p>
+      <ul>
+        <li>IRI: the lexical form of the IRI, e.g. <code>"http://example.org/resource"</code></li>
+        <li>BNode: the contatonation of "<code>_:</code>" and a blank node label, e.g. <code>"_:blank3"</code></li>
+        <li>literal: the concatonation of a U+0022 ('<code>"</code>'), the lexical form of the literal, U+0022, and the first matching of:
+        <ul>
+          <li>literal with type <code>http://www.w3.org/2001/XMLSchema#</code>: empty string, e.g. <code>"abc"</code>.</li>
+          <li>language tagged literal: U+0040 ('<code>@</code>') and the language tag, e.g. <code>"\"hello world\"@en-US"</code></li>
+          <li>datatyped literal: U+005E U+005E ('<code>^^</code>') and the lexical form of the datatype URI, e.g. <code>"\"123\"^^http://www.w3.org/2001/XMLSchema#integer"</code></li>
+        </ul></li>
+      </ul>
+      <div class="issue">
+        <p>
+          When stable, consider switching to the rdfjs task force's <a href="https://github.com/rdfjs/representation-task-force/blob/master/interface-spec.md#term">JSON representation</a> i.e.
+        </p>
+        <ul>
+          <li>IRI: <code>{ "termType": "NamedNode", "value": "http://example.org/resource" }</code></li>
+          <li>BNode: <code>{ "termType": "BlankNode", "value": "blank3" }</code></li>
+          <li>literal:
+          <ul>
+            <li>literal with type <code>http://www.w3.org/2001/XMLSchema#</code>: <code>{ "termType": "Literal", "value": "abc" }</code></li>
+            <li>language tagged literal: <code>{ "termType": "Literal", "value": "hello world", "language": "en-us", "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString" }</code></li>
+            <li>datatyped literal: <code>{ "termType": "Literal", "value": "123", "language": "", "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#integer" }</code></li>
+          </ul></li>
+        </ul>
+      </div>
       <p>
         The term definitions given in this document rely on matching triple patterns in the form <code>(subject, predicate, object)</code> where each position may be supplied by a constant, a previously defined term, or the underscore "<code>_</code>", which represents a previously undefined element or wildcard.
         This corresponds to a <a href="http://www.w3.org/TR/sparql11-query/#defn_TriplePattern">SPARQL Triple Pattern</a> where each "_" is replaced by a unique blank node.
         Matching such a triple pattern against a graph is defined by <a href="http://www.w3.org/TR/sparql11-query/#BGPsparql">SPARQL Basic Graph Pattern Matching</a> (BFP) with a BGP containing only that triple pattern.
       </p>
-      <button id="toggleRDF">Toggle RDF ("r")</button> <button id="toggleExamples">Toggle Examples ("e")</button> <button id="toggleSquished">Render only abstract syntax ("a")</button>
+      <!-- button id="toggleRDF">Toggle RDF ("r")</button> <button id="toggleExamples">Toggle Examples ("e")</button> <button id="toggleSquished">Render only abstract syntax ("a")</button -->
 
-      <p class="rdf">
-        Sections defining the RDF representation of SHACL with have a .rdf class.
-      </p>
       <div class="example">
         <p>
           Results of validation are represented in a table associating node/shape pairs with a pass or fail and a reason for failure:
@@ -139,62 +182,37 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
         <li><a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-rdf-graph" class="math">Graph</a>: a set of <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-rdf-triple" class="math">Triples</a> of (<a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-subject" class="math">subject</a>, <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-predicate" class="math">predicate</a>, <a href="http://www.w3.org/TR/2014/REC-rdf11-concepts-20140225/#dfn-object" class="math">object</a>)</li>
       </ul>
       <p>
-	The following sets access the elements of an RDF graph <m>G</m>:
+	The following functions access the elements of an RDF graph <m>G</m> containing a node <m>n</m>:
 	<ul>
 	  <li>
-	    <m>Nodes(G)</m> is the set nodes of <m>G</m> and is defined as the set of IRI or BNode or RDFLiteral values that occupy a subject or object position in some triple of <m>G</m>
+	    <m>arcsOut(G, n)</m> is the set of triples in a graph <m>G</m> the subject <m>n</m>.
 	  </li>
 	  <li>
-	    <m>Props(G)</m> is the set of properties of <m>G</m> and is defined as the set of IRI that occupy a predicate position in some triple of <m>G</m>
+	    <m>predicatesOut(G, n)</m> is the set of predicates in <m>arcsOut(G, n)</m>.
 	  </li>
 	  <li>
-	    <m>InvProps(G)</m> is the set of inverse properties of <m>G</m> and is defined as the properties of <m>G</m>.
-      In this specification, inverse properties are indicated by <m>^</m>. If <m>prop</m> is a property, then <m>^prop</m> is an inverse property.
+	    <m>arcsIn(G, n)</m> is the set of triples in a graph <m>G</m> the object <m>n</m>.
 	  </li>
 	  <li>
-	    <m>inverse triple</m> is a triple with a predicate in <m>InvProps</m>. For a triple <m>(n1, prop, n2)</m> in <m>G</m>, its inverse triple is the triple <m>(n2, ^prop, n1)</m>. 
-	    (Note that inverse triples are not elements of the graph; they are used for defining the semantics for inverse triple constraints.)
+	    <m>predicatesIn(G, n)</m> is the set of predicates in <m>arcsIn(G, n)</m>.
 	  </li>
 	  <li>
-	    <m>arcsOut(G,n)</m> is the set of triples in a graph <m>G</m> the subject <m>n</m>.
+	    <m>neigh(G, n)</m> is the neighbourhood of the node <m>n</m> in the graph <m>G</m>.<br/><m>neigh(G, n) = arcsOut(G, n) ∪ arcsIn(G, n)</m>
 	  </li>
 	  <li>
-	    <m>predicatesOut(G,n)</m> is the set of predicates in <m>arcsOut(G,n)</m>.
-	  </li>
-	  <li>
-	    <m>arcsIn(G,n)</m> is the set of triples in a graph <m>G</m> the object <m>n</m>.
-	  </li>
-	  <li>
-	    <m>predicatesIn(G,n)</m> is the set of predicates in <m>arcsIn(G,n)</m>.
-	  </li>
-	  <li>
-	    <m>neigh(G,n)</m> is the neighbourhood of the node <m>n</m> in the graph <m>G</m>. <m>neigh(G,n) = arcsOut(G,n) ∪ arcsIn(G,n)</m>.
-	  </li>
-	  <li>
-	    <m>predicates(G,n)</m> is the set of predicates in <m>neigh(G,n)</m>. <m>predicates(G,n) = predicatesOut(G,n) ∪ predicatesIn(G,n)</m>.
-	  </li>
-	</ul>
-      </p>
-
-      <p>
-	Additionally, we define 
-	<ul>
-	  <li>
-	    <m>Prop</m> as a synonym of the set <m>IRI</m>, that we are going to use specifically to designate IRI that appear as predicates in the triples in graphs
-	  </li>
-	  <li>
-	    <m>InvProp</m> as the set inverse properties, that are IRIs decorated by the hat.
+	    <m>predicates(G, n)</m> is the set of predicates in <m>neigh(G, n)</m>.<br/><m>predicates(G, n) = predicatesOut(G, n) ∪ predicatesIn(G, n)</m>
 	  </li>
 	</ul>
       </p>
 
       <div class="Example">
 	<p>
-	  Consider the RDF graph <m>G</m> given by:
+	  Consider the RDF graph <m>G</m> represented in Turtle:
 	</p>
 
 	<pre class="graph">
 PREFIX ex: http://ex.example/#
+PREFIX inst: http://inst.example/#
 PREFIX foaf: http://xmlns.com/foaf/
 PREFIX xsd: http://www.w3.org/2001/XMLSchema#
 
@@ -205,35 +223,31 @@ inst:Issue1
 inst:User2
     foaf:name     "Bob Smith" ;
     foaf:mbox     &lt;mailto:bob@example.org&gt; .
-         </pre>
+        </pre>
+        <p>
+          <code>http://inst.example/#User2</code> is an IRI in this graph and is expressed here as <code>inst:User2</code>.
+        </p>
 	<p>
-	  The set <m>Nodes(G)</m> of the nodes of <m>G</m> is
-<pre>
-    { inst:Issue1, ex:unassigned, inst:User2, "Bob Smith", &lt;mailto:bob@example.org&gt; }
-</pre>
-	</p>
+	  There is one arc into <span class="pre">inst:User2</span>; <m>arcsIn(G, <span class="pre">inst:User2</span>)</m>:
+  </p>
+  <pre>
+    inst:Issue1 ex:reportedBy  inst:User2 .
+  </pre>
 	<p>
-	  The set <m>Props(G)</m> of the properties of <m>G</m> is
-<pre>
-    { ex:state, ex:reportedBy, foaf:name, foaf:mbox }
-</pre>
-	</p>
-
-	<p>
-	  The set <m>InvProps(G)</m> of inverse properties of <m>G</m> is
-<pre>
-    { ^ex:state, ^ex:reportedBy, ^foaf:name, ^foaf:mbox }
-</pre>
-	</p>
-
-	<p>
-	  The set <m>neigh(G, <span class="pre">inst:User2</span>)</m>, neighbourhood of the node <span class="pre">inst:User2</span> is the set composed of the following triples and inverse triples:
-<pre>
+	  There are two arcs out of <span class="pre">inst:User2</span>; <m>arcsOut(G, <span class="pre">inst:User2</span>)</m>:
+  </p>
+  <pre>
     inst:User2  foaf:name  "Bob Smith" .
     inst:User2  foaf:mbox  &lt;mailto:bob@example.org&gt; .
-    inst:User2  ^ex:reportedBy  inst:Issue1 .
-</pre>
-	</p>
+  </pre>
+	<p>
+	  There are three arcs in the neighbourhood of <span class="pre">inst:User2</span> set, <m>neigh(G, <span class="pre">inst:User2</span>)</m>:
+  </p>
+  <pre>
+    inst:User2  foaf:name  "Bob Smith" .
+    inst:User2  foaf:mbox  &lt;mailto:bob@example.org&gt; .
+    inst:Issue1 ex:reportedBy  inst:User2 .
+  </pre>
       </div>
     </section>
 
@@ -885,19 +899,8 @@ strat(&lt;SL_all&gt;) = 1
     <section id="shexj">
       <h2>ShEx JSON Syntax (ShExJ)</h2>
       <p>
-        The JSON Syntax serves as a serializable proxy for the ShEx abstract syntax.
-        Optional parameters are suffixed with a "<code>?</code>".
         For instance, "<span class="param">prefixes</span>:{<a class="trmref" href="#dfn-PREFIX">PREFIX</a>-&gt;<a class="trmref" href="#dfn-IRI">IRI</a>}?" indicates that prefixes is optional and if present is a mapping from the terminal <a class="trmref" href="#dfn-PREFIX">PREFIX</a> to the terminal <a class="trmref" href="#dfn-IRI">IRI</a>.
         "<span class="param">base</span>:<a class="trmref" href="#dfn-IRI">IRI</a>?" indicates that <span class="param">base</span> is optional and, if present, is an <a class="trmref" href="#dfn-IRI">IRI</a>.
-      </p>
-      <p class="issue">
-        When stable, consider switching to the rdfjs task force's <a href="https://github.com/rdfjs/representation-task-force/blob/master/interface-spec.md#term">JSON representation</a> i.e.<br/>
-        IRI: <code>{ "termType": "NamedNode", "value": "http://example.org/resource" }</code><br/>
-        BNode: <code>{ "termType": "BlankNode", "value": "blank3" }</code><br/>
-        literal: <code>{ "termType": "Literal", "value": "hello world", "language": "en-US", "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString" }</code>
-      </p>
-      <p>
-        For brevity, it is preferred that empty maps and lists are elided in serializations of ShExJ.
       </p>
       <div class="shexjTable">
 <table class="shexj">
