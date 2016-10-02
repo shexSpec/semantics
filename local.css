@@ -276,3 +276,7 @@ div.shexjTable th { text-align: right; }
     padding-left: .25em;
 }
 
+.label { font-weight: bold; }
+
+.function { white-space: nowrap; }
+
