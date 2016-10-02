@@ -463,7 +463,7 @@ _:User2
 
       <div class="shexjTable">
         <table class="shexj">
-  <tr class="obj"><th id="dfn-Shape" class="obj">Shape</th><td>{</td><td><span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]? <span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>? <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>]? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
+  <tr class="obj"><th id="dfn-Shape" class="obj">Shape</th><td>{</td><td><!-- <span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>?  --><span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]? <span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>?<!-- <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a> -->]? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
   <tr class="nob"><th id="dfn-tripleExpr" class="nob">tripleExpr</th><td>=</td><td><a class="objref" href="#dfn-EachOf">EachOf</a> | <a class="objref" href="#dfn-SomeOf">SomeOf</a> | <a class="objref" href="#dfn-TripleConstraint">TripleConstraint</a> | <a class="objref" href="#dfn-Inclusion">Inclusion</a> ;</td></tr>
   <tr class="obj"><th id="dfn-EachOf" class="obj">EachOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
   <tr class="obj"><th id="dfn-SomeOf" class="obj">SomeOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
@@ -479,17 +479,38 @@ _:User2
       </section>
       
       <section id="triple-expressions-semantics">
-      <h4>Semantics</h4>
+        <h4>Semantics</h4>
+        <p>
+          The <code>satisfies</code> semantics for a <span class="jobjref"><a href="#dfn-Shape" class="obj">Shape</a></span> depend on a <code>matches</code> function <a href="#matches">defined below</a>.
+          For a node <m>n</m>, shape <m>S</m>, graph <m>G</m>, and shapeMap <m>m</m>, <code class="function">satisfies(<m>n</m>, <m>S</m>, <m>G</m>, <m>m</m>)</code> if and only if:
+        </p>
+        <ul>
+          <li>
+            <code class="function">neigh(<m>G</m>, <m>n</m>)</code> can be partitioned into two sets <m>matched</m> and <m>remainder</m> such that <code class="function">matches(<m>matched</m>, <span class="param">expression</span>)</code>.
+            If <span class="param">expression</span> is absent, <code class="function"><m>remainder</m> = neigh(<m>G</m>, <m>n</m>)</code>.
+            Let <m>outs</m> be the arcsOut in <m>remainder</m>:
+            <code class="function"><m>outs</m> = <m>remainder</m> ∩ arcsOut(<m>G</m>, <m>n</m>)</code>.
+            Let <m>matchables</m> be the triples in <m>outs</m> whose predicate appears in a <span class="jobjref"><a href="#dfn-TripleConstraint" class="obj">TripleConstraint</a></span> in <span class="param">expression</span>.
+            If <span class="param">expression</span> is absent, <code class="function"><m>matchables</m> = <m>outs</m></code>.
+            Let <m>unmatchables</m> be the triples in <m>outs</m> which are not in <m>matchables</m>.
+            <code class="function"><m>matchables</m> ∪ <m>unmatchables</m> = <m>outs</m></code>.
+          </li>
+          <li>
+            There is no triple in <m>matchables</m> whose predicate does not appear in <span class="param">extra.</span>.
+          </li>
+          <li><span class="param">closed</span> is false or <m>unmatchables</m> is empty.</li>
+        </ul>
       <p>
-	      A triple expression is matched by a set of triples that come from the neighbourhood of a node in an RDF graph.
+	      <span class="label" id="matches">matches</span>: A triple expression is matched by a set of triples that come from the neighbourhood of a node in an RDF graph.
         The symbol <m>Ø</m> is used below to denote an empty set.
-        The expression <code>matches(<m>T</m>, <m>expr</m>, <m>matched</m>, <m>remainder</m>)</code> indicates that a set of triples <m>T</m> can be partitioned into two sets <m>matched</m> and <m>remainder</m> such that the triples in <m>matched</m> satisfy these rules and the rest of the triples are in <m>remainder</m>:
+        The expression <code>matches(<m>T</m>, <m>expr</m>)</code> indicates that a set of triples <m>T</m> can satisfy these rules:
       </p>
       <ul>
-        <li><m>expr</m> has a <span class="param">min</span> or a <span class="param">max</span> and there is some partition of <m>matched</m> into <m>m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every required repetition <m><sub>1</sub></m>, <m><sub>2</sub></m>,… ≤ <span class="param">min</span> in <span class="param">shapeExprs</span> and every optional repetition <m><sub><span class="param">min</span>+1</sub></m>, <m><sub><span class="param">min</span>+2</sub></m>,… ≤ <span class="param">max</span>, <code class="function">matches(<m>T</m>, <m>expr</m>, <m>m<sub>n</sub></m>, <m>Ø</m>)</code> by the remaining rules in this list.</li>
-        <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-SomeOf" class="obj">SomeOf</a></span> and there is some shape expression <m>se2</m> in <span class="param">shapeExprs</span> such that a <code class="function">matches(<m>T</m>, <m>expr</m>, <m>matched</m>, <m>remainder</m>)</code>.</li>
-        <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-EachOf" class="obj">EachOf</a></span> and there is some partition of <m>matched</m> into <m>m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every expression <m>expr<sub>1</sub></m>, <m>expr<sub>2</sub></m>,… in <span class="param">shapeExprs</span>, <code class="function">matches(<m>T</m>, <m>expr<sub>n</sub></m>, <m>m<sub>n</sub></m>, <m>Ø</m>)</code>.</li>
-        <li></li>
+        <li><m>expr</m> has a <span class="param">min</span> or a <span class="param">max</span> and there is some partition of <m>matched</m> into <m class="function">m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every required repetition <m><sub>1</sub></m>, <m><sub>2</sub></m>,… ≤ <span class="param">min</span> in <span class="param">shapeExprs</span> and every optional repetition <m><sub><span class="param">min</span>+1</sub></m>, <m><sub><span class="param">min</span>+2</sub></m>,… ≤ <span class="param">max</span>, <code class="function">matches(<m>m<sub>n</sub></m>, <m>expr</m>)</code> by the remaining rules in this list.</li>
+        <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-SomeOf" class="obj">SomeOf</a></span> and there is some shape expression <m>se2</m> in <span class="param">shapeExprs</span> such that a <code class="function">matches(<m>T</m>, <m>expr</m>)</code>.</li>
+        <li><m>expr</m> is an <span class="jobjref"><a href="#dfn-EachOf" class="obj">EachOf</a></span> and there is some partition of <m>matched</m> into <m>m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every expression <span class="function"><m>expr<sub>1</sub></m>, <m>expr<sub>2</sub></m>,…</span> in <span class="param">shapeExprs</span>, <code class="function">matches(<m>m<sub>n</sub></m>, <m>expr<sub>n</sub></m>)</code>.</li>
+        <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-TripleConstraint" class="obj">TripleConstraint</a></span> and </li>
+        <li><m>expr</m> is an <span class="jobjref"><a href="#dfn-Inclusion" class="obj">Inclusion</a></span> and </li>
       </ul>
       <p>
 	An atomic triple expression can be
