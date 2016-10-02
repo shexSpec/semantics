@@ -326,11 +326,11 @@ _:User2
       <section id="shape-expressions">
         <h3>Shape Expressions</h3>
         <p>
-	        A shape expression is a Boolean combination of four kinds of objects combined with algebraic operators And, Or and Not:
+	        A shape expression is composed of four kinds of objects combined with a algebraic operators And, Or and Not:
         </p>
 	      <ul>
 	        <li>
-	          a node constraint (<span class="jobjref"><a href="#dfn-NodeConstraint">NodeConsraint</a></span>) that defines the set of allowed values of a node.
+	          a node constraint (<span class="jobjref"><a href="#dfn-NodeConstraint">NodeConstraint</a></span>) that defines the set of allowed values of a node.
 	          In shapes schemas, a node constraint can be an arbitrary set that contains IRIs or RDFLiteral using different ways of restraining the type of a node: XML string and numeric facets, RDF node kind, and value sets.
 	        </li>
 	        <li>
@@ -388,7 +388,7 @@ _:User2
       <ul>
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-NodeConstraint" class="obj">NodeConstraint</a></span> and <code>satisfies(<m>n</m>, <m>se</m>)</code> as described below in <a href="node-constraints">Node Constraints</a>.
         Note that testing if a node satisfies a node constraint does not require a graph or shapeMap.</li>
-        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-Shape" class="obj">Shape</a></span> and <code>satisfies(<m>n</m>, <m>se</m>)</code> as described below in <a href="triple-expressions">Triple Expressions</a>.</li>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-Shape" class="obj">Shape</a></span> and <code>satisfies(<m>n</m>, <m>se</m>)</code> as described below in <a href="#shapes-and-TEs">Shapes and Triple Expressions</a>.</li>
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeOr" class="obj">ShapeOr</a></span> and there is some shape expression in <m>se2</m> in <span class="param">shapeExprs</span> such that <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a></span> and every shape expression in <m>se2</m> in <span class="param">shapeExprs</span> such that <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeNot" class="obj">ShapeNot</a></span> and for the shape expression <m>se2</m> in <span class="param">shapeExpr</span> such that <code>notSatisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
@@ -449,15 +449,17 @@ _:User2
         </div>
       </section>
 
-      <section id="triple-expressions">
-        <h3>Triple Expressions</h3>
+      <section id="shapes-and-TEs">
+        <h3>Shapes and Triple Expressions</h3>
       
       <p>
-	Triple expressions are used for defining neighbourhood constraints within a shape expression.
+	      Triple expressions are used for defining patterns composed of triple constraints.
+        Shapes associate triple expressions with flags indicating whether triples match if they do not correspond to triple constraints in the triple expression.
+        A triple expression is composed of <span class="jobjref"><a href="#dfn-TripleConstraint">TripleConstraint</a></span> and <span class="jobjref"><a href="#dfn-Inclusion">Inclusion</a></span> objects composed with grouping and choice operators.
       </p>
       
       <section id="triple-expressions-abstract-syntax">
-      <h4>Abstract syntax</h4>
+      <h4>JSON Syntax</h4>
 
       <div class="shexjTable">
         <table class="shexj">
@@ -465,29 +467,14 @@ _:User2
   <tr class="nob"><th id="dfn-tripleExpr" class="nob">tripleExpr</th><td>=</td><td><a class="objref" href="#dfn-EachOf">EachOf</a> | <a class="objref" href="#dfn-SomeOf">SomeOf</a> | <a class="objref" href="#dfn-TripleConstraint">TripleConstraint</a> | <a class="objref" href="#dfn-Inclusion">Inclusion</a> ;</td></tr>
   <tr class="obj"><th id="dfn-EachOf" class="obj">EachOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
   <tr class="obj"><th id="dfn-SomeOf" class="obj">SomeOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-Inclusion" class="obj">Inclusion</th><td>{</td><td><span class="param">include</span>:<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a> }</td></tr>
   <tr class="obj"><th id="dfn-TripleConstraint" class="obj">TripleConstraint</th><td>{</td><td><span class="param">inverse</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">negated</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">predicate</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">valueExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>? <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
+  <tr class="obj"><th id="dfn-Inclusion" class="obj">Inclusion</th><td>{</td><td><span class="param">include</span>:<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a> }</td></tr>
         </table>
       </div>
-      <div class="abstrsynt">
-	<as><a id="dfn-TripleExpression">TripleExpression</a> ::= <a href="#dfn-EmptyTripleExpr">EmptyTripleExpr</a></as>
-	<as>| <a href="#dfn-TripleConstraint">TripleConstraint</a></as>
-	<as>| <a href="#dfn-SomeOfTripleExpr">SomeOfTripleExpr</a></as>
-	<as>| <a href="#dfn-EachOfTripleExpr">EachOfTripleExpr</a></as>
-	<as>| <a href="#dfn-RepeatedTripleExpr">RepeatedTripleExpr</a></as><br/>
-	<br/>
-	<as><a id="dfn-EmptyTripleExpr">EmptyTripleExpr</a> ::= 'EMPTY'</as><br/>
-	<as><a id="dfn-TripleConstraint">TripleConstraint</a> ::= <a href="#dfn-PropertySet">PropertySet</a> <a href="#dfn-ShapeRef">ShapeRef</a></as><br/>
-	<as><a id="dfn-PropertySet">PropertySet</a> ::= </as> a finite or co-finite subset of <as>Prop ∪ InvProp</as><br/>
-	<as><a id="dfn-ShapeRef">ShapeRef</a> ::= </as> a shape label from <as>SLabels</as><br/>
-	<br/>
-	<as><a id="dfn-SomeOfTripleExpr">SomeOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '|' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
-	<as><a id="dfn-EachOfTripleExpr">EachOfTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> ';' <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
-	<br/>
-	<as><a id="dfn-RepeatedTripleExpr">RepeatedTripleExpr</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a> '{' <a href="#dfn-MinCard">MinCard</a> ';' <a href="#dfn-MaxCard">MaxCard</a> '}'</as><br/>
-	<as><a id="dfn-MinCard">MinCard</a> ::= </as> a natural number<br/>
-	<as><a id="dfn-MaxCard">MaxCard</a> ::= </as> a natural number or <as>'*'</as><br/>
-      </div>
+      <p>
+        An <span class="jobjref"><a href="#dfn-Inclusion">Inclusion</a></span> object's <span class="param">include</span> property MUST appear in the schema's <span class="param">shapes</span> map and the corresponding triple expression MUST be a <span class="jobjref"><a href="#dfn-Shape">Shape</a></span>.
+        The function <code>dereference(<span class="param">include</span>)</code> returns the shape's <span class="param">tripleExpr</span>.
+      </p>
 
       <p>
 	A triple expression is matched by a set of triples that come from the neighbourhood of a node in an RDF graph.
@@ -496,16 +483,11 @@ _:User2
 	An atomic triple expression can be
 	<ul>
 	  <li>
-	     the empty triple expression, that is matched only by an empty set of triples;
-	  </li>
-	  <li>
 	    a triple constraint, that is matched by a set containing a single triple.
 	    A triple constraint is composed of a set of properties or inverse properties, that define the allowed values for the predicate of a triple, as well as a shape label, that is a reference to shape expression to be satisfied by the node in the triple opposite to the focus node.
 	  </li>
 	</ul>
       </p>
-      <p>
-	Triple expressions allow for two binary operators, the some-of operator, denoted <m>|</m>, and the each-of operator, denoted as a semicolon <m>;</m>.
 	<ul>
 	  <li>
 	    A some-of triple expression is matched by a set of triples if one or the other of its sub-expressions is matched by that set of triples.
@@ -514,11 +496,12 @@ _:User2
 	    An each-of triple expression is matched by a set of triples if that set can be split into two disjoint subsets such that one of the subsets matches the first sub-expression of the each-of expression, and the other subset matches the other sub-expression.
 	  </li>
 	</ul>
+  <p>
 	These however should not be considered as disjunction and conjunction, as we will see later on when the semantics will be formally defined.
       </p>
       <p>
 	Finally, a triple expression can be repeated by specifying a minimal cardinality that is a natural number, and a maximal cardinality that is a natural number of an unbounded value denoted as a star <m>*</m>. 
-	A repeated triple expression <m>TExpr{min;max}</m> is satisfied by a set of triples if that set can be split into <m>k</m> disjoint subsets such that <m>min &le; k &le; max</m>, and each of these subsets matches the sub-expression <m>TExpr</m>.
+	A repeated triple expression <m>TExpr{min;max}</m> is satisfied by a set of triples if that set can be split into <m>k</m> disjoint subsets such that <m>min ≤ k ≤ max</m>, and each of these subsets matches the sub-expression <m>TExpr</m>.
       </p>
     
 
