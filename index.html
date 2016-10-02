@@ -112,6 +112,14 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
       <p>
         signifies that a <code>shapeExpr</code> is is one of seven object types: <a class="objref .shexj" href="#dfn-ShapeOr">ShapeOr</a> | <a class="objref" href="#dfn-ShapeAnd">ShapeAnd</a>, ...:
       </p>
+
+      <div class="shexj">
+        <pre><a href="#dfn-NodeConstraint" class="obj">NodeConstraint</a> { <span class="param">nodeKind</span>:(<span class="literal">"iri"</span> | <span class="literal">"bnode"</span> | <span class="literal">"nonliteral"</span> | <span class="literal">"literal"</span>)? <a class="nobref" href="#dfn-xsFacet">xsFacet</a>* }</pre>
+      </div>
+      <p>
+        signifies that a <code>NodeConstraint</code> has a <code class="param">nodeKind</code> of one of the four literals followed by any number of <a class="objref .shexj" href="#dfn-xsFacet">xsFacet</a>.
+      </p>
+
       <p>
         <code>IRI</code> and <code>BNode</code> are <a href="http://www.w3.org/TR/2014/REC-rdf11-mt-20140225/#notation">defined in RDF 1.1 Semantics</a>[[!rdf11-mt]].
         <a href="#dfn-Target"><code>Target</code></a>, <a href="#dfn-Shape"><code>Shape</code></a> and <a href="#dfn-Constraint"><code>Constraint</code></a> are defined terms within this document.
@@ -273,7 +281,7 @@ _:User2
         where <span class="param">shapes</span> is a mapping from shape label to shape expression.
       </p>
       <div class="json">
-        <pre>{ "type":"Schema", "shapes":{
+        <pre>{ "type": "Schema", "shapes": {
     "http://schema.example/IssueShape": { <span class="comment">...</span> },
     "_:UserShape": { <span class="comment">...</span> },
     "http://schema.example/EmployeeShape": { <span class="comment">...</span> }
@@ -295,12 +303,12 @@ _:User2
 	  Consider a shapes schema with shape labels <span class="json">"http://schema.example/IssueShape"</span>, <span class="json">"_:UserShape"</span>:
 	</p>
       <div class="json">
-        <pre>{ "type":"Schema", "shapes":{
+        <pre>{ "type": "Schema", "shapes": {
     "http://schema.example/IssueShape": { <span class="comment">...</span> },
     "_:UserShape": { <span class="comment">...</span> },
     "http://schema.example/EmployeeShape": { <span class="comment">...</span> } } }</pre></div>
 	<p>
-	  An example of a typing of the graph <m>G</m> by <m>Sch</m> is:
+	  An example ShapeMap is:
   </p>
   <div class="json">
     <pre>{ "http://inst.example/#Issue1": "http://schema.example/IssueShape,
@@ -313,7 +321,7 @@ _:User2
       <section id="shape-expressions">
         <h3>Shape Expressions</h3>
         <p>
-	        A shape expression is a Boolean combination of two kinds of atomic components:
+	        A shape expression is a Boolean combination of four kinds of objects combined with algebraic operators And, Or and Not:
         </p>
 	      <ul>
 	        <li>
@@ -321,12 +329,17 @@ _:User2
 	          In shapes schemas, a node constraint can be an arbitrary set that contains IRIs or RDFLiteral using different ways of restraining the type of a node: XML string and numeric facets, RDF node kind, and value sets.
 	        </li>
 	        <li>
-	          a neighbourhood constraint (<m><a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></m>) that defines a constraint on the allowed neighbourhood of a node, that is, the allowed triples that contain this node as subject or object.
-	          A neighbourhood constraint is itself defined as a (<m><a href="#dfn-TripleExpression">TripleExpression</a></m>).
+	          a shape constraint (<span class="jobjref"><a href="#dfn-Shape">Shape</a></span>) that defines a constraint on the allowed neighbourhood of a node, that is, the allowed triples that contain this node as subject or object.
 	        </li>
+          <li>
+            a shape reference (<span class="jobjref"><a href="#dfn-ShapeRef">ShapeRef</a></span>) identifies another shape in the schema.
+          </li>
+          <li>
+            an extermal shape (<span class="jobjref"><a href="#dfn-ShapeExternal">ShapeExternal</a></span>) which is an extension mechanism to externally define e.g. functional shapes or prohibitively large value sets.
+          </li>
 	      </ul>
-        <section id="shape-expressions-abstract-syntax">
-          <h4>Abstract Syntax</h4>
+        <section id="shape-expressions-shexj">
+          <h4>JSON Syntax</h4>
 
       <div class="shexjTable">
         <table class="shexj">
@@ -334,81 +347,46 @@ _:User2
   <tr class="obj"><th id="dfn-ShapeOr" class="obj">ShapeOr</th><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
   <tr class="obj"><th id="dfn-ShapeAnd" class="obj">ShapeAnd</th><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
   <tr class="obj"><th id="dfn-ShapeNot" class="obj">ShapeNot</th><td>{</td><td><span class="param">shapeExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a> }</td></tr>
-  <tr class="obj"><th id="dfn-Shape" class="obj">Shape</th><td>{</td><td><span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]? <span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>? <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>]? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-ShapeRef" class="obj">ShapeRef</th><td>{</td><td><span class="param">reference</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
+  <tr class="obj"><th id="dfn-ShapeRef" class="obj">ShapeRef</th><td>{</td><td><span class="param">reference</span>:<a class="trmref" href="#dfn-shapeLabel">shapeLabel</a> }</td></tr>
   <tr class="obj"><th id="dfn-ShapeExternal" class="obj">ShapeExternal</th><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
         </table>
       </div>
-      <div class="abstrsynt">
-	<as><a id="dfn-ShapeExpression">ShapeExpression</a> ::= <a href="#dfn-AtomicShape">AtomicShape</a></as>
-	<as>| <a href="#dfn-ShapeAnd">ShapeAnd</a></as>
-	<as>| <a href="#dfn-ShapeOr">ShapeOr</a></as>
-	<as>| <a href="#dfn-ShapeNot">ShapeNot</a></as><br/>
-	<as><a id="dfn-AtomicShape">AtomicShape</a> ::= <a href="#dfn-NodeConstraint">NodeConstraint</a> | <a href="#dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a></as><br/>
-	<as><a id="dfn-NodeConstraint">NodeConstraint</a> ::=</as> a set of <as>IRI</as> or <as>RDFLiteral</as> or the special value <as>blank</as><br/>
-	<as><a id="dfn-NeighbourhoodConstraint">NeighbourhoodConstraint</a> ::= <a href="#dfn-TripleExpression">TripleExpression</a></as><br/>
-	<as><a id="dfn-ShapeAnd">ShapeAnd</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'AND' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
-	<as><a id="dfn-ShapeOr">ShapeOr</a> ::= <a href="#dfn-ShapeExpression">ShapeExpression</a> 'OR' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
-	<as><a id="dfn-ShapeNot">ShapeNot</a> ::= 'NOT' <a href="#dfn-ShapeExpression">ShapeExpression</a></as><br/>
-      </div>
-      
       <div class="Example">
-	<p>Let <m>U, V, <span class="pre">int</span></m> be node constraints, that is, sets which elements are <m>IRI</m> or <m>RDFLiteral</m> or the special value <m>blank</m>, with
-	  <ul>
-	    <li>
-	      <m>U = { <span class="pre">ex:unassigned, ex:assigned, ex:unknown</span> }</m>
-	    </li>
-	    <li>
-	      <m>V = { <span class="pre">1, 2, 5</span> }</m>
-	    </li>
-	    <li>
-	      <m><span class="pre">int</span></m> the set of all integer values
-	    </li>
-	  </ul>
-	</p>
 	<p>
-	  Let <m>E<sub>1</sub></m>, <m>E<sub>2</sub></m> be triple expressions.
-	</p>
-	<p>
-	  Examples of value expressions are
-	  <ul>
-	    <li><m>int AND (NOT V)</m></li>
-	    <li><m>U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>))</m></li> 
-	  </ul>
-	</p>
+	  Examples shape expressions:
+  </p>
+
+  <div class="json">
+    <pre>{ "type": "Shape", <span class="comment">...</span> }</pre>
+  </div>
+  <div style="clear:both;"> </div>
+  <div class="json">
+    <pre>{ "type": "ShapeAnd", "shapeExprs": [
+  { "type": "NodeConstraint", <span class="comment">...</span> },
+  { "type": "ShapeOr", "shapeExprs": [
+    { "type": "ShapeRef", "reference": "http://schema.example/IssueShape" }
+    { "type": "ShapeNot", "shapeExpr": { "type": "ShapeExternal" } }
+    ] }
+  ] }</pre>
+  </div>
       </div>
       </section>
       <section id="value-expressions-semantics">
       <h4>Semantics</h4>
       <p>
-	The semantics of a shape expression is defined relative to a typing.
+        A node <m>n</m> and graph <m>G</m> satisfies a shape expression <m>se</m> with shapeMap <m>m</m> is written <code>satisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> and is true if and only if:
       </p>
 
-      <p>
-	Let <m>Sch = (SLabels, def)</m> be a shapes schema and <m>G</m> be a graph.
-	For a <m>node</m> in <m>Nodes(G)</m>, a <m>typing</m> of <m>G</m> by <m>Sch</m>, and a shape expression <m>S</m>, we say that <m>node</m> satisfies <m>S</m> with <m>typing</m>, written <m>typing, node ⊢ S</m>, as defined recursively on the structure of <m>S</m> on the figure above, where:
-	<ul>
-	  <li>
-	    <m>V</m> is a <as><a href="#dfn-NodeConstraint">NodeConstraint</a></as> (in the se-node-constr and se-node-constr-blank rules);
-	  </li>
-	  <li>
-	    <m>E</m> is a <as><a href="#dfn-TripleExpression">TripleExpression</a></as> (in rule se-neighb-constr);
-	  </li>
-	  <li>
-	    the &#x22A7; symbol in the premise of the se-neighb-constr rue the relation that defines whether the neighbourhood of a node matches a triple expression, and is defined below;
-	  </li>
-	  <li>
-	    <m>S</m>, <m>S<sub>1</sub></m>, <m>S<sub>2</sub></m> are <as><a href="#dfn-ShapeExpression">ShapeExpression</a></as>s;
-	  </li>
-	  <li>
-	    the <m>typing, node &#x22ac; S</m> in the premise of the se-shape-not rule means that it is impossible to construct a proof for <m>typing, node ⊢ S</m>.
-	  </li>
-	</ul>
-      </p>
-      
-      <p>
-	<img src="images/ve-rules.png" style="width: 40%"/>
-      </p>
+      <ul>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-NodeConstraint" class="obj">NodeConstraint</a></span> and <code>satisfies(<m>n</m>, <m>se</m>)</code> as described below in <a href="node-constraints">Node Constraints</a>.
+        Note that testing if a node satisfies a node constraint does not require a graph or shapeMap.</li>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-Shape" class="obj">Shape</a></span> and <code>satisfies(<m>n</m>, <m>se</m>)</code> as described below in <a href="triple-expressions">Triple Expressions</a>.</li>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeOr" class="obj">ShapeOr</a></span> and there is some shape expression in <m>se2</m> in <span class="param">shapeExprs</span> such that <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a></span> and every shape expression in <m>se2</m> in <span class="param">shapeExprs</span> such that <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeNot" class="obj">ShapeNot</a></span> and for the shape expression <m>se2</m> in <span class="param">shapeExpr</span> it is not true that <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeRef" class="obj">ShapeRef</a></span> and the <span class="jobjref"><a href="#dfn-Schema" class="obj">Schema</a></span>'s <span class="param">shapes</span> maps <span class="param">reference</span> to a shape expression <m>se2</m> and <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeExternal" class="obj">ShapeExternal</a></span> and implementation-specific mechansims not defined in this specification indicate success.</li>
+      </ul>
 
       <div class="Example">
 	<p>
@@ -471,6 +449,7 @@ _:User2
 
       <div class="shexjTable">
         <table class="shexj">
+  <tr class="obj"><th id="dfn-Shape" class="obj">Shape</th><td>{</td><td><span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]? <span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>? <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>]? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
   <tr class="nob"><th id="dfn-tripleExpr" class="nob">tripleExpr</th><td>=</td><td><a class="objref" href="#dfn-EachOf">EachOf</a> | <a class="objref" href="#dfn-SomeOf">SomeOf</a> | <a class="objref" href="#dfn-TripleConstraint">TripleConstraint</a> | <a class="objref" href="#dfn-Inclusion">Inclusion</a> ;</td></tr>
   <tr class="obj"><th id="dfn-EachOf" class="obj">EachOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
   <tr class="obj"><th id="dfn-SomeOf" class="obj">SomeOf</th><td>{</td><td><span class="param">expressions</span>:[<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>] <span class="param">min</span>:<a class="trmref" href="#dfn-INTEGER">INTEGER</a>? <span class="param">max</span>:(<a class="trmref" href="#dfn-INTEGER">INTEGER</a> | <span class="literal">"*"</span>)? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? <span class="param">annotations</span>:[<a class="objref" href="#dfn-Annotation">Annotation</a>]? }</td></tr>
@@ -961,7 +940,7 @@ strat(&lt;SL_all&gt;) = 1
   <tr class="obj"><th id="dfn-ShapeAnd" class="obj">ShapeAnd</th><td>{</td><td><span class="param">shapeExprs</span>:[<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a>] }</td></tr>
   <tr class="obj"><th id="dfn-ShapeNot" class="obj">ShapeNot</th><td>{</td><td><span class="param">shapeExpr</span>:<a class="nobref" href="#dfn-shapeExpr">shapeExpr</a> }</td></tr>
   <tr class="obj"><th id="dfn-Shape" class="obj">Shape</th><td>{</td><td><span class="param">virtual</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">closed</span>:<a class="trmref" href="#dfn-BOOL">BOOL</a>? <span class="param">extra</span>:[<a class="trmref" href="#dfn-IRI">IRI</a>]? <span class="param">expression</span>:<a class="nobref" href="#dfn-tripleExpr">tripleExpr</a>? <span class="param">inherit</span>:[<a class="nobref" href="#dfn-shapeLabel">shapeLabel</a>]? <span class="param">semActs</span>:[<a class="objref" href="#dfn-SemAct">SemAct</a>]? }</td></tr>
-  <tr class="obj"><th id="dfn-ShapeRef" class="obj">ShapeRef</th><td>{</td><td><span class="param">reference</span>:<a class="trmref" href="#dfn-IRI">IRI</a> }</td></tr>
+  <tr class="obj"><th id="dfn-ShapeRef" class="obj">ShapeRef</th><td>{</td><td><span class="param">reference</span>:<a class="trmref" href="#dfn-shapeLabel">shapeLabel</a> }</td></tr>
   <tr class="obj"><th id="dfn-ShapeExternal" class="obj">ShapeExternal</th><td>{</td><td><span class="comment">/* empty */</span> }</td></tr>
   <tr class="obj"><th id="dfn-SemAct" class="obj">SemAct</th><td>{</td><td><span class="param">name</span>:<a class="trmref" href="#dfn-IRI">IRI</a> <span class="param">code</span>:<a class="trmref" href="#dfn-STRING">STRING</a>? }</td></tr>
   <tr class="nob"><th id="dfn-tripleExpr" class="nob">tripleExpr</th><td>=</td><td><a class="objref" href="#dfn-EachOf">EachOf</a> | <a class="objref" href="#dfn-SomeOf">SomeOf</a> | <a class="objref" href="#dfn-TripleConstraint">TripleConstraint</a> | <a class="objref" href="#dfn-Inclusion">Inclusion</a> ;</td></tr>
