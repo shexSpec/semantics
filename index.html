@@ -398,7 +398,7 @@ _:User2
 
       <div class="Example">
 	<p>
-	  Given a three shape expressions <m>SE<sub>1</sub></m>, <m>SE<sub>2</sub></m>, <m>SE<sub>3</sub></m>, such that:
+	  Given a three shape expressions <m>SE<sub>1</sub></m>, <m>SE<sub>2</sub></m>, <m>SE<sub>3</sub></m> in a <span class="jobjref"><a href="#dfn-Schema" class="obj">Schema</a></span> <m>Sch</m>, such that:
 	</p>
   <ul>
     <li><code>satisfies(<m>n</m>, <m>SE<sub>1</sub></m>, <m>G</m>, <m>m</m>)</code></li>
@@ -418,6 +418,13 @@ _:User2
         { "type": "ShapeAnd", "shapeExprs": [ <span class="comment">SE<sub>2</sub></span>, <span class="comment">SE<sub>3</sub></span> ] }
       ] }
   } }</pre></div>,<br/> <m>G</m>, <m>m</m>)</div></code><div style="clear:both;"></div></li>
+	  </ul>
+
+    <p>
+      If <m>Sch</m>'s <span class="param">shapes</span> maps "<code>http://schema.example/shape1</code>" to <m>SE<sub>1</sub></m> then the following holds:
+    </p>
+	<ul>
+    <li><code><div style="float:left;">satisfies(</div><div style="float:left;"><m>n</m>,<br/><div class="inline json"><pre>{ "type": "ShapeReference", "reference": "http://schema.example/shape1" }</pre></div>,<br/> <m>G</m>, <m>m</m>)</div></code><div style="clear:both;"></div></li>
 	  </ul>
       </div>
       </section>
