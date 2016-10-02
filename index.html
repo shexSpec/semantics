@@ -125,6 +125,11 @@ function prepareHighlight (highlightables, onClass, offClass, slide) {
         <a href="#dfn-Target"><code>Target</code></a>, <a href="#dfn-Shape"><code>Shape</code></a> and <a href="#dfn-Constraint"><code>Constraint</code></a> are defined terms within this document.
       </p>
       <p>
+        JSON examples are rendered in a <span class="json">.json</span> CSS style.
+        Partial examples include ranges in a <span class="comment">.comment</span> CSS style to indicate text which would be substituted in a complete example.
+        For example  <span class="json">{ "type": "ShapeAnd", "shapeExprs": [ <span class="comment">SE<sub>1</sub></span>, <span class="comment">...</span> ] }</span> indicates that both <span class="comment">SE<sub>1</sub></span> and <span class="comment">...</span> would be substituted in a complete example.
+      </p>
+      <p>
         Terminals are JSON strings and are indicated by all-caps, e.g. <a class="trmref" href="#dfn-PREFIX">PREFIX</a> and <a class="trmref" href="#dfn-IRI">IRI</a>.
         For brevity RDF nodes are represented as JSON strings composed as:
       </p>
@@ -353,7 +358,7 @@ _:User2
       </div>
       <div class="Example">
 	<p>
-	  Examples shape expressions:
+	  Examples of shape expressions:
   </p>
 
   <div class="json">
@@ -374,7 +379,10 @@ _:User2
       <section id="value-expressions-semantics">
       <h4>Semantics</h4>
       <p>
-        A node <m>n</m> and graph <m>G</m> satisfies a shape expression <m>se</m> with shapeMap <m>m</m> is written <code>satisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> and is true if and only if:
+        The expression <code>satisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> indicates that a node <m>n</m> and graph <m>G</m> satisfy a shape expression <m>se</m> with shapeMap <m>m</m>.
+        Conversely, <code>notSatisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> indicates that <m>n</m> and <m>G</m> do not satisfy <m>se</m> with the given shapeMap <m>m</m>.
+        <code>notSatisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>_</m>)</code> indicates that no shapeMap would allow <m>n</m> and <m>G</m> to satisfy <m>se</m>.
+        <code>satisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> is true if and only if:
       </p>
 
       <ul>
@@ -383,37 +391,34 @@ _:User2
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-Shape" class="obj">Shape</a></span> and <code>satisfies(<m>n</m>, <m>se</m>)</code> as described below in <a href="triple-expressions">Triple Expressions</a>.</li>
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeOr" class="obj">ShapeOr</a></span> and there is some shape expression in <m>se2</m> in <span class="param">shapeExprs</span> such that <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeAnd" class="obj">ShapeAnd</a></span> and every shape expression in <m>se2</m> in <span class="param">shapeExprs</span> such that <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
-        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeNot" class="obj">ShapeNot</a></span> and for the shape expression <m>se2</m> in <span class="param">shapeExpr</span> it is not true that <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
+        <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeNot" class="obj">ShapeNot</a></span> and for the shape expression <m>se2</m> in <span class="param">shapeExpr</span> such that <code>notSatisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeRef" class="obj">ShapeRef</a></span> and the <span class="jobjref"><a href="#dfn-Schema" class="obj">Schema</a></span>'s <span class="param">shapes</span> maps <span class="param">reference</span> to a shape expression <m>se2</m> and <code>satisfies(<m>n</m>, <m>se2</m>, <m>G</m>, <m>m</m>)</code>.</li>
         <li><m>S</m> is a <span class="jobjref"><a href="#dfn-ShapeExternal" class="obj">ShapeExternal</a></span> and implementation-specific mechansims not defined in this specification indicate success.</li>
       </ul>
 
       <div class="Example">
 	<p>
-	  Let <m>U, V, <span class="pre">int</span>, E<sub>1</sub>, E<sub>2</sub></m> be as in the previous example.
+	  Given a three shape expressions <m>SE<sub>1</sub></m>, <m>SE<sub>2</sub></m>, <m>SE<sub>3</sub></m>, such that:
 	</p>
+  <ul>
+    <li><code>satisfies(<m>n</m>, <m>SE<sub>1</sub></m>, <m>G</m>, <m>m</m>)</code></li>
+    <li><code>satisfies(<m>n</m>, <m>SE<sub>2</sub></m>, <m>G</m>, <m>m</m>)</code></li>
+    <li><code>notSatisfies(<m>n</m>, <m>SE<sub>3</sub></m>, <m>G</m>, <m>m</m>)</code></li>
+  </ul>
 	<p>
-	  Whatever the value of <m>typing</m>, it holds
-	  <ul>
-	    <li>
-	      <m>typing, 3 ⊢ int AND (NOT V)</m>
-	    </li>
-	  </ul>
+    the following hold:
 	</p>
 
-	<p> If <m>typing = { (<span class="pre">ex:assigned</span>, E<sub>1</sub>), (<span class="pre">ex:assigned</span>, E<sub>2</sub>), (<span class="pre">ex:unknown</span>, E<sub>1</sub>), (<span class="pre">ex:somenode</span>, E<sub>1</sub>) }</m>, then 
-	  <ul>
-	    <li>
-	      <m>typing, ex:assigned &#x22ac; U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>))</m><br/>
-	    </li>
-	    <li>
-	      <m>typing, ex:unknown ⊢ U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>T))</m><br/>
-	    </li>
-	    <li>
-	      <m>typing, ex:somenode &#x22ac; U AND (E<sub>1</sub> AND (NOT E<sub>2</sub>))</m><br/>
-	    </li>
+	<ul>
+    <li><code><div style="float:left;">satisfies(</div><div style="float:left;"><m>n</m>,<br/><div class="inline json"><pre>{ "type": "ShapeAnd", "shapeExprs": [ <span class="comment">SE<sub>1</sub></span>, <span class="comment">SE<sub>2</sub></span> ] }</pre></div>,<br/> <m>G</m>, <m>m</m>)</div></code><div style="clear:both;"></div></li>
+    <li><code><div style="float:left;">satisfies(</div><div style="float:left;"><m>n</m>,<br/><div class="inline json"><pre>{ "type": "ShapeOr", "shapeExprs": [ <span class="comment">SE<sub>1</sub></span>, <span class="comment">SE<sub>1</sub></span>, <span class="comment">SE<sub>3</sub></span> ] }</pre></div>,<br/> <m>G</m>, <m>m</m>)</div></code><div style="clear:both;"></div></li>
+    <li><code><div style="float:left;">notSatisfies(</div><div style="float:left;"><m>n</m>,<br/><div class="inline json"><pre>{ "type": "ShapeNot", "shapeExpr": {
+    { "type": "ShapeOr", "shapeExprs": [
+        <span class="comment">SE<sub>1</sub></span>,
+        { "type": "ShapeAnd", "shapeExprs": [ <span class="comment">SE<sub>2</sub></span>, <span class="comment">SE<sub>3</sub></span> ] }
+      ] }
+  } }</pre></div>,<br/> <m>G</m>, <m>m</m>)</div></code><div style="clear:both;"></div></li>
 	  </ul>
-	</p>
       </div>
       </section>
       </section>

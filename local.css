@@ -161,6 +161,11 @@
 	  margin: 0
       }
 
+      .inline.json {
+	  padding: .5ex 0ex .5ex 0ex;
+	  margin: 0;
+      }
+
       .grammarTable tr.obj {
       background-color: #F8F8F0;
       }
