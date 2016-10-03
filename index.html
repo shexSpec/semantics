@@ -293,19 +293,14 @@ _:User2
   }
 }</pre>
       </div>
-
-      <p>
-	Note that the validation problem does not necessarily require to compute <m>typing</m> entirely.
-	Only a portion of <m>shapeMap</m> need be computed to validate a specific node, starting from the node and adding only the node-label associations that are necessary for proving, or disproving, the node-label name associations from that node.
-      </p>
       </section>
 
       <section id="shape-map">
       <h3>Mapping From Nodes to Shapes</h3>
 
       <p>
-	A <code>ShapeMap</code> is a set of node-label associations of the form <m>(node,S)</m> where <m>node</m> is an RDF node, and <m>S</m> is a shape label from a schema.
-	A node-label association in a ShapeMap indicates that the node <m>node</m> satisfies the constraint given by the definition of the shape label <m>S</m>.
+	A <span class="label">ShapeMap</span> is a set of node-label associations of the form <m>(node,S)</m> where <m>node</m> is an RDF node, and <m>S</m> is a shape label from a schema.
+	A node-label association in a <m>ShapeMap</m> indicates that the node <m>node</m> satisfies the constraint given by the definition of the shape label <m>S</m>.
       </p>
 
       <div class="Example">
@@ -326,6 +321,11 @@ _:User2
   "_:User2", "http://schema.example/EmployeeShape" }</pre>
   </div>
       </div>
+
+      <p>
+	Note that the validation problem does not necessarily require to compute <m>typing</m> entirely.
+	Only a portion of <m>ShapeMap</m> need be computed to validate a specific node, starting from the node and adding only the node-label associations that are necessary for proving, or disproving, the node-label name associations from that node.
+      </p>
       </section>
 
       <section id="shape-expressions">
