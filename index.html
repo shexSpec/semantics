@@ -293,6 +293,11 @@ _:User2
   }
 }</pre>
       </div>
+
+      <p>
+	Note that the validation problem does not necessarily require to compute <m>typing</m> entirely.
+	Only a portion of <m>shapeMap</m> need be computed to validate a specific node, starting from the node and adding only the node-label associations that are necessary for proving, or disproving, the node-label name associations from that node.
+      </p>
       </section>
 
       <section id="shape-map">
@@ -519,7 +524,7 @@ _:User2
       <div class="issue">
         <p>
           This is a conservative protection from negation conundrums.
-          <a href="">Stratified negation</a> would permit additional expressivity e.g.
+          <a href="orig.html#stratified-negation">Stratified negation</a> would permit additional expressivity e.g.
         </p>
         <pre>&lt;S1&gt; NOT (NOT @&lt;S1&gt;)</pre>
       </div>
@@ -530,7 +535,7 @@ _:User2
         <h4>Semantics</h4>
         <p>
           The <code><a href="#satisfies">satisfies</a></code> semantics for a <span class="jobjref"><a href="#dfn-Shape" class="obj">Shape</a></span> depend on a <code>matches</code> function <a href="#matches">defined below</a>.
-          For a node <m>n</m>, shape <m>S</m>, graph <m>G</m>, and shapeMap <m>m</m>, <code class="function">satisfies(<m>n</m>, <m>S</m>, <m>G</m>, <m>m</m>)</code> if and only if:
+          For a node <m>n</m>, shape <m>S</m>, graph <m>G</m>, and shapeMap <m>m</m>, <code class="function">satisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> if and only if:
         </p>
         <ul>
           <li>
@@ -556,8 +561,16 @@ _:User2
         <li><m>expr</m> has a <span class="param">min</span> or a <span class="param">max</span> and there is some partition of <m>matched</m> into <m class="function">m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every required repetition <m><sub>1</sub></m>, <m><sub>2</sub></m>,… ≤ <span class="param">min</span> in <span class="param">shapeExprs</span> and zero or more optional repetitions <m><sub><span class="param">min</span>+1</sub></m>, <m><sub><span class="param">min</span>+2</sub></m>,… ≤ <span class="param">max</span>, <code class="function">matches(<m>m<sub>n</sub></m>, <m>expr</m>)</code> by the remaining rules in this list.</li>
         <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-SomeOf" class="obj">SomeOf</a></span> and there is some shape expression <m>se2</m> in <span class="param">shapeExprs</span> such that a <code class="function">matches(<m>T</m>, <m>expr</m>)</code>.</li>
         <li><m>expr</m> is an <span class="jobjref"><a href="#dfn-EachOf" class="obj">EachOf</a></span> and there is some partition of <m>matched</m> into <m>m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every expression <span class="function"><m>expr<sub>1</sub></m>, <m>expr<sub>2</sub></m>,…</span> in <span class="param">shapeExprs</span>, <code class="function">matches(<m>m<sub>n</sub></m>, <m>expr<sub>n</sub></m>)</code>.</li>
-        <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-TripleConstraint" class="obj">TripleConstraint</a></span> and </li>
-        <li><m>expr</m> is an <span class="jobjref"><a href="#dfn-Inclusion" class="obj">Inclusion</a></span> and </li>
+        <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-TripleConstraint" class="obj">TripleConstraint</a></span> and:
+        <ul>
+          <li>
+            <m>T</m> is a set of one triple <m>t</m> and <m>t</m>'s predicate equals <m>expr</m>'s predicate.<br/>
+            Let <span class="label">value</span> be <m>t</m>'s subject if <span class="param">inverse</span> is true, else <m>t</m>'s object.
+          </li>
+          <li><m>expr</m> has no <span class="param">valueExpr</span> or <code class="function">satisfies(<m>value</m>, <span class="param">valueExpr</span>, <m>G</m>, <m>m</m>)</code>.</li>
+        </ul>
+        </li>
+        <li><m>expr</m> is an <span class="jobjref"><a href="#dfn-Inclusion" class="obj">Inclusion</a></span> and <code class="function">satisfies(<m>value</m>, dereference(<span class="param">include</span>), <m>G</m>, <m>m</m>)</code>.</li>
       </ul>
       <!-- p>
 	Finally, a triple expression can be repeated by specifying a minimal cardinality that is a natural number, and a maximal cardinality that is a natural number of an unbounded value denoted as a star <m>*</m>. 
@@ -715,198 +728,6 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
       </section>
     </section>
       
-      <section id="stratified-negation">
-      <h3>Shapes Schemas with Stratified Negation</h3>
-      <p>
-	As we can see from the syntax, shape expressions can refer other shape definitions through a <as><a href="#dfn-ShapeRef">ShapeRef</a></as> within a <as><a href="#dfn-TripleConstraint">TripleConstraint</a></as>.
-	In order to avoid undesirable interaction between recursion and the negation in value expressions, we consider shapes schemas with stratified negation only, as defined in the sequel.
-      </p>
-      
-      <p>
-	A <m>typing</m> of <m>G</m> by <m>Sch</m> is called correct if for all node-label association <m>(node, T)</m> in <m>typing</m>, it is the case that <m>typing, neigh(node) ⊢ def(T)</m>.
-      </p>
-      <p>
-	We start by defining the dependency graph for a shapes schema, based on which we will define the stratification.
-      </p>
-
-      <p>
-	For a schema <m>Sch = (SLabels, def)</m>, its dependency graph is a graph which set of nodes is <m>SLabels</m> and that has an edge from the shape label <m>L<sub>1</sub></m> to the shape label <m>L<sub>2</sub></m> if and only if <m>L<sub>2</sub></m> appears in the shape expression <m>def(L<sub>1</sub>)</m>.
-	There are two kinds of edges in the graph:
-	<ul>
-	  <li>
-	    a negative dependency edge <m>dep-(L<sub>1</sub>,L<sub>2</sub>)</m> if <m>L<sub>2</sub></m> appears in <m>def(L<sub>1</sub>)</m> under an odd number of occurrences of the <m>NOT</m> operator;
-	  </li>
-	  <li>
-	    a positive dependency edge <m>dep+(L<sub>1</sub>,L<sub>2</sub>)</m> if <m>L<sub>2</sub></m> appears in <m>def(L<sub>1</sub>)</m> under an even number of occurrences of the <m>NOT</m> operator.
-	  </li>
-	</ul>	
-      </p>
-      <p>
-	We say that the shapes schema <m>Sch</m> is with stratified negation if its dependency graph does not contain a cycle that goes through a <m>dep-</m> edge.
-      </p>
-
-      <div class="Example">
-	<p>
-	  The following is an example of a shapes schema and its dependency graph.
-	</p>
-<pre class="shex" style="float:left">
-# a shapes schema
-
-&lt;SL_all&gt; IRI ∪ RDFLiteral ∪ BNode
-&lt;SL_1&gt;   NOT ({:c} &lt;SL_5&gt;)
-&lt;SL_2&gt; := {:a} &lt;SL_4&gt; ; {:c} &lt;SL_5&gt; 
-&lt;SL_3&gt; := NOT ({:c} &lt;SL_all&gt;) AND {:a} &lt;SL_2&gt;
-&lt;SL_4&gt; := {:a} &lt;SL_3&gt;
-&lt;SL_5&gt; := {:c} &lt;SL_all&gt;
-</pre>
-<pre class="shex" style="float:left">
-# the edges of the dependency graph
-# ---&gt; is a negative dependency edge
-# -+-&gt; is a positive dependency edge
-
-&lt;SL_1&gt; ---&gt; &lt;SL_5&gt;
-
-&lt;SL_2&gt; -+-&gt; &lt;SL_4&gt;
-&lt;SL_2&gt; -+-&gt; &lt;SL_5&gt;
-
-&lt;SL_3&gt; ---&gt; &lt;SL_all&gt;
-&lt;SL_3&gt; -+-&gt; &lt;SL_2&gt;
-
-&lt;SL_4&gt; -+-&gt; &lt;SL_3&gt;
-
-&lt;SL_5&gt; -+-&gt; &lt;SL_all&gt;
-</pre>
-<div style="clear:both;"> </div>
-      </div>
-
-      <p>
-	If a schema is with stratified negation, then there exists a partition of the shape labels of the schema such that there does not exist a negative dependency edge between the shape labels of the same part of the partition.
-	Moreover, the parts of the partition can be ranked in a way that all negative dependency edges always go from a partition with a higher rank to a partition with a lower rank.
-	Such partitioning is called a stratification.
-      </p>
-      <p>
-	More formally, if <m>Sch = (SLabels, def)</m> is a shapes schema with stratified negation, then there exists a natural number <m>k</m> and a partitioning function <m>strat: SLLabels &#8594; 1..k</m> that with every shape label from <m>SLabels</m> associates a natural number between <m>1</m> and <m>k</m>, called the stratum of that label. 
-	Moreover, the partitioning function <m>strat</m> satisfies the following property: for all shape labels <m>L,L'</m> in <m>SLabels</m>, if <m>dep-(L,L')</m>, then <m>strat(L) &gt; strat(L')</m>, and if <m>dep+(L,L')</m>, then <m>strat(L) ≥ strat(L')</m>. 
-	The partitioning function <m>strat</m> is called a stratification of <m>Sch</m>.
-      </p>
-      <p>
-	A stratification guarantees the following property: the definition of a shape label can depend negatively only on shape labels that are in strictly lower stratums, and can depend positively only on shape labels that are on the same stratum or on a lower stratum.
-	In particular, every circular dependency (the definition of a shape label depends on itself) enforces that all the intermediate shape labels are on the same stratum.
-      </p>
-
-      <div class="Example">
-	<p>
-	  A stratification for the schema on the previous example is:
-	</p>
-<pre class="shex" style="float:left">
-strat(&lt;SL_2&gt;) = 3
-strat(&lt;SL_3&gt;) = 3
-strat(&lt;SL_4&gt;) = 3
-
-strat(&lt;SL_1&gt;) = 2
-
-strat(&lt;SL_5&gt;) = 1
-strat(&lt;SL_all&gt;) = 1
-</pre>
-<div style="clear:both;"> </div>
-	<p>
-	  The shape labels  <span class="pre">&lt;SL_2&gt;, &lt;SL_3&gt;, &lt;SL_4&gt;</span> are on the same stratum.
-	  One can see that there is a circular dependency between these three shape labels.
-	  The two negative dependencies in that schema go from <span class="pre">&lt;SL_1&gt;</span> to <span class="pre">&lt;SL_5&gt;</span> (from stratum 2 to stratum 1), and from <span class="pre">&lt;SL_3&gt;</span> to <span class="pre">&lt;SL_all&gt;</span> (from stratum 3 to stratum 1).
-	</p>
-	<p>
-	  Another possible stratification for that schema is to have only two stratums, and <span class="pre">&lt;SL_1&gt;</span> on the same stratum as <span class="pre">&lt;SL_2&gt;, &lt;SL_3&gt;, &lt;SL_4&gt;</span>.
-	</p>
-      </div>
-
-      <p>
-	Remark that it is easy to check whether a schema is with stratified negation: it is enough to construct the dependency graph, and check that it does not contain any cycle that goes through a negative dependency.
-      </p>
-
-      <section id="maximal-typing">
-      <h3>Maximal Typing</h3>
-      <p>
-	A schema with stratified negation admits a unique typing defined here after.
-	This typing is used for defining the semantics of shapes schemas: we say that a node in an RDF graph satisfies the constraint of a shape label if and only if the corresponding node-label association belongs to this particular typing.
-	This typing is maximal as it forces to add in the typing every provable node-label association.
-      </p>
-
-      <p>
-	Let <m>Sch = (SLabels, def)</m> be a schema with stratified negation and let <m>strat: TELabels &#8594; 1..k</m> be a stratification for <m>Sch</m>.
-	Consider a graph <m>G</m>.
-	We define a sequence <m>Sch<sub>1</sub>, ...., Sch<sub>k</sub></m> of sub-schemas of <m>Sch</m> following the stratification <m>strat</m>, as follows. 
-	For all <m>i</m> in <m>1..k</m>, <m>Sch<sub>i</sub> = (SLabels<sub>i</sub>, def<sub>i</sub>)</m> where <m>SLabels<sub>i</sub></m> is the subset of <m>SLabels</m> composed of the shape labels on the stratums <m>1..i</m>.
-	More formally, 
-	<ul>
-	  <li>
-	    <m>SLabels<sub>i</sub> = strat<sup>-1</sup>(1) ∪ ... ∪ strat<sup>-1</sup>(i)</m>,
-	  </li>
-	  <li>
-	    <m>def<sub>i</sub></m> is <m>def</m> restricted on <m>SLabels<sub>i</sub></m>.
-	  </li>
-	</ul>
-	where <m>strat<sup>-1</sup></m> is the inverse of the stratification function, thus <m>strat<sup>-1</sup>(i)</m> is the set of all shape labels which stratum is <m>i</m>.
-      </p>
-      <p>
-	It follows from this definition that <m>Sch<sub>k</sub></m> is equal to <m>Sch</m>.
-      </p>
-
-      <p>
-	Then we define a sequence of typings <m>typing<sub>1</sub>, ..., typing<sub>k</sub></m> such that for all <m>i</m> in <m>1..k</m>, <m>typing<sub>1</sub></m> is the maximal typing for <m>Sch<sub>i</sub></m>.
-	Formally, 
-	<ul>
-	  <li>
-	    <m>typing<sub>1</sub></m> is the union of all correct <m>typing</m>s of <m>G</m> by <m>Sch<sub>1</sub></m>;
-	  </li>
-	  <li>
-	    for <m>i</m> in <m>2..k</m>, <m>typing<sub>i</sub></m> is the union of all correct typings of <m>G</m> by <m>Sch<sub>i</sub></m> that coincide with <m>typing<sub>i-1</sub></m> on the <m>SLabels<sub>i-1</sub></m>.
-	  </li>
-	</ul>
-      </p>
-      
-      <p>
-	Note that because <m>Sch</m> is stratified and because of the way the sub-schemas <m>Sch<sub>i</sub></m> were defined, it is the case that all the typings <m>typing<sub>i</sub></m> are correct.
-      </p>
-
-      <p>
-	The typing <m>typing<sub>k</sub></m> as defined above is called the maximal typing of <m>G</m> by <m>Sch</m>.
-      </p>
-
-      <div class="Example">
-	<p>
-	  TODO: an example of the sequence of typings
-	</p>
-      </div>
-      </section>
-    </section>
-    
-      <hr/>
-
-    <section id="validation-for-shex">
-      <h2>Validation of a Graph against a ShEx Schema</h2>
-
-      <p>
-	Let <m>Shex</m> be a ShEx schema with set <m>ShapeNames</m> of shape names.
-	For a graph <m>G</m>, a validation problem is defined as a set <m>val</m> of node-label name associations.
-	That is, <m>val</m> is a subset of <m>Nodes(G) × ShapeNames</m>.
-	Then the validation problem consists in checking whether for every node-label name association <m>(node, sname)</m> in <m>val</m>, it is the case that <m>node</m> satisfies the constraint defined by <m>sname</m>.
-      </p>
-
-      <p>
-	Formally, let <m>Sch</m> be the shapes schema that corresponds to <m>Shex</m>, and for every shape name <m>sname</m> in <m>Shex</m>, let <m>valConstr(sname)</m> be the corresponding value constraint name in <m>Sch</m>.
-	Then the answer to the validation problem <m>val</m> is yes if and only if for all <m>(node, sname)</m> in <m>val</m>, it is the case that <m>typing, node ⊢ valConstr(sname)</m>, where <m>typing</m> is the maximal typing of <m>G</m> by <m>Sch</m>.
-      </p>
-
-      <p>
-	Remark that the validation problem does not necessarily require to compute <m>typing</m> entirely.
-	Only a portion of <m>typing</m> can be computed, starting from <m>val</m> and adding only the node-label associations that are necessary for proving, or disproving, the node-label name associations from <m>val</m>.
-      </p>
-
-    </section>
-
-
-
-
     <section id="shexj">
       <h2>ShEx JSON Syntax (ShExJ)</h2>
       <p>
