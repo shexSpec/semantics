@@ -379,9 +379,11 @@ _:User2
       <section id="value-expressions-semantics">
       <h4>Semantics</h4>
       <p>
-        The expression <code class="function">satisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> indicates that a node <m>n</m> and graph <m>G</m> satisfy a shape expression <m>se</m> with shapeMap <m>m</m>.
-        Conversely, <code class="function">notSatisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> indicates that <m>n</m> and <m>G</m> do not satisfy <m>se</m> with the given shapeMap <m>m</m>.
+        <span class="label" id="satisfies">satisfies</span>: The expression <code class="function">satisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> indicates that a node <m>n</m> and graph <m>G</m> satisfy a shape expression <m>se</m> with shapeMap <m>m</m>.<br/>
+        <span class="label" id="notSatisfies">notSatisfies</span>: Conversely, <code class="function">notSatisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> indicates that <m>n</m> and <m>G</m> do not satisfy <m>se</m> with the given shapeMap <m>m</m>.
         <code class="function">notSatisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>_</m>)</code> indicates that no shapeMap would allow <m>n</m> and <m>G</m> to satisfy <m>se</m>.
+      </p>
+      <p>
         <code class="function">satisfies(<m>n</m>, <m>se</m>, <m>G</m>, <m>m</m>)</code> is true if and only if:
       </p>
 
@@ -476,66 +478,91 @@ _:User2
         The function <code>dereference(<span class="param">include</span>)</code> returns the shape's <span class="param">tripleExpr</span>.
       </p>
 
+      <div class="Example">
+        <p>
+          Following is a valid inclusion:
+        </p>
+        <div class="json"><pre>{ "type":"Schema", "shapes": {
+    "http://schema.example/PersonShape": {
+      "type":"Shape", "expression": {
+        "type": "TripleConstraint", "predicate": "http://xmlns.com/foaf/0.1/name"
+      } },
+    "http://schema.example/EmployeeShape": {
+      "type":"Shape", "expression": { "type":"ShapeAnd", "shapeExprs": [
+        { "type": "Inclusion", "include": "http://schema.example/PersonShape" }
+        { "type": "TripleConstraint", "predicate": "http://schema.example/employeeNumber" }
+] } } } }</pre></div>
+        <p>
+          This inclusion is invalid because there is no corresponding shape expression:
+        </p>
+        <div class="json"><pre>{ "type":"Schema", "shapes": {
+    "http://schema.example/S1": {
+      "type":"Shape", "expression": {
+        "type": "Inclusion", "include": "http://schema.example/MissingShape"
+} } } }</pre></div>
+    <p>This inclusion is invalid because the referenced shape expression is not a simple shape with an <span class="param">expression</span>:</p>
+    <div class="json"><pre>{ "type":"Schema", "shapes": {
+    "http://schema.example/CustomerShape": {
+      "type":"ShapeAnd", "shapeExprs": [ <span class="comment">...</span> ]
+    },
+    "http://schema.example/PreferredCustomerShape": {
+      "type":"Shape", "expression": { "type":"ShapeAnd", "shapeExprs": [
+        { "type": "Inclusion", "include": "http://schema.example/CustomerShape" }
+        { "type": "TripleConstraint", "predicate": "http://schema.example/discount" }
+] } } } }</pre></div>
+      </div>
+      <p id="negation-constraint">
+        <span class="label">negation constraint</span>: An <span class="jobjref"><a href="#dfn-Inclusion">Inclusion</a></span> object's <span class="param">include</span> property MUST appear in the schema's <span class="param">shapes</span> map and the corresponding triple expression MUST be a <span class="jobjref"><a href="#dfn-Shape">Shape</a></span> with a <span class="param">tripleExpr</span>.
+        The function <code>dereference(<span class="param">include</span>)</code> returns the shape's <span class="param">tripleExpr</span>.
+      </p>
+
+      <div class="issue">
+        <p>
+          This is a conservative protection from negation conundrums.
+          <a href="">Stratified negation</a> would permit additional expressivity e.g.
+        </p>
+        <pre>&lt;S1&gt; NOT (NOT @&lt;S1&gt;)</pre>
+      </div>
+
       </section>
       
       <section id="triple-expressions-semantics">
         <h4>Semantics</h4>
         <p>
-          The <code>satisfies</code> semantics for a <span class="jobjref"><a href="#dfn-Shape" class="obj">Shape</a></span> depend on a <code>matches</code> function <a href="#matches">defined below</a>.
+          The <code><a href="#satisfies">satisfies</a></code> semantics for a <span class="jobjref"><a href="#dfn-Shape" class="obj">Shape</a></span> depend on a <code>matches</code> function <a href="#matches">defined below</a>.
           For a node <m>n</m>, shape <m>S</m>, graph <m>G</m>, and shapeMap <m>m</m>, <code class="function">satisfies(<m>n</m>, <m>S</m>, <m>G</m>, <m>m</m>)</code> if and only if:
         </p>
         <ul>
           <li>
             <code class="function">neigh(<m>G</m>, <m>n</m>)</code> can be partitioned into two sets <m>matched</m> and <m>remainder</m> such that <code class="function">matches(<m>matched</m>, <span class="param">expression</span>)</code>.
-            If <span class="param">expression</span> is absent, <code class="function"><m>remainder</m> = neigh(<m>G</m>, <m>n</m>)</code>.
-            Let <m>outs</m> be the arcsOut in <m>remainder</m>:
-            <code class="function"><m>outs</m> = <m>remainder</m> ∩ arcsOut(<m>G</m>, <m>n</m>)</code>.
-            Let <m>matchables</m> be the triples in <m>outs</m> whose predicate appears in a <span class="jobjref"><a href="#dfn-TripleConstraint" class="obj">TripleConstraint</a></span> in <span class="param">expression</span>.
-            If <span class="param">expression</span> is absent, <code class="function"><m>matchables</m> = <m>outs</m></code>.
-            Let <m>unmatchables</m> be the triples in <m>outs</m> which are not in <m>matchables</m>.
+            If <span class="param">expression</span> is absent, <code class="function"><m>remainder</m> = neigh(<m>G</m>, <m>n</m>)</code>.<br/>
+            Let <span class="label">outs</span> be the arcsOut in <m>remainder</m>:
+            <code class="function"><m>outs</m> = <m>remainder</m> ∩ arcsOut(<m>G</m>, <m>n</m>)</code>.<br/>
+            Let <span class="label">matchables</span> be the triples in <m>outs</m> whose predicate appears in a <span class="jobjref"><a href="#dfn-TripleConstraint" class="obj">TripleConstraint</a></span> in <span class="param">expression</span>.
+            If <span class="param">expression</span> is absent, <code class="function"><m>matchables</m> = <m>outs</m></code>.<br/>
+            Let <span class="label">unmatchables</span> be the triples in <m>outs</m> which are not in <m>matchables</m>.
             <code class="function"><m>matchables</m> ∪ <m>unmatchables</m> = <m>outs</m></code>.
           </li>
           <li>
-            There is no triple in <m>matchables</m> whose predicate does not appear in <span class="param">extra.</span>.
+            There is no triple in <m>matchables</m> whose predicate does not appear in <span class="param">extra</span>.
           </li>
           <li><span class="param">closed</span> is false or <m>unmatchables</m> is empty.</li>
         </ul>
       <p>
 	      <span class="label" id="matches">matches</span>: A triple expression is matched by a set of triples that come from the neighbourhood of a node in an RDF graph.
-        The symbol <m>Ø</m> is used below to denote an empty set.
         The expression <code>matches(<m>T</m>, <m>expr</m>)</code> indicates that a set of triples <m>T</m> can satisfy these rules:
       </p>
       <ul>
-        <li><m>expr</m> has a <span class="param">min</span> or a <span class="param">max</span> and there is some partition of <m>matched</m> into <m class="function">m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every required repetition <m><sub>1</sub></m>, <m><sub>2</sub></m>,… ≤ <span class="param">min</span> in <span class="param">shapeExprs</span> and every optional repetition <m><sub><span class="param">min</span>+1</sub></m>, <m><sub><span class="param">min</span>+2</sub></m>,… ≤ <span class="param">max</span>, <code class="function">matches(<m>m<sub>n</sub></m>, <m>expr</m>)</code> by the remaining rules in this list.</li>
+        <li><m>expr</m> has a <span class="param">min</span> or a <span class="param">max</span> and there is some partition of <m>matched</m> into <m class="function">m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every required repetition <m><sub>1</sub></m>, <m><sub>2</sub></m>,… ≤ <span class="param">min</span> in <span class="param">shapeExprs</span> and zero or more optional repetitions <m><sub><span class="param">min</span>+1</sub></m>, <m><sub><span class="param">min</span>+2</sub></m>,… ≤ <span class="param">max</span>, <code class="function">matches(<m>m<sub>n</sub></m>, <m>expr</m>)</code> by the remaining rules in this list.</li>
         <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-SomeOf" class="obj">SomeOf</a></span> and there is some shape expression <m>se2</m> in <span class="param">shapeExprs</span> such that a <code class="function">matches(<m>T</m>, <m>expr</m>)</code>.</li>
         <li><m>expr</m> is an <span class="jobjref"><a href="#dfn-EachOf" class="obj">EachOf</a></span> and there is some partition of <m>matched</m> into <m>m<sub>1</sub></m>, <m>m<sub>2</sub></m>,… such that for every expression <span class="function"><m>expr<sub>1</sub></m>, <m>expr<sub>2</sub></m>,…</span> in <span class="param">shapeExprs</span>, <code class="function">matches(<m>m<sub>n</sub></m>, <m>expr<sub>n</sub></m>)</code>.</li>
         <li><m>expr</m> is a <span class="jobjref"><a href="#dfn-TripleConstraint" class="obj">TripleConstraint</a></span> and </li>
         <li><m>expr</m> is an <span class="jobjref"><a href="#dfn-Inclusion" class="obj">Inclusion</a></span> and </li>
       </ul>
-      <p>
-	An atomic triple expression can be
-	<ul>
-	  <li>
-	    a triple constraint, that is matched by a set containing a single triple.
-	    A triple constraint is composed of a set of properties or inverse properties, that define the allowed values for the predicate of a triple, as well as a shape label, that is a reference to shape expression to be satisfied by the node in the triple opposite to the focus node.
-	  </li>
-	</ul>
-      </p>
-	<ul>
-	  <li>
-	    A some-of triple expression is matched by a set of triples if one or the other of its sub-expressions is matched by that set of triples.
-	  </li>
-	  <li>
-	    An each-of triple expression is matched by a set of triples if that set can be split into two disjoint subsets such that one of the subsets matches the first sub-expression of the each-of expression, and the other subset matches the other sub-expression.
-	  </li>
-	</ul>
-  <p>
-	These however should not be considered as disjunction and conjunction, as we will see later on when the semantics will be formally defined.
-      </p>
-      <p>
+      <!-- p>
 	Finally, a triple expression can be repeated by specifying a minimal cardinality that is a natural number, and a maximal cardinality that is a natural number of an unbounded value denoted as a star <m>*</m>. 
 	A repeated triple expression <m>TExpr{min;max}</m> is satisfied by a set of triples if that set can be split into <m>k</m> disjoint subsets such that <m>min ≤ k ≤ max</m>, and each of these subsets matches the sub-expression <m>TExpr</m>.
-      </p>
+      </p -->
     
 
       <div class="Example">
@@ -579,23 +606,6 @@ _:User2
 	    -->
 	</script>
       </div>
-      
-      <p>
-	For a set of triples or inverse triples <m>N</m> from a graph <m>G</m>, a triple expression <m>E</m>, and a <m>typing</m> of <m>G</m> by <m>Sch</m>, we say that <m>N</m> matches <m>E</m> for <m>typing</m>, written <m>typing, Neigh &#x22A7; E</m>, as defined on the figure above recursively on the structure of <m>E</m>, where
-	<ul>
-	  <li>
-	    in rule te-triple-constr, <m>P L</m> is a triple constraint, with <m>P</m> a subset of <m>Prop ∪ InvProp</m>, and  <m>L</m> a shape label in <m>SLabels</m>;
-    </li>
-	  <li>
-	    <m>min</m> and <m>max</m> are the minimum, respectively maximum cardinality in a <m>RepetedTripleExpr</m> (in rule te-repet);
-	  </li>
-	</ul>
-
-      </p>
-
-      <p>
-	<img src="images/te-rules.png" style="width: 65%"/>
-      </p>
       
       <div class="Example">
 	<p>
@@ -747,14 +757,6 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
       </section>
     </section>
       
-      <section id="correct-typing">
-      <h3>Correct typing</h3>
-      <p>
-	A <m>typing</m> of <m>G</m> by <m>Sch</m> is called correct if for all node-label association <m>(node, T)</m> in <m>typing</m>, it is the case that <m>typing, neigh(node) ⊢ def(T)</m>.
-      </p>
-      </section>
-
-
       <section id="stratified-negation">
       <h3>Shapes Schemas with Stratified Negation</h3>
       <p>
@@ -762,6 +764,9 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
 	In order to avoid undesirable interaction between recursion and the negation in value expressions, we consider shapes schemas with stratified negation only, as defined in the sequel.
       </p>
       
+      <p>
+	A <m>typing</m> of <m>G</m> by <m>Sch</m> is called correct if for all node-label association <m>(node, T)</m> in <m>typing</m>, it is the case that <m>typing, neigh(node) ⊢ def(T)</m>.
+      </p>
       <p>
 	We start by defining the dependency graph for a shapes schema, based on which we will define the stratification.
       </p>
@@ -789,8 +794,8 @@ ex:lp  ^ex:reportedBy  ex:bug</div>
 <pre class="shex" style="float:left">
 # a shapes schema
 
-&lt;SL_all&gt;:= IRI ∪ RDFLiteral ∪ {blank}
-&lt;SL_1&gt; := NOT ({:c} &lt;SL_5&gt;)
+&lt;SL_all&gt; IRI ∪ RDFLiteral ∪ BNode
+&lt;SL_1&gt;   NOT ({:c} &lt;SL_5&gt;)
 &lt;SL_2&gt; := {:a} &lt;SL_4&gt; ; {:c} &lt;SL_5&gt; 
 &lt;SL_3&gt; := NOT ({:c} &lt;SL_all&gt;) AND {:a} &lt;SL_2&gt;
 &lt;SL_4&gt; := {:a} &lt;SL_3&gt;
