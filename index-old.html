@@ -327,7 +327,7 @@
     <div class="abstrsynt">
       <span class="math" id="as-ShapeExpr">ShapeExpr ::= EmptyShape</span><br>
       <m>| TripleConstraint</m><br>
-      <m>| SomeOfShape</m><br>
+      <m>| OneOfShape</m><br>
       <m>| GroupShape</m><br>
       <m>| RepetitionShape</m><br>
     </div>
@@ -366,11 +366,11 @@
     <section id="some-of-expression">
       <h4>Some-of Shape Expression</h4>
       <p>
-	A <span class="emph">some-of shape expression</span> (<m>SomeOfShape</m>) allows to define a disjunctive constraint. 
+	A <span class="emph">some-of shape expression</span> (<m>OneOfShape</m>) allows to define a disjunctive constraint. 
 	It is composed by one or more sub-expressions. A some-of expression is satisfied by a set of neighborhood edges if one of its sub-expressions is satisfied.
       </p>
       <div class="abstrsynt">
-	<span class="math" id="as-SomeOfShape">SomeOfShape ::= ShapeExpr ('|' ShapeExpr)*</span><br>
+	<span class="math" id="as-OneOfShape">OneOfShape ::= ShapeExpr ('|' ShapeExpr)*</span><br>
       </div>
     </section>
 
@@ -455,11 +455,11 @@
       <span class="math" id="as-ShapeDefinition">ShapeDefinition ::= 'CLOSED'? '^CLOSED'? ('EXTRA' ExtraPropSet)? ShapeExpr</span><br>
       <span class="math" id="as-ShapeExpr">ShapeExpr ::= EmptyShape</span><br>
       <m>| TripleConstraint</m><br>
-      <m>| SomeOfShape</m><br>
+      <m>| OneOfShape</m><br>
       <m>| GroupShape</m><br>
       <m>| RepetitionShape</m><br>
       <span class="math" id="as-TripleConstraint">TripleConstraint ::= (Property | InvProperty) ValueClass</span><br>
-      <span class="math" id="as-SomeOfShape">SomeOfShape ::= ShapeExpr ('|' ShapeExpr)*</span><br>
+      <span class="math" id="as-OneOfShape">OneOfShape ::= ShapeExpr ('|' ShapeExpr)*</span><br>
       <span class="math" id="as-GroupShape">GroupShape ::= ShapeExpr (',' ShapeExpr)*</span> <br>
       <span class="math" id="as-RepetitionShape">RepetitionShape ::= ShapeExpr Cardinality</span> <br>
       <span class="math" id="as-Cardinality">Cardinality ::= '[' MinCardinality ';' MaxCardinality ']'</span><br>

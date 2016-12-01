@@ -523,7 +523,7 @@ inst:User2
       <div class="abstrsynt">
 	<as>TripleExpression ::= EmptyTripleExpr</as><br/>
 	<as>| TripleConstraint</as><br/>
-	<as>| SomeOfTripleExpr</as><br/>
+	<as>| OneOfTripleExpr</as><br/>
 	<as>| EachOfTripleExpr</as><br/>
 	<as>| RepeatedTripleExpr</as><br/>
 	<br/>
@@ -532,7 +532,7 @@ inst:User2
 	<as>PropertySet ::= </as> a finite or co-finite subset of <as>Prop &cup; InvProp</as><br/>
 	<as>ShapeRef ::= </as> a shape label from <as>SLabels</as><br/>
 	<br/>
-	<as>SomeOfTripleExpr ::= TripleExpression '|' TripleExpression</as><br/>
+	<as>OneOfTripleExpr ::= TripleExpression '|' TripleExpression</as><br/>
 	<as>EachOfTripleExpr ::= TripleExpression ';' TripleExpression</as><br/>
 	<br/>
 	<as>RepeatedTripleExpr ::= TripleExpression '{' MinCard ';' MaxCard '}'</as><br/>
@@ -579,7 +579,7 @@ inst:User2
 	    Moving the mouse over the elements of the list below will highlight the corresponding elements in the triple expression.
 	    <ul>
 	      <li><span class="hl-tc lowlight1">triple constraint</span> (<as>TripleConstraint</as>)</li>
-	      <li><span class="hl-someof lowlight2">some-of triple expression</span> (<as>SomeOfTripleExpr</as>)</li>
+	      <li><span class="hl-someof lowlight2">some-of triple expression</span> (<as>OneOfTripleExpr</as>)</li>
 	      <li><span class="hl-eachof lowlight2">each-of triple expression</span> (<as>EachOfTripleExpr</as>)</li>
 	      <li><span class="hl-repet lowlight3">repeated triple expression</span> (<as>RepeatedTripleExpr</as>)</li>
 	      <li><span class="hl-inverse-tc lowlight1">triple constraint with an inverse property</span></li>
@@ -1341,7 +1341,7 @@ CLOSED {
 	<as>ExtraPropSet_ ::= </as> a set of properties and inverse properties<br/>
 	<as>TripleExpression_ ::= EmptyTripleExpr_</as><br/>
 	<as> | TripleConstraint_</as><br/>
-	<as> | SomeOfTripleExpr_</as><br/>
+	<as> | OneOfTripleExpr_</as><br/>
 	<as> | EachOfTripleExpr_</as><br/>
 	<as> | RepeatedTripleExpr_</as><br/>
 	<br/>
@@ -1350,7 +1350,7 @@ CLOSED {
 	<as>Property_ ::=</as> an IRI<br/>
 	<as>InvProperty_ ::= '^'Property_</as><br/>
 	<br/>
-	<as>SomeOfTripleExpr_ ::= TripleExpr_ '|' TripleExpr_</as><br/>
+	<as>OneOfTripleExpr_ ::= TripleExpr_ '|' TripleExpr_</as><br/>
 	<as>EachOfTripleExpr_ ::= TripleExpr_ ';' TripleExpr_</as><br/>
 	<br/>
 	<as>RepeatedTipleExpr_ ::= TripleExpr_ '{' MinCard_ ';' MaxCard_ '}'</as><br/>
